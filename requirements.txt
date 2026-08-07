@@ -1,0 +1,10 @@
+python-jobspy
+requests
+groq
+pandas
+python-dotenv
+pydantic
+fastapi
+uvicorn
+sse-starlette
+aiofiles

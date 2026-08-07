@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Job Matcher</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>AI Job Matcher <span class="badge">Pro</span></h1>
+            <p>Automatically scraping and matching the best remote tech roles for you.</p>
+        </header>
+
+        <section class="controls">
+            <button id="start-btn" class="primary-btn">Start Scraping & Matching</button>
+            <a href="/api/download" id="download-btn" class="secondary-btn" download>Download CSV</a>
+        </section>
+
+        <div class="dashboard">
+            <div class="console-panel panel">
+                <h2>Live Logs</h2>
+                <div id="console-output" class="console-output"></div>
+            </div>
+
+            <div class="results-panel panel">
+                <h2>Matched Jobs (Score &ge; 50)</h2>
+                <div class="table-container">
+                    <table id="jobs-table">
+                        <thead>
+                            <tr>
+                                <th>Match</th>
+                                <th>Job Title</th>
+                                <th>Company</th>
+                                <th>Pay</th>
+                                <th>Link</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jobs-body">
+                            <!-- Job rows will be dynamically added here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html>
