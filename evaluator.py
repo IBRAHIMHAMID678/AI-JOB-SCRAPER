@@ -45,6 +45,19 @@ def save_eval_cache():
     except Exception as e:
         log(f"Could not save evaluation cache: {e}")
 
+def clear_eval_cache_local():
+    global EVAL_CACHE
+    try:
+        with cache_lock:
+            EVAL_CACHE = {}
+            save_eval_cache()
+        log("Evaluation cache cleared in memory and on disk.")
+        return True
+    except Exception as e:
+        log(f"Error clearing evaluation cache: {e}")
+        return False
+
+
 def get_job_hash(job):
     url = str(job.get('url', '')).strip()
     title = str(job.get('title', '')).strip()

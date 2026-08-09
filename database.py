@@ -43,6 +43,9 @@ def save_job_to_db(job):
         if not url:
             return False
             
+        if "status" not in job_data:
+            job_data["status"] = "matched"
+            
         jobs_collection.update_one(
             {"url": url},
             {"$set": job_data},
@@ -51,6 +54,61 @@ def save_job_to_db(job):
         return True
     except Exception as e:
         log(f"[DATABASE] Error saving job to MongoDB: {e}")
+        return False
+
+def update_job_status(url, status):
+    if not is_mongo_connected or jobs_collection is None:
+        return False
+    try:
+        jobs_collection.update_one(
+            {"url": url},
+            {"$set": {"status": status}}
+        )
+        return True
+    except Exception as e:
+        log(f"[DATABASE] Error updating job status for {url}: {e}")
+        return False
+
+def get_applied_jobs_from_db():
+    if not is_mongo_connected or jobs_collection is None:
+        return []
+    try:
+        cursor = jobs_collection.find({"status": "applied"}, {"_id": 0}).sort("match_score", pymongo.DESCENDING)
+        return list(cursor)
+    except Exception as e:
+        log(f"[DATABASE] Error retrieving applied jobs: {e}")
+        return []
+
+def get_active_jobs_from_db():
+    if not is_mongo_connected or jobs_collection is None:
+        return []
+    try:
+        cursor = jobs_collection.find(
+            {"$or": [{"status": "matched"}, {"status": {"$exists": False}}]},
+            {"_id": 0}
+        ).sort("match_score", pymongo.DESCENDING)
+        return list(cursor)
+    except Exception as e:
+        log(f"[DATABASE] Error retrieving active matched jobs: {e}")
+        return []
+
+def delete_all_jobs_from_db():
+    if not is_mongo_connected or jobs_collection is None:
+        return False
+    try:
+        jobs_collection.delete_many({})
+        return True
+    except Exception as e:
+        log(f"[DATABASE] Error clearing jobs from MongoDB: {e}")
+        return False
+
+def is_job_url_exists(url):
+    if not is_mongo_connected or jobs_collection is None:
+        return False
+    try:
+        count = jobs_collection.count_documents({"url": url})
+        return count > 0
+    except Exception as e:
         return False
 
 def get_saved_jobs_from_db():
@@ -65,3 +123,4 @@ def get_saved_jobs_from_db():
     except Exception as e:
         log(f"[DATABASE] Error retrieving jobs from MongoDB: {e}")
         return []
+

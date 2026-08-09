@@ -16,9 +16,20 @@ from scrapers.remotive_scraper import get_remotive_jobs
 from scrapers.remoteok_scraper import get_remoteok_jobs
 from scrapers.weworkremotely_scraper import get_weworkremotely_jobs
 from scrapers.nodesk_python_scraper import get_nodesk_python_jobs
+from scrapers.themuse_scraper import get_themuse_jobs
+from scrapers.arbeitnow_scraper import get_arbeitnow_jobs
 from evaluator import evaluate_job_single
-from database import save_job_to_db, get_saved_jobs_from_db, is_mongo_connected
+from database import (
+    save_job_to_db, 
+    get_saved_jobs_from_db, 
+    is_mongo_connected,
+    update_job_status,
+    get_applied_jobs_from_db,
+    get_active_jobs_from_db,
+    delete_all_jobs_from_db
+)
 from log_manager import log_queue, job_queue, pending_job_queue, log
+
 
 app = FastAPI()
 
@@ -63,10 +74,12 @@ def run_pipeline():
         ("Remotive API", get_remotive_jobs),
         ("Remote OK API", get_remoteok_jobs),
         ("WeWorkRemotely RSS", get_weworkremotely_jobs),
-        ("Python.org & NoDesk RSS", get_nodesk_python_jobs)
+        ("Python.org & NoDesk RSS", get_nodesk_python_jobs),
+        ("The Muse API", get_themuse_jobs),
+        ("Arbeitnow API", get_arbeitnow_jobs)
     ]
     
-    with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
         future_map = {executor.submit(func): name for name, func in scraper_tasks}
         for future in concurrent.futures.as_completed(future_map):
             name = future_map[future]
@@ -98,6 +111,34 @@ def run_pipeline():
     # Filter out fingerprint keys to leave list of unique job dicts
     jobs_list = [j for k, j in unique_jobs.items() if k.startswith("http") or k.startswith("https")]
     log(f"[SYSTEM] Total unique jobs after deduplication: {len(jobs_list)}")
+
+    # Load existing URLs in MongoDB / memory to prevent duplicate evaluation and re-scraping
+    existing_urls = set()
+    if is_mongo_connected:
+        try:
+            from database import jobs_collection
+            cursor = jobs_collection.find({}, {"url": 1, "_id": 0})
+            existing_urls = {doc["url"] for doc in cursor if "url" in doc}
+        except Exception as e:
+            log(f"[ERROR] Error loading existing URLs from DB: {e}")
+    else:
+        existing_urls = {j.get("url") for j in global_evaluated_jobs if j.get("url")}
+
+    # Skip duplicate jobs
+    new_jobs_list = []
+    skipped_count = 0
+    for job in jobs_list:
+        url = job.get("url")
+        if url in existing_urls:
+            skipped_count += 1
+        else:
+            new_jobs_list.append(job)
+
+    if skipped_count > 0:
+        log(f"[SYSTEM] Skipped {skipped_count} jobs that were already scraped/processed in previous runs.")
+
+    jobs_list = new_jobs_list
+
     
     if not jobs_list:
         log("[SYSTEM] No jobs found across scraped sources. Pipeline complete.")
@@ -180,12 +221,77 @@ async def sse_stream():
 @app.get("/api/jobs/saved")
 def get_db_jobs():
     """
-    Returns saved jobs stored in MongoDB.
+    Returns active (unapplied) saved jobs stored in MongoDB or memory.
     """
     if not is_mongo_connected:
-        return {"mongo_connected": False, "jobs": global_evaluated_jobs}
-    saved_jobs = get_saved_jobs_from_db()
+        active_jobs = [j for j in global_evaluated_jobs if j.get("status", "matched") == "matched"]
+        return {"mongo_connected": False, "jobs": active_jobs}
+    saved_jobs = get_active_jobs_from_db()
     return {"mongo_connected": True, "jobs": saved_jobs}
+
+@app.get("/api/jobs/applied")
+def get_applied_jobs():
+    """
+    Returns applied jobs stored in MongoDB or memory.
+    """
+    if not is_mongo_connected:
+        applied_jobs = [j for j in global_evaluated_jobs if j.get("status") == "applied"]
+        return {"mongo_connected": False, "jobs": applied_jobs}
+    saved_jobs = get_applied_jobs_from_db()
+    return {"mongo_connected": True, "jobs": saved_jobs}
+
+class ApplyJobRequest(BaseModel):
+    url: str
+
+@app.post("/api/jobs/apply")
+def mark_job_applied_endpoint(req: ApplyJobRequest):
+    """
+    Marks a job as applied in MongoDB or memory.
+    """
+    url = req.url
+    updated = False
+    
+    # Update in memory
+    with list_lock:
+        for job in global_evaluated_jobs:
+            if job.get("url") == url:
+                job["status"] = "applied"
+                updated = True
+                break
+                
+    # Update in MongoDB
+    if is_mongo_connected:
+        res = update_job_status(url, "applied")
+        if res:
+            updated = True
+            
+    if updated:
+        log(f"[ACTION] Job marked as Applied: {url}")
+        return {"status": "success"}
+    else:
+        raise HTTPException(status_code=404, detail="Job not found")
+
+@app.post("/api/jobs/clear")
+def clear_all_jobs_endpoint():
+    """
+    Clears all jobs in memory, MongoDB, and the evaluation cache.
+    """
+    global global_evaluated_jobs, global_pending_jobs, global_source_stats
+    with list_lock:
+        global_evaluated_jobs = []
+        global_pending_jobs = []
+        global_source_stats = {}
+        
+    db_cleared = False
+    if is_mongo_connected:
+        db_cleared = delete_all_jobs_from_db()
+        
+    from evaluator import clear_eval_cache_local
+    cache_cleared = clear_eval_cache_local()
+    
+    log("[SYSTEM] Database, memory, and evaluation cache have been cleared successfully.")
+    return {"status": "success", "db_cleared": db_cleared, "cache_cleared": cache_cleared}
+
 
 @app.post("/api/verify-job")
 def verify_job(req: VerifyJobRequest):

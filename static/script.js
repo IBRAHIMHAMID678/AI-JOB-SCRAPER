@@ -18,9 +18,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const metricScraped = document.getElementById("metric-scraped");
     const metricMatched = document.getElementById("metric-matched");
     const metricPending = document.getElementById("metric-pending");
+    const metricApplied = document.getElementById("metric-applied");
+    
+    // Clear and mark applied elements
+    const clearAllBtn = document.getElementById("clear-all-btn");
+    const inspectMarkAppliedBtn = document.getElementById("inspect-mark-applied-btn");
     
     let totalScrapedCount = 0;
     let matchedJobsList = [];
+    let appliedJobsList = [];
     let pendingJobs = {};
     let activeFilter = "all";
     let searchTerm = "";
@@ -78,6 +84,22 @@ specifically AI Engineer, AI Full Stack Developer, or Full Stack Developer. Cand
             }
         })
         .catch(err => console.log("DB check error:", err));
+
+    // Check applied jobs on page load
+    fetch("/api/jobs/applied")
+        .then(res => res.json())
+        .then(data => {
+            if (data.jobs && data.jobs.length > 0) {
+                data.jobs.forEach(job => {
+                    if (!appliedJobsList.some(j => j.url === job.url)) {
+                        appliedJobsList.push(job);
+                    }
+                });
+                appliedJobsList.sort((a, b) => b.match_score - a.match_score);
+                metricApplied.textContent = appliedJobsList.length;
+            }
+        })
+        .catch(err => console.log("Applied check error:", err));
 
     function disableDownloads() {
         downloadBtn.style.pointerEvents = "none";
@@ -154,10 +176,47 @@ specifically AI Engineer, AI Full Stack Developer, or Full Stack Developer. Cand
         );
     }
 
+    async function markJobAsApplied(job) {
+        try {
+            const res = await fetch("/api/jobs/apply", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url: job.url })
+            });
+            const data = await res.json();
+            if (data.status === "success") {
+                job.status = "applied";
+                
+                // Move from active to applied list
+                matchedJobsList = matchedJobsList.filter(j => j.url !== job.url);
+                if (!appliedJobsList.some(j => j.url === job.url)) {
+                    appliedJobsList.push(job);
+                    appliedJobsList.sort((a, b) => b.match_score - a.match_score);
+                }
+                
+                renderMatchedJobs();
+                metricApplied.textContent = appliedJobsList.length;
+                metricMatched.textContent = matchedJobsList.length;
+                addLog(`[ACTION] Job marked as Applied: ${job.title}`);
+                
+                // Close modal if open
+                if (activeVerificationJob && activeVerificationJob.url === job.url) {
+                    closeVerificationModal();
+                }
+                closeJobInspector();
+            }
+        } catch (err) {
+            console.error("Mark applied error:", err);
+            alert("Failed to mark job as applied.");
+        }
+    }
+
     function renderMatchedJobs() {
         jobsBody.innerHTML = "";
         
-        const filtered = matchedJobsList.filter(job => {
+        const listToRender = (activeFilter === "applied") ? appliedJobsList : matchedJobsList;
+        
+        const filtered = listToRender.filter(job => {
             const query = searchTerm.toLowerCase();
             const matchesSearch = !query || 
                 job.title.toLowerCase().includes(query) || 
@@ -175,7 +234,7 @@ specifically AI Engineer, AI Full Stack Developer, or Full Stack Developer. Cand
         });
 
         if (filtered.length === 0) {
-            jobsBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 2rem;">No matched jobs matching current filter.</td></tr>';
+            jobsBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 2rem;">No jobs matching current filter.</td></tr>';
             return;
         }
 
@@ -189,6 +248,8 @@ specifically AI Engineer, AI Full Stack Developer, or Full Stack Developer. Cand
             
             const skills = extractSkills(`${job.title} ${job.description} ${job.match_reason}`);
             const skillChipsHtml = skills.map(s => `<span class="skill-chip">${s}</span>`).join("");
+            
+            const isAppliedJob = (activeFilter === "applied") || (job.status === "applied");
 
             tr.innerHTML = `
                 <td>
@@ -205,13 +266,32 @@ specifically AI Engineer, AI Full Stack Developer, or Full Stack Developer. Cand
                 </td>
                 <td><span class="pay-tag">${job.estimated_pay || "Not Disclosed"}</span></td>
                 <td>
-                    <button class="inspect-btn primary-btn-sm">Inspect &nearr;</button>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <button class="inspect-btn primary-btn-sm">Inspect</button>
+                        ${!isAppliedJob ? `<button class="row-apply-btn success-btn-sm" title="Mark as Applied">✓</button>` : `<span class="applied-badge-text">✓ Applied</span>`}
+                    </div>
                 </td>
             `;
             
             tr.addEventListener("click", () => {
                 openJobInspector(job);
             });
+            
+            const rowApplyBtn = tr.querySelector(".row-apply-btn");
+            if (rowApplyBtn) {
+                rowApplyBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    markJobAsApplied(job);
+                });
+            }
+            
+            const inspectBtn = tr.querySelector(".inspect-btn");
+            if (inspectBtn) {
+                inspectBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    openJobInspector(job);
+                });
+            }
             
             jobsBody.appendChild(tr);
         });
@@ -271,7 +351,9 @@ specifically AI Engineer, AI Full Stack Developer, or Full Stack Developer. Cand
     }
 
     // Right Window Job Inspector Modal logic
+    let activeInspectJob = null;
     function openJobInspector(job) {
+        activeInspectJob = job;
         inspectTitle.textContent = job.title;
         inspectCompany.textContent = job.company;
         inspectPay.textContent = job.estimated_pay || "Not Disclosed";
@@ -281,6 +363,14 @@ specifically AI Engineer, AI Full Stack Developer, or Full Stack Developer. Cand
         inspectReason.textContent = job.match_reason || "Matched tech criteria.";
         inspectApplyBtn.href = job.url;
         inspectDesc.innerHTML = job.description || "No job description content available.";
+        
+        const isApplied = (job.status === "applied") || appliedJobsList.some(j => j.url === job.url);
+        if (isApplied) {
+            inspectMarkAppliedBtn.style.display = "none";
+        } else {
+            inspectMarkAppliedBtn.style.display = "block";
+            inspectMarkAppliedBtn.disabled = false;
+        }
         
         inspectorModal.style.display = "flex";
         setTimeout(() => inspectorModal.classList.add("active"), 10);
@@ -418,6 +508,47 @@ specifically AI Engineer, AI Full Stack Developer, or Full Stack Developer. Cand
         });
     });
 
+    inspectMarkAppliedBtn.addEventListener("click", () => {
+        if (activeInspectJob) {
+            markJobAsApplied(activeInspectJob);
+        }
+    });
+
+    clearAllBtn.addEventListener("click", async () => {
+        if (!confirm("Are you sure you want to clear all scraped jobs, pending review list, and the AI evaluation cache? This cannot be undone.")) {
+            return;
+        }
+        try {
+            const res = await fetch("/api/jobs/clear", { method: "POST" });
+            const data = await res.json();
+            if (data.status === "success") {
+                matchedJobsList = [];
+                appliedJobsList = [];
+                pendingJobs = {};
+                totalScrapedCount = 0;
+                
+                metricScraped.textContent = "0";
+                metricMatched.textContent = "0";
+                metricPending.textContent = "0";
+                metricApplied.textContent = "0";
+                
+                jobsBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 3rem;">No matched jobs yet. Click <strong>Start Multi-Site Pipeline</strong> to scrape and evaluate live jobs.</td></tr>';
+                pendingList.innerHTML = '<p class="empty-state">No jobs pending manual verification.</p>';
+                
+                const sourceCounts = sourcesGrid.querySelectorAll(".source-count");
+                sourceCounts.forEach(sc => {
+                     sc.textContent = "Ready";
+                     sc.className = "source-count";
+                });
+                
+                addLog("[SYSTEM] Cleared all scraped jobs, records, and AI cache.");
+            }
+        } catch (err) {
+            console.error("Clear all failed:", err);
+            alert("Failed to clear data.");
+        }
+    });
+
     // Pipeline Start button listener
     let eventSource = null;
     startBtn.addEventListener("click", async () => {
@@ -435,6 +566,7 @@ specifically AI Engineer, AI Full Stack Developer, or Full Stack Developer. Cand
         metricScraped.textContent = "0";
         metricMatched.textContent = "0";
         metricPending.textContent = "0";
+        metricApplied.textContent = appliedJobsList.length;
         
         const sourceCounts = sourcesGrid.querySelectorAll(".source-count");
         sourceCounts.forEach(sc => {

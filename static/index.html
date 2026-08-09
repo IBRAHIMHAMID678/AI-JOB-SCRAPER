@@ -35,6 +35,10 @@
                     <span class="metric-val text-warning" id="metric-pending">0</span>
                     <span class="metric-label">Pending Review</span>
                 </div>
+                <div class="metric-card">
+                    <span class="metric-val text-info" id="metric-applied">0</span>
+                    <span class="metric-label">Applied Jobs</span>
+                </div>
             </div>
         </header>
 
@@ -43,6 +47,7 @@
             <button id="start-btn" class="primary-btn">⚡ Start Multi-Site Pipeline</button>
             <a href="/api/download" id="download-btn" class="secondary-btn" download>📥 Export CSV</a>
             <a href="/api/download/docx" id="download-docx-btn" class="secondary-btn" download>📄 Export DOCX</a>
+            <button id="clear-all-btn" class="danger-btn">🧹 Clear Scraped Jobs</button>
         </section>
 
         <!-- Live Source Scrapers Status Grid -->
@@ -71,6 +76,14 @@
                 </div>
                 <div class="source-card" data-source="Python.org & NoDesk RSS">
                     <span class="source-name">Python.org & NoDesk</span>
+                    <span class="source-count">Ready</span>
+                </div>
+                <div class="source-card" data-source="The Muse API">
+                    <span class="source-name">The Muse API</span>
+                    <span class="source-count">Ready</span>
+                </div>
+                <div class="source-card" data-source="Arbeitnow API">
+                    <span class="source-name">Arbeitnow API</span>
                     <span class="source-count">Ready</span>
                 </div>
             </div>
@@ -113,6 +126,7 @@
                             <button class="filter-btn" data-filter="high">High Match (&ge;80%)</button>
                             <button class="filter-btn" data-filter="hourly">USD Hourly</button>
                             <button class="filter-btn" data-filter="worldwide">Worldwide</button>
+                            <button class="filter-btn text-info-hover" data-filter="applied">💼 Applied Jobs</button>
                         </div>
                     </div>
                 </div>
@@ -247,8 +261,9 @@
                         <p id="inspect-reason"></p>
                     </div>
 
-                    <div class="inspector-actions">
-                        <a id="inspect-apply-btn" href="#" target="_blank" class="primary-btn apply-btn-large">🔗 Apply Direct on Employer Site &nearr;</a>
+                    <div class="inspector-actions" style="display: flex; gap: 1rem; width: 100%;">
+                        <a id="inspect-apply-btn" href="#" target="_blank" class="primary-btn apply-btn-large" style="flex: 2;">🔗 Apply Direct on Employer Site &nearr;</a>
+                        <button id="inspect-mark-applied-btn" class="success-btn-large" style="flex: 1;">✓ Mark as Applied</button>
                     </div>
 
                     <div class="desc-box">
