@@ -4,60 +4,73 @@ from log_manager import log
 
 def get_himalayas_jobs():
     """
-    Fetches jobs from Himalayas public REST API.
+    Fetches remote jobs from Himalayas search endpoint (worldwide friendly).
     Returns a list of standardized job dictionaries.
     """
-    log(f"Scraping Himalayas API for {len(config.SEARCH_TERMS)} terms...")
+    log("Scraping Himalayas API for worldwide-friendly jobs...")
+    base_url = "https://himalayas.app/jobs/api/search"
     
-    base_url = "https://himalayas.app/jobs/api"
     all_jobs = []
     
-    try:
-        # Himalayas API doesn't easily support arbitrary search terms via a single endpoint without pagination over all jobs
-        # For this demo, we'll hit the main endpoint and filter.
-        # Note: They have a /jobs endpoint that returns recent jobs.
-        log("  -> Fetching jobs from Himalayas...")
-        response = requests.get(f"{base_url}", timeout=10)
+    # We will search Himalayas using a few keywords to get a broad list of candidates
+    keywords_to_search = ["python", "react", "full stack", "software", "node"]
+    
+    for kw in keywords_to_search:
+        log(f"  -> Fetching Himalayas for '{kw}'...")
+        params = {
+            "q": kw,
+            "worldwide": "true",
+            "limit": 20
+        }
         
-        if response.status_code == 200:
-            data = response.json()
-            jobs = data.get("jobs", [])
-            
-            # Filter jobs based on search terms
-            # Convert terms to lower for easy matching
-            search_terms_lower = [t.lower() for t in config.SEARCH_TERMS]
-            
-            for job_data in jobs:
-                title = job_data.get("title", "")
+        try:
+            response = requests.get(base_url, params=params, timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                jobs = data.get("jobs", [])
                 
-                # Check if the title matches any of our terms
-                # For a broader search, we check if any word from our terms is in the title
-                # E.g. "AI", "Engineer", "Python", "React", "Full Stack"
-                keywords = ["ai", "python", "full stack", "react", "next.js", "junior", "entry"]
-                
-                if any(kw in title.lower() for kw in keywords):
+                for job_data in jobs:
+                    title = job_data.get("title", "")
+                    
+                    # Normalize location restrictions to string
+                    loc_restrictions = job_data.get("locationRestrictions", [])
+                    
+                    # If locationRestrictions has entries, check if Pakistan is allowed.
+                    # Since we requested worldwide=true, most will have empty restrictions, meaning anywhere.
+                    if loc_restrictions:
+                        loc_restrictions_lower = [str(loc).lower() for loc in loc_restrictions]
+                        if not any(x in loc_restrictions_lower for x in ["pakistan", "worldwide", "anywhere"]):
+                            # Pakistan is not explicitly allowed in restricted list, skip
+                            continue
+                            
+                    location_str = ", ".join(loc_restrictions) if loc_restrictions else "Worldwide / Remote"
+                    
                     job = {
                         "title": title,
                         "company": job_data.get("companyName", ""),
-                        "url": job_data.get("jobUrl", ""),
+                        "url": job_data.get("applicationLink", ""),
                         "description": job_data.get("description", "No description available"),
-                        "location": job_data.get("location", "Remote"),
+                        "location": location_str,
                         "source": "Himalayas"
                     }
                     
                     if job["url"]:
                         all_jobs.append(job)
                         
-                        # Stop if we hit a generous limit to avoid taking too much time
-                        if len(all_jobs) >= config.RESULTS_PER_TERM * len(config.SEARCH_TERMS):
-                            break
-                            
-    except Exception as e:
-        log(f"  -> Error fetching from Himalayas API: {e}")
-        
-    log(f"Himalayas API fetching complete. Found {len(all_jobs)} jobs.")
+            else:
+                log(f"  -> Himalayas API returned status: {response.status_code} for keyword '{kw}'")
+        except Exception as e:
+            log(f"  -> Error fetching from Himalayas API for '{kw}': {e}")
+            
+    # Deduplicate by URL
+    unique_jobs = {job["url"]: job for job in all_jobs if job["url"]}.values()
+    all_jobs = list(unique_jobs)
+    
+    log(f"Himalayas API fetching complete. Found {len(all_jobs)} unique jobs.")
     return all_jobs
 
 if __name__ == "__main__":
     jobs = get_himalayas_jobs()
-    print(f"Sample job: {jobs[0] if jobs else 'No jobs found'}")
+    print(f"Total jobs: {len(jobs)}")
+    if jobs:
+        print(f"Sample job: {jobs[0]}")

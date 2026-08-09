@@ -3,50 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Job Matcher</title>
+    <title>AI Remote Job Generator & Orchestrator Pro</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="app-container">
+        <!-- Main Top Bar -->
         <header>
-            <h1>AI Job Matcher <span class="badge">Pro</span></h1>
-            <p>Automatically scraping and matching the best remote tech roles for you.</p>
+            <div class="header-main">
+                <div class="brand">
+                    <h1>AI Job Matcher <span class="badge">Orchestrator Pro</span></h1>
+                    <span class="status-indicator" id="pipeline-status-badge">● System Ready</span>
+                    <span class="status-indicator" id="mongo-status-badge">🍃 DB: Checking...</span>
+                </div>
+                <p>Multi-source automated scraper & AI matching engine for Pakistan & Worldwide Remote Tech Roles.</p>
+            </div>
+            
+            <div class="metrics-bar">
+                <div class="metric-card">
+                    <span class="metric-val" id="metric-scraped">0</span>
+                    <span class="metric-label">Raw Scraped</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-val text-success" id="metric-matched">0</span>
+                    <span class="metric-label">Matched (Right Window)</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-val text-warning" id="metric-pending">0</span>
+                    <span class="metric-label">Pending Review</span>
+                </div>
+            </div>
         </header>
 
+        <!-- Control Action Bar -->
         <section class="controls">
-            <button id="start-btn" class="primary-btn">Start Scraping & Matching</button>
-            <a href="/api/download" id="download-btn" class="secondary-btn" download>Download CSV</a>
+            <button id="start-btn" class="primary-btn">⚡ Start Multi-Site Pipeline</button>
+            <a href="/api/download" id="download-btn" class="secondary-btn" download>📥 Export CSV</a>
+            <a href="/api/download/docx" id="download-docx-btn" class="secondary-btn" download>📄 Export DOCX</a>
         </section>
 
+        <!-- Live Source Scrapers Status Grid -->
+        <section class="sources-grid-section">
+            <h3 class="section-title">📡 Active Scraper Sources & Real-Time Status</h3>
+            <div class="sources-grid" id="sources-grid">
+                <div class="source-card" data-source="JobSpy (LinkedIn/Indeed/Glassdoor/ZipRecruiter)">
+                    <span class="source-name">JobSpy (LinkedIn & Indeed)</span>
+                    <span class="source-count">Ready</span>
+                </div>
+                <div class="source-card" data-source="Himalayas API">
+                    <span class="source-name">Himalayas API</span>
+                    <span class="source-count">Ready</span>
+                </div>
+                <div class="source-card" data-source="Remotive API">
+                    <span class="source-name">Remotive API</span>
+                    <span class="source-count">Ready</span>
+                </div>
+                <div class="source-card" data-source="Remote OK API">
+                    <span class="source-name">Remote OK API</span>
+                    <span class="source-count">Ready</span>
+                </div>
+                <div class="source-card" data-source="WeWorkRemotely RSS">
+                    <span class="source-name">WeWorkRemotely</span>
+                    <span class="source-count">Ready</span>
+                </div>
+                <div class="source-card" data-source="Python.org & NoDesk RSS">
+                    <span class="source-name">Python.org & NoDesk</span>
+                    <span class="source-count">Ready</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Dashboard Split Layout -->
         <div class="dashboard">
-            <div class="console-panel panel">
-                <h2>Live Logs</h2>
-                <div id="console-output" class="console-output"></div>
+            <!-- Left Column: Live Terminal Console & Pending Verification -->
+            <div class="left-column">
+                <div class="console-panel panel">
+                    <div class="panel-header">
+                        <h2>🖥️ Real-Time Backend Activity Console</h2>
+                        <button id="clear-console-btn" class="icon-btn" title="Clear console">🧹</button>
+                    </div>
+                    <div id="console-output" class="console-output">
+                        <p class="log-system">> System initialized. Click "Start Multi-Site Pipeline" to begin fetching & matching remote roles.</p>
+                    </div>
+                </div>
+
+                <div class="pending-panel panel">
+                    <h2>⚠️ Borderline Roles Pending Verification</h2>
+                    <div id="pending-list" class="pending-list">
+                        <p class="empty-state">No jobs pending manual verification.</p>
+                    </div>
+                </div>
             </div>
 
+            <!-- Right Column: Matched Jobs Table & Details Inspector -->
             <div class="results-panel panel">
-                <h2>Matched Jobs (Score &ge; 50)</h2>
+                <div class="results-header">
+                    <div>
+                        <h2>🎯 Matched Jobs (Right Window)</h2>
+                        <p class="sub-text">Click any row to inspect complete description, USD pay, and direct application link.</p>
+                    </div>
+                    
+                    <div class="filter-controls">
+                        <input type="text" id="search-input" placeholder="🔍 Instant search titles, skills, company..." class="search-box">
+                        <div class="filter-tabs">
+                            <button class="filter-btn active" data-filter="all">All Matched</button>
+                            <button class="filter-btn" data-filter="high">High Match (&ge;80%)</button>
+                            <button class="filter-btn" data-filter="hourly">USD Hourly</button>
+                            <button class="filter-btn" data-filter="worldwide">Worldwide</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="table-container">
                     <table id="jobs-table">
                         <thead>
                             <tr>
-                                <th>Match</th>
-                                <th>Job Title</th>
-                                <th>Company</th>
-                                <th>Pay</th>
-                                <th>Link</th>
+                                <th>Score</th>
+                                <th>Job Position & Matched CV Skills</th>
+                                <th>Employer & Source</th>
+                                <th>USD Compensation</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="jobs-body">
-                            <!-- Job rows will be dynamically added here -->
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 3rem;">
+                                    No matched jobs yet. Click <strong>Start Multi-Site Pipeline</strong> to scrape and evaluate live jobs.
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+
+        <!-- Borderline Job Verification Modal -->
+        <div id="verification-modal" class="modal-overlay">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h2>Verify Scraped Job Fit</h2>
+                    <button id="modal-close" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-left">
+                        <h3>Job Details</h3>
+                        <div class="detail-row"><strong>Title:</strong> <span id="modal-job-title"></span></div>
+                        <div class="detail-row"><strong>Company:</strong> <span id="modal-job-company"></span></div>
+                        <div class="detail-row"><strong>Location:</strong> <span id="modal-job-location"></span></div>
+                        <div class="detail-row"><strong>Source:</strong> <span id="modal-job-source"></span></div>
+                        <div class="detail-row"><strong>Link:</strong> <a id="modal-job-url" href="#" target="_blank" class="job-link">View Original Listing &nearr;</a></div>
+                        
+                        <div class="desc-box">
+                            <h4>Job Description</h4>
+                            <div id="modal-job-desc" class="desc-content"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-right">
+                        <h3>Verify Fit Against Candidate CV</h3>
+                        <div class="cv-reference">
+                            <h4>Target Profile Specs:</h4>
+                            <pre id="modal-candidate-cv"></pre>
+                        </div>
+                        
+                        <form id="verification-form">
+                            <div class="form-checkbox">
+                                <label>
+                                    <input type="checkbox" id="verify-remote" checked>
+                                    Allows working from Anywhere / Pakistan Remote
+                                </label>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="verify-score">Match Score: <span id="verify-score-val">50%</span></label>
+                                <input type="range" id="verify-score" min="0" max="100" value="50">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="verify-pay">Estimated Pay (USD):</label>
+                                <input type="text" id="verify-pay">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="verify-location">Adjust Location Restriction:</label>
+                                <input type="text" id="verify-location">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="verify-reason">Match Reason:</label>
+                                <textarea id="verify-reason" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="modal-actions">
+                                <button type="button" id="btn-approve" class="approve-btn">Approve & Match</button>
+                                <button type="button" id="btn-reject" class="reject-btn">Reject</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Window Job Inspector Modal -->
+        <div id="inspector-modal" class="modal-overlay">
+            <div class="modal-card inspector-card">
+                <div class="modal-header">
+                    <h2>Job Details & Full Description Inspector</h2>
+                    <button id="inspector-close" class="close-btn">&times;</button>
+                </div>
+                <div class="inspector-body">
+                    <div class="inspector-meta-bar">
+                        <div class="meta-item">
+                            <span class="meta-label">Position Title</span>
+                            <span class="meta-val" id="inspect-title"></span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Employer</span>
+                            <span class="meta-val" id="inspect-company"></span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">USD Pay Rate</span>
+                            <span class="meta-val highlight-pay" id="inspect-pay"></span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Match Score</span>
+                            <span class="meta-val score-badge" id="inspect-score"></span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Source Board</span>
+                            <span class="meta-val" id="inspect-source"></span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Location Eligibility</span>
+                            <span class="meta-val" id="inspect-location"></span>
+                        </div>
+                    </div>
+
+                    <div class="inspector-reason-box">
+                        <strong>Match Rationale & Skills Breakdown:</strong>
+                        <p id="inspect-reason"></p>
+                    </div>
+
+                    <div class="inspector-actions">
+                        <a id="inspect-apply-btn" href="#" target="_blank" class="primary-btn apply-btn-large">🔗 Apply Direct on Employer Site &nearr;</a>
+                    </div>
+
+                    <div class="desc-box">
+                        <h3>Complete Scraped Job Description</h3>
+                        <div id="inspect-desc" class="desc-content full-desc"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
     <script src="/static/script.js"></script>
 </body>

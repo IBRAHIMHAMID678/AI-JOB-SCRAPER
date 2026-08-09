@@ -8,3 +8,4 @@ fastapi
 uvicorn
 sse-starlette
 aiofiles
+pymongo
