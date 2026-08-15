@@ -1,0 +1,13 @@
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+jobpilot/tests
+jobpilot/.pytest_cache
+*.db
+*.sqlite
+*.sqlite3
+.env
+.env.local
+node_modules
+.git
