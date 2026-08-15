@@ -1503,12 +1503,12 @@ class Component extends DCLogic {
     route:'dashboard', rail:'wide', drawer:false, vw:1440,
     notifOpen:false, notifTab:'All', palette:false, pq:'', pIdx:0,
     saved:['j2','j5','j7'], selected:'j1', searchStatus:'', searching:false,
-    fields:{Role:'Cyber Security Engineer',Location:'Remote',Experience:'Mid-Senior',Salary:'$3,000+','Work Type':'Remote',Skills:'SIEM, Python, AWS'},
+    fields:{Role:'AI Engineer',Location:'Remote',Experience:'Mid-Senior',Salary:'$3,000+','Work Type':'Remote',Skills:'Python, LangChain, FastAPI, React'},
     filters:{q:'',work:'All',minMatch:0,types:[],exp:'Any',date:'Any'},
     sort:'Match', jobTab:'analysis', savedGroup:'All',
     appView:'board', appStages:null, resumeOpt:false, resumeTab:'versions',
     agentState:{}, autoState:{}, autoModal:false,
-    settingsSec:'Profile', onboarding:false, obStep:1, obRoles:['Security Engineer'], obLocs:['Remote'],
+    settingsSec:'Profile', onboarding:false, obStep:1, obRoles:['AI Engineer','LLM Engineer'], obLocs:['Remote'],
     theme:'dark', notifs:null, activityN:5, loading:false, filterSheet:false, autoSched:'Every 6 hours', obInit:false,
     apiJobs:[], apiApps:[], apiStats:null, apiLoaded:false, pipelineLogs:[],
     gmailConnected:false, waConfigured:false, gmailScanResult:'', waTestResult:''
@@ -1519,21 +1519,21 @@ class Component extends DCLogic {
   }
 
   jobs = [
-    J('j1','Senior Cyber Security Engineer','arcnet','Berlin, DE','Remote · Full-time','$4,000 – $6,000','2 hours ago',94,91,['Python','AWS','SIEM','SOC','Threat Intelligence'],'LinkedIn'),
-    J('j2','Cloud Security Architect','lumen','Amsterdam, NL','Hybrid · Full-time','$5,200 – $7,400','5 hours ago',89,84,['AWS','Terraform','Zero Trust','Kubernetes'],'Company site'),
-    J('j3','Detection Engineer','kestrel','Remote (EU)','Remote · Full-time','$3,800 – $5,100','9 hours ago',86,88,['Sigma','Splunk','Python','MITRE ATT&CK'],'Greenhouse'),
-    J('j4','AI Security Automation Engineer','quanta','London, UK','Remote · Contract','$6,000 – $8,000','1 day ago',92,79,['LangChain','Python','SOAR','GenAI'],'Wellfound'),
-    J('j5','SOC Analyst — Tier 3','meridian','Dublin, IE','On-site · Full-time','$3,200 – $4,400','1 day ago',74,81,['SIEM','Incident Response','KQL'],'Indeed'),
-    J('j6','Application Security Engineer','vellum','Remote (Global)','Remote · Full-time','$4,500 – $6,200','2 days ago',81,76,['SAST','Go','Threat Modeling','CI/CD'],'Lever'),
-    J('j7','Security Platform Engineer','northwind','Zurich, CH','Hybrid · Full-time','$6,800 – $9,000','3 days ago',88,90,['Kubernetes','Go','IAM','Terraform'],'LinkedIn'),
-    J('j8','Threat Intelligence Analyst','orbital','Remote (EU)','Remote · Full-time','$3,000 – $4,200','4 days ago',69,72,['OSINT','MISP','Python'],'Company site')
+    J('j1','AI Engineer — LLM Applications','neuralworks','Remote (Global)','Remote · Full-time','$4,500 – $7,000','2 hours ago',96,93,['Python','LangChain','RAG','FastAPI','LLM'],'LinkedIn'),
+    J('j2','Full Stack AI Developer','luminary','Amsterdam, NL','Remote · Full-time','$4,000 – $6,500','5 hours ago',91,87,['React','Next.js','Python','FastAPI','MongoDB'],'Himalayas'),
+    J('j3','LLM Engineer','quantaai','Remote (US/EU)','Remote · Contract','$5,000 – $8,000','9 hours ago',89,85,['Python','OpenAI','LangChain','Vector DB','Prompt Engineering'],'Remotive'),
+    J('j4','Python AI Developer','novastack','London, UK','Remote · Full-time','$3,800 – $5,500','1 day ago',87,82,['Python','FastAPI','LangChain','PostgreSQL','Docker'],'Wellfound'),
+    J('j5','Full Stack Developer','meridian','Toronto, CA','Remote · Full-time','$3,500 – $5,000','1 day ago',78,80,['React','Node.js','TypeScript','MongoDB','AWS'],'Indeed'),
+    J('j6','AI Product Engineer','vellum','Remote (Global)','Remote · Full-time','$4,200 – $6,000','2 days ago',83,78,['Python','React','LLM','REST APIs','TypeScript'],'RemoteOK'),
+    J('j7','Software Engineer — AI Platform','orbitalai','Dubai, UAE','Remote · Full-time','$4,800 – $7,200','3 days ago',85,88,['Python','Kubernetes','FastAPI','RAG','CI/CD'],'LinkedIn'),
+    J('j8','FastAPI Backend Developer','kestrel','Remote (EU)','Remote · Full-time','$3,200 – $4,800','4 days ago',71,74,['Python','FastAPI','SQLAlchemy','PostgreSQL','Redis'],'Arbeitnow')
   ];
   whyMap = {
-    j1:'Strong match for your cybersecurity + AI automation profile. Your SIEM and Python depth covers 5 of 6 core requirements.',
-    j4:'Rare overlap of security engineering and GenAI tooling — the exact direction your last two roles have been trending.',
-    j7:'Highest compensation band in your saved set, and your Kubernetes and IAM experience maps cleanly to the platform team.'
+    j1:'Top match — your Python + LangChain + RAG stack covers every core requirement. Remote-first with competitive comp range.',
+    j3:'Rare contract LLM role with your exact skill set. High pay ceiling and fully remote across US/EU timezones.',
+    j7:'Strong overlap with your FastAPI + RAG experience. Dubai-based company, fully remote, above your target salary band.'
   };
-  breakdown = { Skills:96, Experience:91, Location:100, Education:88, Salary:95 };
+  breakdown = { Skills:94, Experience:88, Location:100, Education:85, Salary:92 };
   navDefs = [
     ['dashboard','Dashboard','space_dashboard'],['jobs','Jobs','work'],['recommended','Recommended','auto_awesome'],
     ['saved','Saved Jobs','bookmark'],['applications','Applications','view_kanban'],['resume','Resume','description'],
@@ -1542,54 +1542,54 @@ class Component extends DCLogic {
   ];
   badges = { jobs:'128', recommended:'9', applications:'14' };
   activityFeed = [
-    ['22:14','Job Discovery Agent','Found 18 new jobs','#5E8CA8'],
-    ['22:15','Job Analysis Agent','Analyzed 14 jobs','#7B72AC'],
-    ['22:16','Matching Agent','Ranked 9 high-match opportunities','var(--acc)'],
-    ['22:17','Resume Agent','Found 3 optimization opportunities','var(--pos)'],
-    ['22:19','Application Agent','Drafted cover letter for Arcnet Security','#A96E85'],
-    ['22:21','Research Agent','Compiled company brief · Kestrel Defense','#5E8CA8'],
-    ['22:24','ATS Agent','Re-scored 4 resume versions','#7E8C52']
+    ['22:14','Job Discovery Agent','Found 23 new AI/Python roles','#5E8CA8'],
+    ['22:15','Job Analysis Agent','Analyzed 18 job descriptions','#7B72AC'],
+    ['22:16','Matching Agent','Ranked 11 high-match opportunities','var(--acc)'],
+    ['22:17','Resume Agent','Found 4 optimization opportunities for LLM roles','var(--pos)'],
+    ['22:19','Application Agent','Drafted cover letter for Neuralworks','#A96E85'],
+    ['22:21','Research Agent','Compiled company brief · Quantaai','#5E8CA8'],
+    ['22:24','ATS Agent','Re-scored 3 resume versions for AI roles','#7E8C52']
   ];
   notifSeed = [
-    ['Jobs','12 new high-match jobs found','4m ago','work','#5E8CA8',true],
-    ['AI','Your resume score improved to 94%','22m ago','auto_awesome','var(--acc)',true],
+    ['Jobs','11 new high-match AI/Python roles found','4m ago','work','#5E8CA8',true],
+    ['AI','Your resume score improved to 94% for LLM roles','22m ago','auto_awesome','var(--acc)',true],
     ['Jobs','3 saved jobs are expiring soon','1h ago','schedule','#A96E85',true],
-    ['Applications','Meridian Health moved you to Interview','3h ago','view_kanban','var(--pos)',false],
-    ['System','Automation “Remote Cybersecurity Search” completed','5h ago','bolt','var(--acc)',false],
-    ['Applications','Vellum Fintech viewed your application','yesterday','visibility','#7B72AC',false]
+    ['Applications','Luminary Tech moved you to Interview','3h ago','view_kanban','var(--pos)',false],
+    ['System','Automation “Remote AI Search” completed','5h ago','bolt','var(--acc)',false],
+    ['Applications','Vellum AI viewed your application','yesterday','visibility','#7B72AC',false]
   ];
   stageDefs = [
     ['Wishlist','var(--tx3)'],['Applied','var(--acc)'],['Screening','#7B72AC'],['Interview','#A07A3C'],
     ['Technical','#5E8CA8'],['Offer','var(--pos)'],['Rejected','var(--neg)']
   ];
   appSeed = [
-    ['a1','Senior Cyber Security Engineer','arcnet','Applied','Mar 4',94,'Follow up in 2 days'],
-    ['a2','Cloud Security Architect','lumen','Interview','Feb 27',89,'Panel interview Thu 14:00'],
-    ['a3','Detection Engineer','kestrel','Screening','Mar 1',86,'Recruiter call pending'],
-    ['a4','AI Security Automation Engineer','quanta','Technical','Feb 21',92,'Take-home due Friday'],
-    ['a5','SOC Analyst — Tier 3','meridian','Rejected','Feb 12',74,'Archived'],
-    ['a6','Security Platform Engineer','northwind','Offer','Feb 8',88,'Review offer letter'],
-    ['a7','Application Security Engineer','vellum','Applied','Mar 5',81,'Awaiting response'],
-    ['a8','Threat Intelligence Analyst','orbital','Wishlist','—',69,'Tailor resume first']
+    ['a1','AI Engineer — LLM Applications','neuralworks','Applied','Mar 4',96,'Follow up in 2 days'],
+    ['a2','Full Stack AI Developer','luminary','Interview','Feb 27',91,'Panel interview Thu 14:00'],
+    ['a3','LLM Engineer','quantaai','Screening','Mar 1',89,'Recruiter call pending'],
+    ['a4','Python AI Developer','novastack','Technical','Feb 21',87,'Take-home due Friday'],
+    ['a5','Full Stack Developer','meridian','Rejected','Feb 12',78,'Archived'],
+    ['a6','AI Product Engineer','vellum','Offer','Feb 8',83,'Review offer letter'],
+    ['a7','Software Engineer — AI Platform','orbitalai','Applied','Mar 5',85,'Awaiting response'],
+    ['a8','FastAPI Backend Developer','kestrel','Wishlist','—',71,'Tailor resume first']
   ];
   agentDefs = [
-    ['Job Discovery Agent','travel_explore','Running','Scanning 41 sources for new postings','2 min ago',68,'#5E8CA8'],
-    ['Job Analysis Agent','psychology','Running','Extracting requirements from 14 postings','just now',41,'#7B72AC'],
-    ['Resume Agent','description','Active','Idle — last optimized v4 Cybersecurity','18 min ago',100,'var(--pos)'],
+    ['Job Discovery Agent','travel_explore','Running','Scanning 8 sources for AI/Python roles','2 min ago',68,'#5E8CA8'],
+    ['Job Analysis Agent','psychology','Running','Extracting requirements from 18 postings','just now',41,'#7B72AC'],
+    ['Resume Agent','description','Active','Idle — last optimized for LLM Engineer roles','18 min ago',100,'var(--pos)'],
     ['ATS Agent','fact_check','Idle','Awaiting next resume revision','1 hour ago',0,'var(--acc)'],
-    ['Research Agent','corporate_fare','Active','Company briefs for 6 shortlisted employers','32 min ago',82,'#5E8CA8'],
-    ['Application Agent','send','Paused','Paused by user — 3 drafts queued','yesterday',25,'#A96E85']
+    ['Research Agent','corporate_fare','Active','Company briefs for 5 shortlisted employers','32 min ago',82,'#5E8CA8'],
+    ['Application Agent','send','Paused','Paused by user — 3 cover letters queued','yesterday',25,'#A96E85']
   ];
   autoDefs = [
-    ['Remote Cybersecurity Search','Every 6 hours',80,'Multiple','Active',412,'2h ago'],
-    ['EU Detection Engineering','Daily at 08:00',75,'LinkedIn, Lever','Active',188,'9h ago'],
-    ['AI Security · High Salary','Every 12 hours',88,'Wellfound, Greenhouse','Paused',64,'2d ago']
+    ['Remote AI Engineer Search','Every 6 hours',85,'Himalayas, Remotive, LinkedIn','Active',187,'2h ago'],
+    ['LLM Engineer · Global Remote','Daily at 08:00',78,'RemoteOK, Wellfound','Active',94,'9h ago'],
+    ['Full Stack AI · High Salary','Every 12 hours',90,'LinkedIn, Greenhouse','Paused',42,'2d ago']
   ];
   resumeVersions = [
-    ['Cybersecurity Engineer',94,'2 days ago','Senior Security Engineer'],
-    ['AI Automation Engineer',88,'1 week ago','AI Security Automation'],
-    ['Security Engineer',82,'3 weeks ago','Generalist Security'],
-    ['SOC Analyst',76,'2 months ago','SOC / Blue Team']
+    ['AI Engineer / LLM Specialist',94,'2 days ago','LangChain + RAG focus'],
+    ['Full Stack AI Developer',89,'1 week ago','React + FastAPI + Python'],
+    ['Python Backend Developer',82,'3 weeks ago','FastAPI + SQLAlchemy'],
+    ['Software Engineer',75,'2 months ago','Generalist profile']
   ];
   settingsSecs = ['Profile','Job Preferences','Resume Preferences','AI Preferences','Automation','Notifications','Appearance','Security'];
   obSteps = ['Welcome','Upload CV','Target roles','Locations','Salary','Preferences','Finish'];
@@ -1599,7 +1599,7 @@ class Component extends DCLogic {
     dist:[3,7,14,26,38,29,11],
     sources:[['LinkedIn',46],['Company site',31],['Greenhouse',22],['Lever',15],['Wellfound',9]],
     funnel:[['Jobs found',412],['Analyzed',288],['Applied',64],['Interview',18],['Offer',3]],
-    skills:[['Python',88],['AWS',74],['SIEM',66],['Kubernetes',52],['Terraform',44],['MITRE ATT&CK',31]]
+    skills:[['Python',94],['FastAPI',82],['LangChain',78],['React',71],['MongoDB',64],['Next.js',58]]
   };
 
   applyTheme(t){ try{ document.documentElement.setAttribute('data-theme', t); document.body.style.background = t==='light' ? '#F3F4F6' : '#0E1013'; }catch(e){} }
