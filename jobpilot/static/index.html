@@ -986,6 +986,79 @@ input:focus-visible,button:focus-visible,select:focus-visible{outline:1px solid 
     </div>
     </sc-if>
 
+    <sc-if value="{{ isIntegrations }}">
+    <div style="display:flex;flex-direction:column;gap:14px;animation:fadeUp .3s ease both">
+      <div>
+        <h1 style="margin:0;font-size:20px;font-weight:600;letter-spacing:-.02em">Integrations</h1>
+        <p style="margin:3px 0 0;font-size:12.5px;color:var(--tx3)">Connect email and messaging to automate your job search.</p>
+      </div>
+
+      <section style="padding:20px;border-radius:4px;background:var(--panel);border:1px solid var(--line)">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <span style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:4px;background:var(--accSoft);border:1px solid var(--accLine);color:var(--acc);font-family:'Material Symbols Rounded';font-size:20px;flex:none">mail</span>
+          <div>
+            <div style="font-size:14px;font-weight:600">Gmail</div>
+            <div style="font-size:11.5px;color:var(--tx3)">Auto-detect rejections, interviews and offers from your inbox</div>
+          </div>
+          <span style="{{ gmailStatusStyle }}">{{ gmailStatus }}</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:12.5px;color:var(--tx2)">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Material Symbols Rounded';font-size:15px;color:var(--pos)">check_circle</span>Detects rejections, interviews, assessments and offers</div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Material Symbols Rounded';font-size:15px;color:var(--pos)">check_circle</span>Auto-updates application status in your pipeline</div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Material Symbols Rounded';font-size:15px;color:var(--pos)">check_circle</span>Read-only access — never sends email on your behalf</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:16px">
+          <button onClick="{{ connectGmail }}" style="{{ gmailBtnStyle }}">
+            <span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">{{ gmailBtnIcon }}</span>{{ gmailBtnLabel }}
+          </button>
+          <sc-if value="{{ gmailConnected }}">
+            <button onClick="{{ scanGmail }}" style="display:flex;align-items:center;gap:6px;height:32px;padding:0 13px;border-radius:3px;background:var(--panel2);border:1px solid var(--line2);color:var(--tx2);font-size:12.5px;white-space:nowrap;cursor:pointer" style-hover="color:var(--tx)">
+              <span style="font-family:'Material Symbols Rounded';font-size:15px;line-height:1">refresh</span>Scan Inbox Now
+            </button>
+            <button onClick="{{ disconnectGmail }}" style="display:flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:3px;background:transparent;border:1px solid var(--line2);color:var(--tx3);font-size:12px;white-space:nowrap;cursor:pointer" style-hover="color:var(--neg);border-color:var(--neg)">Disconnect</button>
+          </sc-if>
+        </div>
+        <sc-if value="{{ gmailScanResult }}">
+          <div style="margin-top:12px;padding:10px 12px;border-radius:3px;background:var(--sunk);border:1px solid var(--line2);font-size:12px;color:var(--tx2)">{{ gmailScanResult }}</div>
+        </sc-if>
+      </section>
+
+      <section style="padding:20px;border-radius:4px;background:var(--panel);border:1px solid var(--line)">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <span style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:4px;background:var(--posSoft);border:1px solid var(--posLine);color:var(--pos);font-family:'Material Symbols Rounded';font-size:20px;flex:none">chat</span>
+          <div>
+            <div style="font-size:14px;font-weight:600">WhatsApp</div>
+            <div style="font-size:11.5px;color:var(--tx3)">Get job alerts and approve applications from your phone</div>
+          </div>
+          <span style="{{ waStatusStyle }}">{{ waStatus }}</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:12.5px;color:var(--tx2)">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Material Symbols Rounded';font-size:15px;color:var(--pos)">check_circle</span>Instant alerts when a 90%+ match job is found</div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Material Symbols Rounded';font-size:15px;color:var(--pos)">check_circle</span>Reply APPROVE or REJECT to control applications</div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Material Symbols Rounded';font-size:15px;color:var(--pos)">check_circle</span>Daily summary of activity and next actions</div>
+        </div>
+        <sc-if value="{{ waNotConfigured }}">
+          <div style="margin-top:14px;padding:12px 14px;border-radius:3px;background:var(--sunk);border:1px solid var(--line2);font-size:12px;color:var(--tx3);display:flex;flex-direction:column;gap:6px">
+            <div style="font-weight:600;color:var(--tx2)">Setup required (3 steps):</div>
+            <div>1. Create a <span style="color:var(--acc)">Meta Business Account</span> at business.facebook.com</div>
+            <div>2. Go to developers.facebook.com → create app → add WhatsApp → get approved</div>
+            <div>3. Add to .env: WHATSAPP_API_TOKEN, WHATSAPP_PHONE_NUMBER_ID, WHATSAPP_TO_NUMBER</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ waConfigured }}">
+          <div style="display:flex;gap:8px;margin-top:14px">
+            <button onClick="{{ testWhatsApp }}" style="display:flex;align-items:center;gap:6px;height:32px;padding:0 13px;border-radius:3px;background:var(--pos);border:none;color:#fff;font-size:12.5px;font-weight:600;white-space:nowrap;cursor:pointer" style-hover="filter:brightness(1.07)">
+              <span style="font-family:'Material Symbols Rounded';font-size:15px;line-height:1">send</span>Send Test Message
+            </button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ waTestResult }}">
+          <div style="margin-top:12px;padding:10px 12px;border-radius:3px;background:var(--sunk);border:1px solid var(--line2);font-size:12px;color:var(--tx2)">{{ waTestResult }}</div>
+        </sc-if>
+      </section>
+    </div>
+    </sc-if>
+
     <sc-if value="{{ isSettings }}">
     <div style="display:flex;flex-direction:column;gap:14px;animation:fadeUp .3s ease both">
       <div>
@@ -1437,7 +1510,8 @@ class Component extends DCLogic {
     agentState:{}, autoState:{}, autoModal:false,
     settingsSec:'Profile', onboarding:false, obStep:1, obRoles:['Security Engineer'], obLocs:['Remote'],
     theme:'dark', notifs:null, activityN:5, loading:false, filterSheet:false, autoSched:'Every 6 hours', obInit:false,
-    apiJobs:[], apiApps:[], apiStats:null, apiLoaded:false, pipelineLogs:[]
+    apiJobs:[], apiApps:[], apiStats:null, apiLoaded:false, pipelineLogs:[],
+    gmailConnected:false, waConfigured:false, gmailScanResult:'', waTestResult:''
   };
   static getDerivedStateFromProps(p, s){
     if(!s.obInit) return {obInit:true, onboarding:!!p.showOnboarding, login:!!p.showLogin, route:p.startRoute||s.route};
@@ -1463,7 +1537,8 @@ class Component extends DCLogic {
   navDefs = [
     ['dashboard','Dashboard','space_dashboard'],['jobs','Jobs','work'],['recommended','Recommended','auto_awesome'],
     ['saved','Saved Jobs','bookmark'],['applications','Applications','view_kanban'],['resume','Resume','description'],
-    ['agents','AI Agents','smart_toy'],['automation','Automation','bolt'],['analytics','Analytics','monitoring'],['settings','Settings','settings']
+    ['agents','AI Agents','smart_toy'],['automation','Automation','bolt'],['analytics','Analytics','monitoring'],
+    ['integrations','Integrations','hub'],['settings','Settings','settings']
   ];
   badges = { jobs:'128', recommended:'9', applications:'14' };
   activityFeed = [
@@ -1584,6 +1659,10 @@ class Component extends DCLogic {
     this.tick = setInterval(()=>{ if(this.state.route==='dashboard'||this.state.route==='agents') this.setState(s=>({activityN:Math.min(this.activityFeed.length, s.activityN>=this.activityFeed.length?5:s.activityN+1)})); }, 4200);
     this._loadData();
     this._startSSE();
+    Promise.all([
+      fetch('/api/whatsapp/status').then(r=>r.json()).then(d=>this.setState({waConfigured:!!d.configured})).catch(()=>{}),
+      fetch('/api/email/status').then(r=>r.json()).then(d=>this.setState({gmailConnected:!!d.authorized})).catch(()=>{})
+    ]).catch(()=>{});
   }
   componentWillUnmount(){ window.removeEventListener('resize',this.onR); window.removeEventListener('keydown',this.onK); clearInterval(this.tick); if(this._sse){this._sse.close();} }
 
@@ -1815,6 +1894,48 @@ class Component extends DCLogic {
     };
   }
 
+  integrationsVals(){
+    const s=this.state;
+    const gmailOk=s.gmailConnected;
+    const waOk=s.waConfigured;
+    return {
+      isIntegrations:s.route==='integrations',
+      gmailConnected:gmailOk,
+      gmailStatus:gmailOk?'Connected':'Not connected',
+      gmailStatusStyle:`font-variant-numeric:tabular-nums;font-family:inherit;font-size:10.5px;padding:3px 8px;border-radius:3px;margin-left:auto;flex:none;color:${gmailOk?'var(--pos)':'var(--tx3)'};background:${gmailOk?'var(--posSoft)':'var(--sunk)'};border:1px solid ${gmailOk?'var(--posLine)':'var(--line2)'}`,
+      gmailBtnLabel:gmailOk?'Reconnect Gmail':'Connect Gmail',
+      gmailBtnIcon:gmailOk?'sync':'add_link',
+      gmailBtnStyle:`display:flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:3px;background:var(--acc);border:none;color:var(--onacc);font-size:12.5px;font-weight:600;white-space:nowrap;cursor:pointer`,
+      gmailScanResult:s.gmailScanResult||'',
+      connectGmail:()=>{
+        fetch('/api/email/auth').then(r=>r.json()).then(d=>{
+          if(d.auth_url) window.open(d.auth_url,'_blank','width=500,height=600');
+          setTimeout(()=>fetch('/api/email/status').then(r=>r.json()).then(d2=>this.setState({gmailConnected:d2.authorized})),4000);
+        }).catch(()=>this.setState({gmailScanResult:'Error: set EMAIL_OAUTH_CLIENT_ID in .env first'}));
+      },
+      scanGmail:()=>{
+        this.setState({gmailScanResult:'Scanning inbox…'});
+        fetch('/api/email/scan',{method:'POST'}).then(r=>r.json()).then(d=>{
+          this.setState({gmailScanResult:`Scanned ${d.scanned} emails · ${d.applications_updated} application${d.applications_updated===1?'':'s'} updated`});
+        }).catch(()=>this.setState({gmailScanResult:'Scan failed — check your connection'}));
+      },
+      disconnectGmail:()=>{
+        fetch('/api/email/disconnect',{method:'DELETE'}).then(()=>this.setState({gmailConnected:false,gmailScanResult:'Gmail disconnected'}));
+      },
+      waConfigured:waOk,
+      waNotConfigured:!waOk,
+      waStatus:waOk?'Ready':'Not configured',
+      waStatusStyle:`font-variant-numeric:tabular-nums;font-family:inherit;font-size:10.5px;padding:3px 8px;border-radius:3px;margin-left:auto;flex:none;color:${waOk?'var(--pos)':'var(--tx3)'};background:${waOk?'var(--posSoft)':'var(--sunk)'};border:1px solid ${waOk?'var(--posLine)':'var(--line2)'}`,
+      waTestResult:s.waTestResult||'',
+      testWhatsApp:()=>{
+        this.setState({waTestResult:'Sending test message…'});
+        fetch('/api/whatsapp/test',{method:'POST'}).then(r=>r.json()).then(d=>{
+          this.setState({waTestResult:d.status==='sent'?'✓ Test message sent to your WhatsApp':'Failed — check your token and phone number'});
+        }).catch(()=>this.setState({waTestResult:'Error connecting to WhatsApp API'}));
+      }
+    };
+  }
+
   settingsVals(){
     const s=this.state;
     return {
@@ -1954,7 +2075,7 @@ class Component extends DCLogic {
 
     return {
       ...this.jobsVals(), ...this.detailVals(), ...this.appsVals(), ...this.resumeVals(),
-      ...this.agentsVals(), ...this.autoVals(), ...this.analyticsVals(), ...this.settingsVals(), ...this.obVals(), ...this.loginVals(),
+      ...this.agentsVals(), ...this.autoVals(), ...this.analyticsVals(), ...this.integrationsVals(), ...this.settingsVals(), ...this.obVals(), ...this.loginVals(),
       showRail, railWide, railNarrow:showRail&&!railWide, isMobile, isTablet,
       railStyle:`position:sticky;top:0;height:100vh;flex:none;width:${railWide?'232px':'62px'};display:flex;flex-direction:column;background:var(--sunk);border-right:1px solid var(--line);transition:width .18s ease`,
       mainStyle:`flex:1;min-width:0;font-size:${({dense:13,balanced:13.5,airy:14})[this.props.density||'dense']}px;padding:${isMobile?'14px 13px 20px':(this.props.density==='airy'?'28px 32px 56px':this.props.density==='balanced'?'22px 26px 48px':'18px 20px 40px')};max-width:1560px;width:100%`,

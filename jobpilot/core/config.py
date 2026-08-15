@@ -84,7 +84,7 @@ class Settings(BaseSettings):
     EMAIL_SCAN_INTERVAL_MINUTES: int = 15
     EMAIL_OAUTH_CLIENT_ID: Optional[str] = None
     EMAIL_OAUTH_CLIENT_SECRET: Optional[str] = None
-    EMAIL_OAUTH_REDIRECT_URI: str = "http://localhost:8000/auth/email/callback"
+    EMAIL_OAUTH_REDIRECT_URI: str = "http://localhost:8000/api/email/callback"
     EMAIL_PROVIDER: str = "gmail"            # gmail | outlook
 
     # ── WhatsApp ──────────────────────────────────────────────────────────────
