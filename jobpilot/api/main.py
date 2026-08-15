@@ -34,7 +34,7 @@ logger = get_logger(__name__)
 _start_time = time.time()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATIC_DIR = os.path.join(BASE_DIR, "static")
+STATIC_DIR = os.environ.get("JOBPILOT_STATIC_DIR", os.path.join(BASE_DIR, "static"))
 
 
 @asynccontextmanager

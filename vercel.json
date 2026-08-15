@@ -4,10 +4,24 @@
     {
       "src": "api/index.py",
       "use": "@vercel/python",
-      "config": { "maxLambdaSize": "50mb" }
+      "config": {
+        "maxLambdaSize": "50mb",
+        "includeFiles": [
+          "jobpilot/**",
+          "api/**"
+        ]
+      }
     }
   ],
   "routes": [
+    { "src": "/api/(.*)", "dest": "api/index.py" },
+    { "src": "/static/(.*)", "dest": "api/index.py" },
+    { "src": "/", "dest": "api/index.py" },
     { "src": "/(.*)", "dest": "api/index.py" }
-  ]
+  ],
+  "env": {
+    "DATABASE_URL": "sqlite:////tmp/jobpilot.db",
+    "SCRAPE_INTERVAL_HOURS": "0",
+    "LLM_PROVIDER": "groq"
+  }
 }
