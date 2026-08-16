@@ -488,8 +488,8 @@ nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px}
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Location (optional)</label>
-              <input class="form-input" id="s-location" type="text" placeholder="Islamabad, Pakistan">
+              <label class="form-label">Your City (for on-site jobs)</label>
+              <input class="form-input" id="s-location" type="text" placeholder="e.g. Islamabad, Lahore, Karachi">
             </div>
             <div class="form-group">
               <label class="form-label">Min Salary (USD/hr)</label>
@@ -709,6 +709,38 @@ function onLoggedIn(){
   document.getElementById('user-avatar').textContent=name[0].toUpperCase();
   loadDashboard();
   connectSSE();
+  // Check onboarding completeness after a short delay
+  setTimeout(checkOnboarding, 1500);
+}
+
+async function checkOnboarding(){
+  try{
+    const s=await get('/user/settings');
+    const missing=[];
+    if(!s.telegram_bot_token)missing.push('Telegram Bot Token');
+    if(!s.location)missing.push('Your City');
+    if(!s.linkedin_email && !s.indeed_email)missing.push('LinkedIn or Indeed credentials');
+    if(missing.length){
+      showToast('⚙️ Setup incomplete: '+missing.join(', ')+'. Go to Settings to enable auto-apply.','warn');
+    }
+  }catch(_){}
+}
+
+function showToast(msg,type='info'){
+  let el=document.getElementById('toast-banner');
+  if(!el){
+    el=document.createElement('div');
+    el.id='toast-banner';
+    el.style.cssText='position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:9999;padding:12px 20px;border-radius:8px;font-size:13px;max-width:540px;text-align:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.3)';
+    el.onclick=()=>el.remove();
+    document.body.appendChild(el);
+  }
+  el.style.background=type==='warn'?'#7c5c00':type==='error'?'#7c1e1e':'#1a4a2e';
+  el.style.color=type==='warn'?'#ffd666':type==='error'?'#ff8080':'#66ffaa';
+  el.style.border=`1px solid ${type==='warn'?'#ffd666':type==='error'?'#ff8080':'#66ffaa'}`;
+  el.textContent=msg;
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>el.remove(),8000);
 }
 
 async function checkSession(){
@@ -884,7 +916,8 @@ async function uploadCV(inp){
     clearInterval(t);bar.style.width='100%';
     setTimeout(()=>{prog.style.display='none';},400);
     if(!r.ok)throw new Error(data.detail||JSON.stringify(data));
-    res.innerHTML=`<div class="alert alert-success">✅ CV uploaded! Found ${(data.skills||[]).length} skills · ${(data.roles||[]).length} target roles</div>`;
+    const pipelineMsg = data.pipeline_started ? ' Job discovery started in background — check the Jobs tab in a few minutes.' : '';
+    res.innerHTML=`<div class="alert alert-success">✅ CV uploaded! Found ${(data.skills||[]).length} skills · ${(data.roles||[]).length} target roles.${pipelineMsg}</div>`;
     inp.value='';loadCVs();
   }catch(e){
     clearInterval(t);prog.style.display='none';

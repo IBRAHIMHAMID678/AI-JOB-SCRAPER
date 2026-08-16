@@ -194,12 +194,11 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict, user_id
     from ..agents.analysis.agent import AnalysisAgent
     from ..agents.matching.agent import MatchingAgent
     from ..core.models import Job, JobAnalysis, JobMatch, Application, UploadedCV, UserSettings
-    from ..services.auth_service import get_settings
 
     analysis_agent = AnalysisAgent()
     matching_agent = MatchingAgent()
 
-    # Load this user's default CV path once
+    # Load this user's default CV and settings once
     with db_session() as db:
         cv = (
             db.query(UploadedCV)
@@ -209,8 +208,30 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict, user_id
         if not cv:
             cv = db.query(UploadedCV).filter_by(user_id=user_id, is_active=True).first()
         cv_path = cv.file_path if cv else ""
-        cv_skills = cv.skills or [] if cv else []
-        cv_roles = cv.roles or [] if cv else []
+        cv_skills = (cv.skills or []) if cv else []
+        cv_roles = (cv.roles or []) if cv else []
+        cv_keywords = (cv.keywords or []) if cv else []
+
+        user_settings = db.query(UserSettings).filter_by(user_id=user_id).first()
+        user_location = (user_settings.location or "").strip().lower() if user_settings else ""
+
+    # Build profile from CV data (falls back to defaults inside matching agent if empty)
+    user_profile = {
+        "skills": cv_skills + cv_keywords,
+        "technologies": cv_skills,
+        "preferred_roles": cv_roles,
+        "seniority_preference": ["junior", "entry", "mid"],
+        "min_hourly_usd": 15,
+        "max_hourly_usd": 60,
+        "years_experience": getattr(cv, "experience_years", 0) or 0 if cv else 0,
+        "career_level": "junior",
+    }
+
+    # India location exclusion keywords
+    _INDIA_KEYWORDS = [
+        "india", "bangalore", "bengaluru", "delhi", "mumbai",
+        "hyderabad", "pune", "chennai", "kolkata", "noida", "gurgaon",
+    ]
 
     def process_job(job: NormalizedJob) -> Optional[str]:
         """Returns 'matched', 'pending', 'skipped', or None on error."""
@@ -218,15 +239,31 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict, user_id
             title = job.title
             company = job.company
             title_lower = title.lower()
+            loc_lower = (job.location or "").lower()
+
+            # Skip India-based jobs
+            if any(city in loc_lower for city in _INDIA_KEYWORDS):
+                sse_log(f"[SKIP] India location: {title} at {company}")
+                return "skipped"
+
+            # For on-site/in-person jobs, only allow if they match user's city
+            is_remote = job.remote_type in ("remote", "hybrid") or "remote" in loc_lower
+            if not is_remote and user_location:
+                if user_location not in loc_lower:
+                    sse_log(f"[SKIP] On-site job not in user's city ({user_location}): {title}")
+                    return "skipped"
 
             senior_kw = ["senior", "lead", "staff", "principal", "director", "vp ", "head of", "architect", "sr."]
             if any(k in title_lower for k in senior_kw):
                 sse_log(f"[SKIP] Senior role: {title} at {company}")
                 return "skipped"
 
-            tech_kw = ["ai", "python", "react", "node", "software", "developer", "engineer",
-                       "programmer", "frontend", "backend", "web", "data", "tech", "fastapi", "llm", "full stack"]
-            if not any(k in title_lower for k in tech_kw):
+            # Build tech keywords from user's CV skills + default tech terms
+            cv_tech_kw = [s.lower() for s in (cv_skills + cv_roles) if s]
+            default_tech_kw = ["ai", "python", "react", "node", "software", "developer", "engineer",
+                                "programmer", "frontend", "backend", "web", "data", "tech", "fastapi", "llm", "full stack"]
+            all_tech_kw = cv_tech_kw + default_tech_kw
+            if not any(k in title_lower for k in all_tech_kw):
                 sse_log(f"[SKIP] Non-tech role: {title}")
                 return "skipped"
 
@@ -235,7 +272,10 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict, user_id
                 sse_log(f"[SKIP] US-only: {title} at {company}")
                 return "skipped"
 
-            match: Optional[JobMatchResult] = matching_agent.run({"job": job, "analysis": analysis}, trigger="pipeline")
+            match: Optional[JobMatchResult] = matching_agent.run(
+                {"job": job, "analysis": analysis, "user_profile": user_profile},
+                trigger="pipeline",
+            )
             if not match or match.overall_score < settings.SCORE_MIN_THRESHOLD:
                 return "skipped"
 

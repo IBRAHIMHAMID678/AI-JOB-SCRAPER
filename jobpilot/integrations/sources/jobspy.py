@@ -1,5 +1,6 @@
 """
 JobSpy adapter — scrapes LinkedIn, Indeed, Glassdoor, ZipRecruiter.
+Remote jobs from UK, USA, Germany (last 24 hours only).
 """
 from __future__ import annotations
 
@@ -12,6 +13,19 @@ from ...core.config import settings
 from ...core.schemas import RawJob
 from .base import JobSourceAdapter
 
+# Target locations for remote scraping
+_REMOTE_LOCATIONS = [
+    ("United States", "JobSpy-Remote-US"),
+    ("United Kingdom", "JobSpy-Remote-UK"),
+    ("Germany", "JobSpy-Remote-DE"),
+]
+
+# Countries to exclude (India-based jobs)
+_EXCLUDE_COUNTRIES = [
+    "india", "bangalore", "bengaluru", "delhi", "mumbai",
+    "hyderabad", "pune", "chennai", "kolkata", "noida", "gurgaon",
+]
+
 
 class JobSpyAdapter(JobSourceAdapter):
     source_name = "jobspy"
@@ -22,40 +36,30 @@ class JobSpyAdapter(JobSourceAdapter):
 
         jobs: List[RawJob] = []
 
-        def scrape_term(term: str) -> List[RawJob]:
-            term_jobs: List[RawJob] = []
-
-            # Global remote
+        def scrape_term_location(term: str, location: str, label: str) -> List[RawJob]:
             try:
                 df = scrape_jobs(
                     site_name=["linkedin", "indeed"],
                     search_term=term,
-                    location="Remote",
+                    location=location,
                     results_wanted=settings.RESULTS_PER_TERM,
-                    hours_old=72,
+                    hours_old=24,
                     is_remote=True,
                 )
-                term_jobs.extend(self._df_to_raw(df, "JobSpy-Remote"))
+                results = self._df_to_raw(df, label)
+                # Filter out India-based jobs at source
+                return [j for j in results if not self._is_india_job(j)]
             except Exception as exc:
-                self.logger.warning("JobSpy remote scrape failed for '%s': %s", term, exc)
+                self.logger.warning("JobSpy scrape failed for '%s' @ %s: %s", term, location, exc)
+                return []
 
-            # Local Pakistan
-            try:
-                df = scrape_jobs(
-                    site_name=["linkedin"],
-                    search_term=term,
-                    location="Islamabad, Pakistan",
-                    results_wanted=settings.RESULTS_PER_TERM,
-                    hours_old=72,
-                )
-                term_jobs.extend(self._df_to_raw(df, "JobSpy-LinkedIn-Local"))
-            except Exception as exc:
-                self.logger.warning("JobSpy local scrape failed for '%s': %s", term, exc)
-
-            return term_jobs
+        tasks = []
+        for term in settings.SEARCH_TERMS:
+            for location, label in _REMOTE_LOCATIONS:
+                tasks.append((term, location, label))
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:
-            futures = [ex.submit(scrape_term, t) for t in settings.SEARCH_TERMS]
+            futures = [ex.submit(scrape_term_location, t, loc, lbl) for t, loc, lbl in tasks]
             for f in concurrent.futures.as_completed(futures):
                 try:
                     jobs.extend(f.result())
@@ -70,6 +74,10 @@ class JobSpyAdapter(JobSourceAdapter):
                 seen.add(j.application_url)
                 unique.append(j)
         return unique
+
+    def _is_india_job(self, job: RawJob) -> bool:
+        loc = (job.location or "").lower()
+        return any(city in loc for city in _EXCLUDE_COUNTRIES)
 
     def _df_to_raw(self, df, source_label: str) -> List[RawJob]:
         results: List[RawJob] = []

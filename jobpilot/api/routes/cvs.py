@@ -86,6 +86,18 @@ async def upload_cv(
         db.flush()
         cv_id = cv.id
 
+    # Auto-trigger pipeline in background so user sees results immediately
+    import threading
+    def _run_pipeline():
+        try:
+            from ...workers.pipeline import run_pipeline, is_pipeline_running
+            if not is_pipeline_running():
+                run_pipeline("cv_upload", user_id=user.id)
+        except Exception as exc:
+            logger.error("Auto-pipeline after CV upload failed: %s", exc)
+
+    threading.Thread(target=_run_pipeline, daemon=True).start()
+
     return JSONResponse({
         "id": cv_id,
         "name": label,
@@ -95,7 +107,8 @@ async def upload_cv(
         "experience_years": parsed.get("experience_years"),
         "summary": parsed.get("summary", ""),
         "is_default": is_first,
-        "message": "CV uploaded and parsed successfully",
+        "message": "CV uploaded and parsed. Job discovery running in background...",
+        "pipeline_started": True,
     })
 
 
