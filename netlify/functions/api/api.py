@@ -13,6 +13,9 @@ if str(_root) not in sys.path:
 
 os.environ.setdefault("JOBPILOT_STATIC_DIR", str(_root / "jobpilot" / "static"))
 
+from jobpilot.core.database import init_db
+init_db()  # lifespan is off in serverless — must init DB manually
+
 from mangum import Mangum
 from jobpilot.api.main import app
 
