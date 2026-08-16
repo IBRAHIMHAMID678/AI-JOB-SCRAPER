@@ -18,7 +18,7 @@ router = APIRouter(tags=["analytics"])
 def analytics_summary(db: Session = Depends(get_db), user=Depends(get_current_user)):
     today = datetime.utcnow().date().isoformat()
 
-    total_jobs = db.query(Job).count()
+    total_jobs = db.query(JobMatch).filter(JobMatch.user_id == user.id).count()
     matched = db.query(JobMatch).filter(
         JobMatch.user_id == user.id,
         JobMatch.overall_score >= 40,
@@ -46,8 +46,9 @@ def analytics_summary(db: Session = Depends(get_db), user=Depends(get_current_us
     applied_tier2_today = t2.count if t2 else 0
     applied_today = applied_tier1_today + applied_tier2_today
 
-    new_today = db.query(Job).filter(
-        func.date(Job.discovered_at) == datetime.utcnow().date()
+    new_today = db.query(JobMatch).filter(
+        JobMatch.user_id == user.id,
+        func.date(JobMatch.created_at) == datetime.utcnow().date(),
     ).count()
 
     return {

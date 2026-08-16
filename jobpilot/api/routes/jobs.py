@@ -41,7 +41,7 @@ def list_jobs(
     effective_min = max(score_min, min_score)
     query = (
         db.query(Job, JobMatch)
-        .outerjoin(JobMatch, (Job.id == JobMatch.job_id) & (JobMatch.user_id == user.id))
+        .join(JobMatch, (Job.id == JobMatch.job_id) & (JobMatch.user_id == user.id))
     )
 
     if remote_only:
