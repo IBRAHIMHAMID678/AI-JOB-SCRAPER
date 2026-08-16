@@ -13,9 +13,8 @@ venv.bak/
 
 # Data files
 *.csv
-*.json
 *.sqlite3
-*.docx
+# Do NOT ignore *.json — config files like vercel.json must be tracked
 
 
 # Python

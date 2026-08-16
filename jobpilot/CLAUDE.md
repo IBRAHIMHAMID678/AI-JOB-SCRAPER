@@ -1,50 +1,61 @@
-# JOBPILOT — Claude Checkpoint
+# JOBPILOT — Project Status
 
-## Status: COMPLETE (pending credential configuration + one-time Vercel link)
+## How to Run Locally
 
-## Completed
-- [x] core/ — config, models (15 tables), schemas, database, logging, security, events, state_machine
-- [x] agents/ — base, normalization, deduplication, analysis, matching, resume, cover_letter
-- [x] integrations/sources/ — jobspy, himalayas, remotive, remoteok, weworkremotely, arbeitnow, themuse, nodesk
-- [x] integrations/llm/ — base, groq_provider, openrouter_provider
-- [x] integrations/whatsapp/client.py — Meta official API (pending credentials)
-- [x] integrations/email/oauth.py — Gmail OAuth (pending credentials)
-- [x] workers/pipeline.py — parallel orchestrator (8 sources, parallel analysis)
-- [x] api/main.py — FastAPI + SSE stream
-- [x] api/routes/ — jobs, applications, analytics, agents, notifications, system
-- [x] static/index.html — full dark-mode dashboard (no build step)
-- [x] tests/unit/ — 5 test files, 41+ unit tests
-- [x] conftest.py + tests/conftest.py — pytest env setup
-- [x] prompts/ — job_analysis.txt, resume.txt, cover_letter.txt
-- [x] run.py, requirements.txt, .env.example, Dockerfile, docker-compose.yml
-- [x] README.md, PROJECT_STATUS.md
-
-## Pending (credentials + one-time setup only)
-- [ ] Set GROQ_API_KEY in .env for LLM features
-- [ ] Set WHATSAPP_API_TOKEN + Meta Business approval for WhatsApp
-- [ ] Set EMAIL_OAUTH_CLIENT_ID/SECRET + Google OAuth for email monitoring
-- [ ] Vercel one-time link: run `vercel link` locally (logged in as Uswarooj account),
-      then add VERCEL_TOKEN to GitHub repo secrets (Settings → Secrets → Actions).
-      After that, every push to master auto-deploys via .github/workflows/deploy.yml.
-
-## To Run
 ```bash
-cd jobpilot
+cd d:\AI-JOB-SCRAPER-main\jobpilot
+
+# First time only — install packages
+# On Python 3.14 Windows use --only-binary for pandas/jobspy:
 pip install -r requirements.txt
-cp .env.example .env   # then set GROQ_API_KEY
+pip install pandas python-jobspy --only-binary=:all:
+
+# Run
 python run.py
-# http://localhost:8000
+# Open: http://localhost:8000
 ```
 
-## To Test
-```bash
-cd jobpilot
-pytest tests/unit/ -v
-```
+## Deployment
+- **Frontend + API**: Netlify (auto-deploys on git push to master)
+- **Live URL**: https://singular-pasca-851777.netlify.app
+- **GitHub**: https://github.com/Uswarooj/ai-job-scraper.git (master branch)
+- Netlify function: `netlify/functions/api/api.py` (Mangum wraps FastAPI)
+
+## What's Working ✅
+- Multi-user auth (register/login/logout/forgot-password with OTP)
+- Per-user data isolation — every query scoped to user_id
+- CV upload + auto-parse (skills, roles, keywords extracted)
+- CV-based job matching (uses YOUR CV, not hardcoded profile)
+- Pipeline auto-triggers after CV upload
+- Job scraping: Himalayas, Remotive, RemoteOK, WeWorkRemotely, Arbeitnow, TheMuse, NodeDesk, Rozee
+- JobSpy (LinkedIn + Indeed) — optional, serial with jitter to avoid bot detection
+- India job filter — excluded automatically
+- Location-aware: remote UK/USA/Germany + user's city for on-site
+- Last 24 hours only
+- Per-user Telegram notifications
+- Password eye toggle on all fields
+- Onboarding toast after first login
+- Data leakage fixed: outerjoin → inner join, analytics scoped to user
+
+## Pending (credentials only)
+- Set `GROQ_API_KEY` in settings for AI-powered matching
+- Set Telegram Bot Token + Chat ID per user (in Settings tab)
+- Set LinkedIn/Indeed credentials per user (in Settings tab)
+- Playwright for browser auto-apply: `pip install playwright && playwright install chromium`
 
 ## Key Files
 - Entry point: `run.py`
-- Config: `core/config.py` (all settings from .env)
+- Config: `core/config.py`
 - Pipeline: `workers/pipeline.py`
+- Matching: `agents/matching/agent.py` (CV-based, not hardcoded)
 - Dashboard: `static/index.html`
-- Tests: `tests/unit/`
+- Auth: `api/routes/auth.py` + `services/auth_service.py`
+- Netlify function: `../netlify/functions/api/api.py`
+
+## DB Schema Notes
+Uses SQLAlchemy `create_all` (no migrations). If you change model columns
+or constraints, delete `jobpilot.db` and restart — it recreates automatically.
+
+## Python Version
+Python 3.11 or 3.12 recommended. Python 3.14 works but needs:
+`pip install pandas python-jobspy --only-binary=:all:`

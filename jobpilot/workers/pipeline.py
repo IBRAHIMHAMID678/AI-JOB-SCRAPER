@@ -142,7 +142,6 @@ def run_pipeline(trigger: str = "manual", user_id: Optional[str] = None) -> dict
 
 def _fetch_all_sources() -> List[RawJob]:
     """Fetch from all enabled sources in parallel."""
-    from ..integrations.sources.jobspy import JobSpyAdapter
     from ..integrations.sources.himalayas import HimalayasAdapter
     from ..integrations.sources.remotive import RemotiveAdapter
     from ..integrations.sources.remoteok import RemoteOKAdapter
@@ -153,7 +152,6 @@ def _fetch_all_sources() -> List[RawJob]:
     from ..integrations.sources.rozee import RozeeAdapter
 
     adapters = [
-        ("JobSpy", JobSpyAdapter()),
         ("Himalayas", HimalayasAdapter()),
         ("Remotive", RemotiveAdapter()),
         ("RemoteOK", RemoteOKAdapter()),
@@ -163,6 +161,14 @@ def _fetch_all_sources() -> List[RawJob]:
         ("NodeDesk", NodeDeskAdapter()),
         ("Rozee", RozeeAdapter()),
     ]
+
+    # JobSpy (LinkedIn/Indeed) is optional — requires pandas + python-jobspy
+    try:
+        from ..integrations.sources.jobspy import JobSpyAdapter
+        adapters.insert(0, ("JobSpy", JobSpyAdapter()))
+    except ImportError:
+        sse_log("[WARN] JobSpy not installed — LinkedIn/Indeed scraping skipped. "
+                "Install: pip install pandas python-jobspy --only-binary=:all:")
 
     all_jobs: List[RawJob] = []
 
