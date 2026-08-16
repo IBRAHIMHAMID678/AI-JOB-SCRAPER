@@ -14,9 +14,22 @@ if str(_root) not in sys.path:
 os.environ.setdefault("JOBPILOT_STATIC_DIR", str(_root / "jobpilot" / "static"))
 
 from jobpilot.core.database import init_db
-init_db()  # lifespan is off in serverless — must init DB manually
+init_db()  # lifespan=off skips startup — init DB here
 
 from mangum import Mangum
 from jobpilot.api.main import app
 
-handler = Mangum(app, lifespan="off")
+_mangum = Mangum(app, lifespan="off")
+
+
+def handler(event, context):
+    """
+    Netlify redirects /api/* → this function with :splat, which strips the
+    /api/ prefix from the path. FastAPI routes are all registered under /api/
+    so we restore the prefix before handing off to Mangum.
+    """
+    path = event.get("path", "/")
+    if not path.startswith("/api"):
+        event = dict(event)
+        event["path"] = "/api/" + path.lstrip("/")
+    return _mangum(event, context)
