@@ -1,0 +1,26 @@
+[build]
+  publish = "jobpilot/static"
+  functions = "netlify/functions"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Route everything through the FastAPI lambda
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/static/*"
+  to = "/.netlify/functions/api/static/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+[build.environment]
+  PYTHON_VERSION = "3.11"
