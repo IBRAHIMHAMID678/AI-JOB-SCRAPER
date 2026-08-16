@@ -1,11 +1,5 @@
 """
-CV upload and management routes.
-POST /api/cvs/upload  — upload a CV file (PDF/DOCX)
-GET  /api/cvs         — list all uploaded CVs
-GET  /api/cvs/{id}    — CV detail + parsed data
-DELETE /api/cvs/{id}  — delete a CV
-PATCH /api/cvs/{id}/default — set as default CV
-POST /api/cvs/test-telegram — test Telegram connection
+CV upload and management routes — per-user, auth required.
 """
 from __future__ import annotations
 
@@ -13,9 +7,8 @@ import os
 import pathlib
 import uuid
 from datetime import datetime
-from typing import List
 
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import JSONResponse
 
 from ...core.config import settings
@@ -23,16 +16,11 @@ from ...core.database import db_session
 from ...core.logging import get_logger
 from ...core.models import UploadedCV
 from ...services.cv_parser import parse_cv
-from ...services.telegram_service import test_connection
+from .auth import get_current_user
 
 logger = get_logger(__name__)
 router = APIRouter(prefix="/cvs", tags=["CVs"])
 
-ALLOWED_TYPES = {
-    "application/pdf", "application/msword",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "text/plain",
-}
 ALLOWED_EXT = {".pdf", ".doc", ".docx", ".txt"}
 MAX_SIZE = 10 * 1024 * 1024  # 10 MB
 
@@ -45,9 +33,11 @@ def _upload_dir() -> pathlib.Path:
 
 @router.post("/upload")
 async def upload_cv(
+    request: Request,
     file: UploadFile = File(...),
     name: str = Form(""),
     target_roles: str = Form(""),
+    user=Depends(get_current_user),
 ):
     ext = pathlib.Path(file.filename or "").suffix.lower()
     if ext not in ALLOWED_EXT:
@@ -73,8 +63,9 @@ async def upload_cv(
                   "education": [], "summary": "", "raw_text": ""}
 
     with db_session() as db:
-        is_first = db.query(UploadedCV).count() == 0
+        is_first = db.query(UploadedCV).filter_by(user_id=user.id, is_active=True).count() == 0
         cv = UploadedCV(
+            user_id=user.id,
             name=label,
             filename=file.filename or filename,
             file_path=file_path,
@@ -109,9 +100,14 @@ async def upload_cv(
 
 
 @router.get("")
-def list_cvs():
+def list_cvs(user=Depends(get_current_user)):
     with db_session() as db:
-        cvs = db.query(UploadedCV).filter_by(is_active=True).order_by(UploadedCV.created_at.desc()).all()
+        cvs = (
+            db.query(UploadedCV)
+            .filter_by(user_id=user.id, is_active=True)
+            .order_by(UploadedCV.created_at.desc())
+            .all()
+        )
         return [
             {
                 "id": cv.id,
@@ -132,9 +128,9 @@ def list_cvs():
 
 
 @router.get("/{cv_id}")
-def get_cv(cv_id: str):
+def get_cv(cv_id: str, user=Depends(get_current_user)):
     with db_session() as db:
-        cv = db.query(UploadedCV).filter_by(id=cv_id).first()
+        cv = db.query(UploadedCV).filter_by(id=cv_id, user_id=user.id).first()
         if not cv:
             raise HTTPException(404, "CV not found")
         return {
@@ -156,20 +152,20 @@ def get_cv(cv_id: str):
 
 
 @router.patch("/{cv_id}/default")
-def set_default_cv(cv_id: str):
+def set_default_cv(cv_id: str, user=Depends(get_current_user)):
     with db_session() as db:
-        cv = db.query(UploadedCV).filter_by(id=cv_id).first()
+        cv = db.query(UploadedCV).filter_by(id=cv_id, user_id=user.id).first()
         if not cv:
             raise HTTPException(404, "CV not found")
-        db.query(UploadedCV).update({"is_default": False})
+        db.query(UploadedCV).filter_by(user_id=user.id).update({"is_default": False})
         cv.is_default = True
     return {"message": "Default CV updated"}
 
 
 @router.delete("/{cv_id}")
-def delete_cv(cv_id: str):
+def delete_cv(cv_id: str, user=Depends(get_current_user)):
     with db_session() as db:
-        cv = db.query(UploadedCV).filter_by(id=cv_id).first()
+        cv = db.query(UploadedCV).filter_by(id=cv_id, user_id=user.id).first()
         if not cv:
             raise HTTPException(404, "CV not found")
         try:
@@ -179,14 +175,3 @@ def delete_cv(cv_id: str):
             pass
         cv.is_active = False
     return {"message": "CV deleted"}
-
-
-@router.post("/test-telegram")
-def test_telegram():
-    ok = test_connection()
-    if ok:
-        return {"message": "Telegram notification sent successfully!"}
-    return JSONResponse(
-        status_code=400,
-        content={"message": "Telegram not configured or failed. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env"}
-    )

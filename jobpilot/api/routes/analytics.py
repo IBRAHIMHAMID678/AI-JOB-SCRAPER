@@ -1,49 +1,78 @@
-"""Analytics and reporting endpoints."""
+"""Analytics endpoints — user-scoped."""
 from __future__ import annotations
 
-import io
 from datetime import datetime, timedelta
-from typing import List
 
-import pandas as pd
 from fastapi import APIRouter, Depends
-from fastapi.responses import FileResponse, StreamingResponse
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from ...core.database import get_db
-from ...core.models import Application, Job, JobMatch
+from ...core.models import Application, Job, JobMatch, DailyApplyLog
+from .auth import get_current_user
 
 router = APIRouter(tags=["analytics"])
 
 
 @router.get("/analytics/summary")
-def analytics_summary(db: Session = Depends(get_db)):
-    total_jobs = db.query(Job).count()
-    total_apps = db.query(Application).count()
-    submitted = db.query(Application).filter(Application.status == "SUBMITTED").count()
-    interviews = db.query(Application).filter(Application.status == "INTERVIEW").count()
-    offers = db.query(Application).filter(Application.status == "OFFER").count()
-    matched = db.query(JobMatch).filter(JobMatch.overall_score >= 40).count()
+def analytics_summary(db: Session = Depends(get_db), user=Depends(get_current_user)):
+    today = datetime.utcnow().date().isoformat()
 
-    response_rate = (interviews / submitted * 100) if submitted > 0 else 0
-    interview_rate = (interviews / submitted * 100) if submitted > 0 else 0
+    total_jobs = db.query(Job).count()
+    matched = db.query(JobMatch).filter(
+        JobMatch.user_id == user.id,
+        JobMatch.overall_score >= 40,
+    ).count()
+    high_match = db.query(JobMatch).filter(
+        JobMatch.user_id == user.id,
+        JobMatch.overall_score >= 90,
+    ).count()
+    good_match = db.query(JobMatch).filter(
+        JobMatch.user_id == user.id,
+        JobMatch.overall_score >= 80,
+        JobMatch.overall_score < 90,
+    ).count()
+
+    total_apps = db.query(Application).filter(Application.user_id == user.id).count()
+    submitted = db.query(Application).filter(
+        Application.user_id == user.id,
+        Application.status == "SUBMITTED",
+    ).count()
+
+    # Today's apply counts per tier
+    t1 = db.query(DailyApplyLog).filter_by(user_id=user.id, date=today, tier=1).first()
+    t2 = db.query(DailyApplyLog).filter_by(user_id=user.id, date=today, tier=2).first()
+    applied_tier1_today = t1.count if t1 else 0
+    applied_tier2_today = t2.count if t2 else 0
+    applied_today = applied_tier1_today + applied_tier2_today
+
+    new_today = db.query(Job).filter(
+        func.date(Job.discovered_at) == datetime.utcnow().date()
+    ).count()
 
     return {
+        "total_jobs": total_jobs,
         "jobs_discovered": total_jobs,
         "jobs_matched": matched,
+        "high_match": high_match,
+        "good_match": good_match,
+        "total_applied": total_apps,
         "applications_total": total_apps,
         "applications_submitted": submitted,
-        "interviews": interviews,
-        "offers": offers,
-        "response_rate": round(response_rate, 1),
-        "interview_rate": round(interview_rate, 1),
+        "applied_today": applied_today,
+        "applied_tier1_today": applied_tier1_today,
+        "applied_tier2_today": applied_tier2_today,
+        "pending_review": db.query(Application).filter(
+            Application.user_id == user.id,
+            Application.status.in_(["DISCOVERED", "MATCHED", "READY_FOR_REVIEW"]),
+        ).count(),
+        "new_today": new_today,
     }
 
 
 @router.get("/analytics/score-distribution")
-def score_distribution(db: Session = Depends(get_db)):
-    rows = db.query(JobMatch.overall_score).all()
+def score_distribution(db: Session = Depends(get_db), user=Depends(get_current_user)):
+    rows = db.query(JobMatch.overall_score).filter(JobMatch.user_id == user.id).all()
     scores = [r[0] for r in rows if r[0] is not None]
     buckets = {"0-29": 0, "30-59": 0, "60-74": 0, "75-89": 0, "90-100": 0}
     for s in scores:
@@ -67,51 +96,21 @@ def source_performance(db: Session = Depends(get_db)):
 
 
 @router.get("/analytics/application-timeline")
-def application_timeline(db: Session = Depends(get_db), days: int = 30):
+def application_timeline(db: Session = Depends(get_db), user=Depends(get_current_user), days: int = 30):
     since = datetime.utcnow() - timedelta(days=days)
     rows = db.query(
         func.date(Application.created_at),
-        func.count(Application.id)
-    ).filter(Application.created_at >= since).group_by(func.date(Application.created_at)).all()
+        func.count(Application.id),
+    ).filter(
+        Application.user_id == user.id,
+        Application.created_at >= since,
+    ).group_by(func.date(Application.created_at)).all()
     return [{"date": str(r[0]), "count": r[1]} for r in rows]
 
 
 @router.get("/analytics/status-breakdown")
-def status_breakdown(db: Session = Depends(get_db)):
-    rows = db.query(Application.status, func.count(Application.id)).group_by(Application.status).all()
+def status_breakdown(db: Session = Depends(get_db), user=Depends(get_current_user)):
+    rows = db.query(Application.status, func.count(Application.id)).filter(
+        Application.user_id == user.id
+    ).group_by(Application.status).all()
     return [{"status": r[0], "count": r[1]} for r in rows]
-
-
-@router.get("/download/csv")
-def download_csv(db: Session = Depends(get_db), score_min: int = 40):
-    rows = db.query(Job, JobMatch).outerjoin(JobMatch, Job.id == JobMatch.job_id).filter(
-        JobMatch.overall_score >= score_min
-    ).order_by(JobMatch.overall_score.desc()).all()
-
-    data = []
-    for job, match in rows:
-        data.append({
-            "Score": match.overall_score if match else 0,
-            "Title": job.title,
-            "Company": job.company,
-            "Location": job.location,
-            "Remote": job.remote_type,
-            "Salary": job.salary_raw or "Not Disclosed",
-            "Source": job.source_name,
-            "URL": job.application_url,
-            "Match Reason": match.match_reason_summary if match else "",
-            "Discovered": job.discovered_at.strftime("%Y-%m-%d") if job.discovered_at else "",
-        })
-
-    if not data:
-        return {"error": "No jobs to export"}
-
-    df = pd.DataFrame(data)
-    output = io.BytesIO()
-    df.to_csv(output, index=False)
-    output.seek(0)
-    return StreamingResponse(
-        output,
-        media_type="text/csv",
-        headers={"Content-Disposition": f'attachment; filename="jobpilot_jobs_{datetime.now().strftime("%Y%m%d")}.csv"'},
-    )

@@ -1,84 +1,95 @@
-"""Job discovery and management endpoints."""
+"""Job discovery and management endpoints — user-scoped."""
 from __future__ import annotations
 
-import threading
 from typing import List, Optional
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session
 
 from ...core.database import get_db
 from ...core.models import Job, JobAnalysis, JobMatch, Application
-from ...core.schemas import JobOut, JobDetailOut
+from .auth import get_current_user, get_current_user_optional
 
 router = APIRouter(tags=["jobs"])
 
 
 @router.post("/jobs/discover")
-def trigger_discovery(background_tasks: BackgroundTasks):
-    """Start the job discovery pipeline in the background."""
+def trigger_discovery(background_tasks: BackgroundTasks, user=Depends(get_current_user)):
+    """Start the job discovery pipeline for this user in the background."""
     from ...workers.pipeline import is_pipeline_running, run_pipeline
     if is_pipeline_running():
         return {"status": "already_running", "message": "Pipeline is already running"}
-    background_tasks.add_task(run_pipeline, "manual")
+    background_tasks.add_task(run_pipeline, "manual", user.id)
     return {"status": "started", "message": "Job discovery pipeline started"}
 
 
 @router.get("/jobs", response_model=List[dict])
 def list_jobs(
     db: Session = Depends(get_db),
+    user=Depends(get_current_user),
     score_min: int = Query(0, ge=0, le=100),
+    min_score: int = Query(0, ge=0, le=100),
     status: Optional[str] = None,
     decision: Optional[str] = None,
     remote_only: bool = False,
+    source: Optional[str] = None,
     limit: int = Query(50, le=200),
     offset: int = 0,
+    order: Optional[str] = None,
 ):
-    """List all discovered jobs with optional filters."""
-    query = db.query(Job, JobMatch).outerjoin(JobMatch, Job.id == JobMatch.job_id)
+    """List jobs with scores specific to this user's CV."""
+    effective_min = max(score_min, min_score)
+    query = (
+        db.query(Job, JobMatch)
+        .outerjoin(JobMatch, (Job.id == JobMatch.job_id) & (JobMatch.user_id == user.id))
+    )
 
     if remote_only:
         query = query.filter(Job.remote_type == "remote")
-
-    if score_min > 0:
-        query = query.filter(JobMatch.overall_score >= score_min)
-
+    if effective_min > 0:
+        query = query.filter(JobMatch.overall_score >= effective_min)
     if decision:
         query = query.filter(JobMatch.decision == decision)
+    if source:
+        query = query.filter(Job.source_name == source)
 
-    rows = query.order_by(JobMatch.overall_score.desc()).offset(offset).limit(limit).all()
+    query = query.order_by(JobMatch.overall_score.desc())
+    rows = query.offset(offset).limit(limit).all()
 
-    results = []
-    for job, match in rows:
-        d = {
+    return [
+        {
             "id": job.id,
             "title": job.title,
             "company": job.company,
             "location": job.location,
             "remote_type": job.remote_type,
             "salary_raw": job.salary_raw,
+            "salary_min": job.salary_min,
+            "salary_max": job.salary_max,
             "application_url": job.application_url,
             "source_name": job.source_name,
             "discovered_at": job.discovered_at.isoformat() if job.discovered_at else None,
             "overall_score": match.overall_score if match else None,
+            "match_score": match.overall_score if match else None,
             "score_label": match.score_label if match else None,
             "decision": match.decision if match else None,
             "match_reason": match.match_reason_summary if match else None,
+            "match_reason_summary": match.match_reason_summary if match else None,
         }
-        results.append(d)
-    return results
+        for job, match in rows
+    ]
 
 
 @router.get("/jobs/{job_id}")
-def get_job(job_id: str, db: Session = Depends(get_db)):
-    """Get full job details including analysis and match breakdown."""
+def get_job(job_id: str, db: Session = Depends(get_db), user=Depends(get_current_user)):
+    """Get full job details including this user's match breakdown."""
     job = db.query(Job).filter(Job.id == job_id).first()
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
 
     analysis = db.query(JobAnalysis).filter(JobAnalysis.job_id == job_id).first()
-    match = db.query(JobMatch).filter(JobMatch.job_id == job_id).first()
-    application = db.query(Application).filter(Application.job_id == job_id).first()
+    match = db.query(JobMatch).filter(JobMatch.job_id == job_id, JobMatch.user_id == user.id).first()
+    application = db.query(Application).filter(Application.job_id == job_id, Application.user_id == user.id).first()
 
     return {
         "id": job.id,
@@ -133,9 +144,8 @@ def get_job(job_id: str, db: Session = Depends(get_db)):
 
 
 @router.post("/jobs/{job_id}/shortlist")
-def shortlist_job(job_id: str, db: Session = Depends(get_db)):
-    """Manually shortlist a job."""
-    app = db.query(Application).filter(Application.job_id == job_id).first()
+def shortlist_job(job_id: str, db: Session = Depends(get_db), user=Depends(get_current_user)):
+    app = db.query(Application).filter(Application.job_id == job_id, Application.user_id == user.id).first()
     if not app:
         raise HTTPException(status_code=404, detail="Application not found")
     from ...core.state_machine import transition, StateMachineError
@@ -149,9 +159,8 @@ def shortlist_job(job_id: str, db: Session = Depends(get_db)):
 
 
 @router.post("/jobs/{job_id}/reject")
-def reject_job(job_id: str, db: Session = Depends(get_db)):
-    """Manually reject a job."""
-    app = db.query(Application).filter(Application.job_id == job_id).first()
+def reject_job(job_id: str, db: Session = Depends(get_db), user=Depends(get_current_user)):
+    app = db.query(Application).filter(Application.job_id == job_id, Application.user_id == user.id).first()
     if not app:
         raise HTTPException(status_code=404, detail="Application not found")
     from ...core.state_machine import transition, StateMachineError
@@ -162,14 +171,3 @@ def reject_job(job_id: str, db: Session = Depends(get_db)):
         return {"status": "rejected"}
     except StateMachineError as e:
         raise HTTPException(status_code=400, detail=str(e))
-
-
-@router.delete("/jobs/clear")
-def clear_all_jobs(db: Session = Depends(get_db)):
-    """Clear all jobs from the database (development use)."""
-    db.query(JobAnalysis).delete()
-    db.query(JobMatch).delete()
-    db.query(Application).delete()
-    db.query(Job).delete()
-    db.commit()
-    return {"status": "cleared"}

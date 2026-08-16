@@ -30,6 +30,9 @@ nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px}
 .nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
 .nav-badge{margin-left:auto;background:var(--acc);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:600}
 .sidebar-footer{padding:12px;border-top:1px solid var(--border)}
+.user-chip{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.user-avatar{width:26px;height:26px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--pos);margin-right:6px}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .pulsing{animation:pulse 2s infinite}
@@ -94,6 +97,11 @@ nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px}
 .settings-row:last-child{border-bottom:none}
 .settings-label{font-size:13px;font-weight:500}
 .settings-desc{font-size:11px;color:var(--tx3);margin-top:2px}
+.form-group{margin-bottom:14px}
+.form-label{font-size:12px;color:var(--tx2);margin-bottom:5px;display:block;font-weight:500}
+.form-input{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--tx);font-size:13px;outline:none;transition:border-color .15s}
+.form-input:focus{border-color:var(--acc)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .empty{text-align:center;padding:48px 24px;color:var(--tx3)}
 .empty-icon{font-size:40px;margin-bottom:12px}
 .empty-title{font-size:15px;font-weight:600;color:var(--tx2);margin-bottom:6px}
@@ -107,11 +115,67 @@ nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px}
 .spinner{animation:spin .7s linear infinite}
 .progress-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:8px}
 .progress-fill{height:100%;background:var(--acc);border-radius:2px;transition:width .4s}
-@media(max-width:768px){.sidebar{display:none}.stats-row{grid-template-columns:repeat(2,1fr)}}
+/* Auth modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(4px)}
+.modal-box{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:36px;width:380px;max-width:95vw}
+.modal-title{font-size:22px;font-weight:700;text-align:center;margin-bottom:6px}
+.modal-sub{color:var(--tx3);font-size:13px;text-align:center;margin-bottom:28px}
+.modal-tabs{display:flex;border:1px solid var(--border);border-radius:8px;margin-bottom:24px;overflow:hidden}
+.modal-tab{flex:1;padding:9px;font-size:13px;font-weight:500;background:none;color:var(--tx3);text-align:center;cursor:pointer;transition:all .15s}
+.modal-tab.active{background:var(--acc);color:#fff}
+.modal-err{color:var(--neg);font-size:12px;text-align:center;margin-top:10px;min-height:18px}
+@media(max-width:768px){.sidebar{display:none}.stats-row{grid-template-columns:repeat(2,1fr)}.form-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="layout">
+
+<!-- ── Auth Modal ─────────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal-box">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="width:48px;height:48px;background:var(--acc);border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:#fff;margin-bottom:12px">JP</div>
+      <div class="modal-title">JOBPILOT</div>
+      <div class="modal-sub">AI-powered job search automation</div>
+    </div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+      <button class="modal-tab" id="tab-register" onclick="switchTab('register')">Register</button>
+    </div>
+    <!-- Login form -->
+    <div id="form-login">
+      <div class="form-group">
+        <label class="form-label">Username or Email</label>
+        <input class="form-input" id="login-user" type="text" placeholder="your@email.com" autocomplete="username">
+      </div>
+      <div class="form-group" style="margin-bottom:20px">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px" onclick="doLogin()" id="login-btn">Sign In</button>
+      <div class="modal-err" id="login-err"></div>
+    </div>
+    <!-- Register form -->
+    <div id="form-register" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input class="form-input" id="reg-user" type="text" placeholder="johndoe" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="reg-email" type="email" placeholder="your@email.com" autocomplete="email">
+      </div>
+      <div class="form-group" style="margin-bottom:20px">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="reg-pass" type="password" placeholder="min 6 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()">
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px" onclick="doRegister()" id="reg-btn">Create Account</button>
+      <div class="modal-err" id="reg-err"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── App ────────────────────────────────────────────────────────────────── -->
+<div class="layout" id="app" style="display:none">
 
 <aside class="sidebar">
   <div class="logo">
@@ -127,7 +191,14 @@ nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px}
     <button class="nav-item" onclick="showPage('settings')" id="nav-settings"><span class="nav-icon">⚙️</span>Settings</button>
   </nav>
   <div class="sidebar-footer">
-    <div style="font-size:12px;color:var(--tx3)"><span class="status-dot pulsing" id="status-dot"></span><span id="status-text">System ready</span></div>
+    <div class="user-chip">
+      <div class="user-avatar" id="user-avatar">?</div>
+      <div class="user-name" id="user-name">Loading...</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:12px;color:var(--tx3)"><span class="status-dot pulsing" id="status-dot"></span><span id="status-text">Ready</span></div>
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()" style="font-size:11px;padding:3px 8px">Logout</button>
+    </div>
   </div>
 </aside>
 
@@ -246,7 +317,7 @@ nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px}
           <div class="cv-item" style="flex-direction:column;align-items:flex-start"><strong>Arbeitnow</strong><div class="cv-meta">EU + remote</div></div>
           <div class="cv-item" style="flex-direction:column;align-items:flex-start"><strong>TheMuse</strong><div class="cv-meta">Curated jobs</div></div>
           <div class="cv-item" style="flex-direction:column;align-items:flex-start"><strong>NodeDesk</strong><div class="cv-meta">Remote dev</div></div>
-          <div class="cv-item" style="flex-direction:column;align-items:flex-start;border-color:var(--pos)"><strong>🇵🇰 Rozee.pk</strong><div class="cv-meta" style="color:var(--pos)">Pakistan jobs · NEW</div></div>
+          <div class="cv-item" style="flex-direction:column;align-items:flex-start;border-color:var(--pos)"><strong>🇵🇰 Rozee.pk</strong><div class="cv-meta" style="color:var(--pos)">Pakistan jobs</div></div>
         </div>
       </div>
     </div>
@@ -254,38 +325,129 @@ nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px}
 
   <!-- SETTINGS -->
   <div id="page-settings" style="display:none">
-    <div class="page-header"><div class="page-title">Settings</div><div class="page-sub">Configure your AI pipeline and notifications</div></div>
+    <div class="page-header"><div class="page-title">Settings</div><div class="page-sub">Your personal credentials — stored encrypted, never shared</div></div>
     <div class="content">
+
+      <!-- Telegram -->
       <div class="section" style="margin-bottom:16px">
-        <div class="section-head"><div class="section-title">Telegram Notifications</div></div>
+        <div class="section-head"><div class="section-title">📱 Telegram Notifications</div></div>
         <div class="section-body">
-          <div class="alert alert-info" style="margin-bottom:14px">Set <strong>TELEGRAM_BOT_TOKEN</strong> and <strong>TELEGRAM_CHAT_ID</strong> in .env · <a href="https://t.me/BotFather" target="_blank">Create bot →</a></div>
-          <button class="btn btn-ghost" onclick="testTelegram()">📱 Test Connection</button>
-          <div id="tg-result" style="margin-top:10px;font-size:13px"></div>
-        </div>
-      </div>
-      <div class="section" style="margin-bottom:16px">
-        <div class="section-head"><div class="section-title">Auto-Apply Limits</div></div>
-        <div class="section-body">
-          <div class="settings-row"><div><div class="settings-label">Tier 1 (90%+ match)</div><div class="settings-desc">Daily application limit for top matches</div></div><div style="font-size:22px;font-weight:700;color:var(--pos)">15/day</div></div>
-          <div class="settings-row"><div><div class="settings-label">Tier 2 (80–89% match)</div><div class="settings-desc">Daily application limit for good matches</div></div><div style="font-size:22px;font-weight:700;color:var(--acc)">15/day</div></div>
-          <div style="font-size:12px;color:var(--tx3);margin-top:10px">Change in .env: <code>DAILY_APPLY_LIMIT_TIER1</code>, <code>DAILY_APPLY_LIMIT_TIER2</code></div>
-        </div>
-      </div>
-      <div class="section" style="margin-bottom:16px">
-        <div class="section-head"><div class="section-title">Apply Credentials (.env)</div></div>
-        <div class="section-body">
-          <div class="alert alert-warn" style="margin-bottom:10px">⚠️ Never share these. Set in .env only.</div>
-          <div style="font-size:13px;color:var(--tx2);line-height:2.2">
-            <div><code>LINKEDIN_EMAIL</code> / <code>LINKEDIN_PASSWORD</code></div>
-            <div><code>INDEED_EMAIL</code> / <code>INDEED_PASSWORD</code></div>
-            <div><code>ROZEE_EMAIL</code> / <code>ROZEE_PASSWORD</code></div>
-            <div><code>GROQ_API_KEY</code> — AI analysis and matching</div>
-            <div><code>TELEGRAM_BOT_TOKEN</code> / <code>TELEGRAM_CHAT_ID</code></div>
+          <div class="alert alert-info" style="margin-bottom:14px">Create a bot at <a href="https://t.me/BotFather" target="_blank">@BotFather</a> · Get Chat ID by messaging your bot then visiting <code>https://api.telegram.org/bot&lt;TOKEN&gt;/getUpdates</code></div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Bot Token</label>
+              <input class="form-input" id="s-tg-token" type="password" placeholder="123456:ABC-DEF1234...">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Chat ID</label>
+              <input class="form-input" id="s-tg-chat" type="text" placeholder="-1001234567890">
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button class="btn btn-ghost" onclick="testTelegram()">📱 Test Connection</button>
+            <div id="tg-result" style="font-size:13px"></div>
           </div>
         </div>
       </div>
-      <div class="section">
+
+      <!-- LinkedIn -->
+      <div class="section" style="margin-bottom:16px">
+        <div class="section-head"><div class="section-title">🔗 LinkedIn Auto-Apply</div></div>
+        <div class="section-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">LinkedIn Email</label>
+              <input class="form-input" id="s-li-email" type="email" placeholder="you@email.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">LinkedIn Password</label>
+              <input class="form-input" id="s-li-pass" type="password" placeholder="••••••••">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Indeed -->
+      <div class="section" style="margin-bottom:16px">
+        <div class="section-head"><div class="section-title">🔍 Indeed Auto-Apply</div></div>
+        <div class="section-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Indeed Email</label>
+              <input class="form-input" id="s-in-email" type="email" placeholder="you@email.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Indeed Password</label>
+              <input class="form-input" id="s-in-pass" type="password" placeholder="••••••••">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rozee -->
+      <div class="section" style="margin-bottom:16px">
+        <div class="section-head"><div class="section-title">🇵🇰 Rozee.pk Auto-Apply</div></div>
+        <div class="section-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Rozee Email</label>
+              <input class="form-input" id="s-rz-email" type="email" placeholder="you@email.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Rozee Password</label>
+              <input class="form-input" id="s-rz-pass" type="password" placeholder="••••••••">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI + Search -->
+      <div class="section" style="margin-bottom:16px">
+        <div class="section-head"><div class="section-title">🤖 AI & Search Preferences</div></div>
+        <div class="section-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Groq API Key (AI Analysis)</label>
+              <input class="form-input" id="s-groq" type="password" placeholder="gsk_...">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Remote Preference</label>
+              <select class="form-input" id="s-remote">
+                <option value="worldwide_remote">Worldwide Remote</option>
+                <option value="remote">Remote Only</option>
+                <option value="hybrid">Hybrid</option>
+                <option value="onsite">On-site</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Location (optional)</label>
+              <input class="form-input" id="s-location" type="text" placeholder="Islamabad, Pakistan">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Min Salary (USD/hr)</label>
+              <input class="form-input" id="s-salary" type="number" placeholder="15">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Search Terms (comma-separated)</label>
+            <input class="form-input" id="s-terms" type="text" placeholder="Python Developer, AI Engineer, FastAPI">
+          </div>
+          <div style="display:flex;gap:10px;margin-top:6px">
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="s-notify-apply"> Notify on every application</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="s-notify-daily"> Daily summary</label>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="btn btn-primary" onclick="saveSettings()" id="save-btn">💾 Save Settings</button>
+        <div id="save-result" style="font-size:13px"></div>
+      </div>
+
+      <!-- System Health -->
+      <div class="section" style="margin-top:16px">
         <div class="section-head"><div class="section-title">System Health</div></div>
         <div class="section-body" id="health-info"><div class="spinner"></div></div>
       </div>
@@ -300,6 +462,93 @@ const API='';
 let jobOffset=0;
 const JOB_PAGE=20;
 let sse=null;
+let _token=localStorage.getItem('jp_token')||'';
+let _user=null;
+
+// ── Auth helpers ────────────────────────────────────────────────────────────
+
+function authHeaders(){return _token?{'Authorization':'Bearer '+_token,'Content-Type':'application/json'}:{'Content-Type':'application/json'};}
+
+async function apiFetch(path,opts={}){
+  const r=await fetch(API+path,{...opts,headers:{...authHeaders(),...(opts.headers||{})}});
+  if(r.status===401){showAuthModal();return null;}
+  if(!r.ok)throw new Error(await r.text());
+  return r.json();
+}
+async function get(path){return apiFetch('/api'+path);}
+async function post(path,body){return apiFetch('/api'+path,{method:'POST',body:body?JSON.stringify(body):undefined});}
+async function put(path,body){return apiFetch('/api'+path,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});}
+
+// ── Auth modal ──────────────────────────────────────────────────────────────
+
+function showAuthModal(){document.getElementById('auth-modal').style.display='flex';document.getElementById('app').style.display='none';}
+function hideAuthModal(){document.getElementById('auth-modal').style.display='none';document.getElementById('app').style.display='flex';}
+
+function switchTab(t){
+  document.getElementById('form-login').style.display=t==='login'?'':'none';
+  document.getElementById('form-register').style.display=t==='register'?'':'none';
+  document.getElementById('tab-login').classList.toggle('active',t==='login');
+  document.getElementById('tab-register').classList.toggle('active',t==='register');
+  document.getElementById('login-err').textContent='';
+  document.getElementById('reg-err').textContent='';
+}
+
+async function doLogin(){
+  const btn=document.getElementById('login-btn');
+  btn.disabled=true;btn.textContent='Signing in...';
+  document.getElementById('login-err').textContent='';
+  try{
+    const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username_or_email:document.getElementById('login-user').value,password:document.getElementById('login-pass').value})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.detail||'Login failed');
+    _token=d.token;_user=d.user;
+    localStorage.setItem('jp_token',_token);
+    onLoggedIn();
+  }catch(e){document.getElementById('login-err').textContent=e.message;}
+  finally{btn.disabled=false;btn.textContent='Sign In';}
+}
+
+async function doRegister(){
+  const btn=document.getElementById('reg-btn');
+  btn.disabled=true;btn.textContent='Creating account...';
+  document.getElementById('reg-err').textContent='';
+  try{
+    const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:document.getElementById('reg-user').value,email:document.getElementById('reg-email').value,password:document.getElementById('reg-pass').value})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.detail||'Registration failed');
+    _token=d.token;_user=d.user;
+    localStorage.setItem('jp_token',_token);
+    onLoggedIn();
+  }catch(e){document.getElementById('reg-err').textContent=e.message;}
+  finally{btn.disabled=false;btn.textContent='Create Account';}
+}
+
+async function doLogout(){
+  try{await fetch('/api/auth/logout',{method:'POST',headers:authHeaders()});}catch(_){}
+  _token='';_user=null;localStorage.removeItem('jp_token');
+  showAuthModal();
+}
+
+function onLoggedIn(){
+  hideAuthModal();
+  const name=_user?.username||'User';
+  document.getElementById('user-name').textContent=name;
+  document.getElementById('user-avatar').textContent=name[0].toUpperCase();
+  loadDashboard();
+  connectSSE();
+}
+
+async function checkSession(){
+  if(!_token){showAuthModal();return;}
+  try{
+    const r=await fetch('/api/auth/me',{headers:authHeaders()});
+    if(!r.ok){_token='';localStorage.removeItem('jp_token');showAuthModal();return;}
+    _user=await r.json();
+    onLoggedIn();
+  }catch(_){showAuthModal();}
+}
+
+// ── Pages ───────────────────────────────────────────────────────────────────
 
 function showPage(p){
   document.querySelectorAll('[id^="page-"]').forEach(e=>e.style.display='none');
@@ -311,11 +560,8 @@ function showPage(p){
   if(p==='jobs'){jobOffset=0;loadJobs();}
   if(p==='applied')loadApplied();
   if(p==='cvs')loadCVs();
-  if(p==='settings')loadHealth();
+  if(p==='settings'){loadSettings();loadHealth();}
 }
-
-async function get(path){const r=await fetch(API+'/api'+path);if(!r.ok)throw new Error(await r.text());return r.json();}
-async function post(path,body){const r=await fetch(API+'/api'+path,{method:'POST',headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});if(!r.ok)throw new Error(await r.text());return r.json();}
 
 // Dashboard
 async function loadDashboard(){
@@ -427,9 +673,10 @@ async function loadApplied(){
 async function loadCVs(){
   try{
     const cvs=await get('/cvs');
+    if(!cvs)return;
     set('cv-count',`${cvs.length} CV${cvs.length!==1?'s':''}`);
     const el=document.getElementById('cv-list');
-    if(!cvs||!cvs.length){el.innerHTML=emptyEl('📂','No CVs uploaded','Upload your first CV above');return;}
+    if(!cvs.length){el.innerHTML=emptyEl('📂','No CVs uploaded','Upload your first CV above');return;}
     el.innerHTML=cvs.map(cv=>`
       <div class="cv-item" id="cvi-${cv.id}">
         <span class="cv-icon">📄</span>
@@ -459,7 +706,7 @@ async function uploadCV(inp){
     const fd=new FormData();
     fd.append('file',f);
     fd.append('name',f.name.replace(/\.[^.]+$/,''));
-    const r=await fetch(API+'/api/cvs/upload',{method:'POST',body:fd});
+    const r=await fetch(API+'/api/cvs/upload',{method:'POST',headers:{'Authorization':'Bearer '+_token},body:fd});
     const data=await r.json();
     clearInterval(t);bar.style.width='100%';
     setTimeout(()=>{prog.style.display='none';},400);
@@ -478,8 +725,8 @@ function drop(e){
   const f=e.dataTransfer.files[0];
   if(f){const i=document.getElementById('cv-file');i.files=e.dataTransfer.files;uploadCV(i);}
 }
-async function setDefault(id){await fetch(API+'/api/cvs/'+id+'/default',{method:'PATCH'});loadCVs();}
-async function delCV(id){if(!confirm('Delete this CV?'))return;await fetch(API+'/api/cvs/'+id,{method:'DELETE'});loadCVs();}
+async function setDefault(id){await apiFetch('/api/cvs/'+id+'/default',{method:'PATCH'});loadCVs();}
+async function delCV(id){if(!confirm('Delete this CV?'))return;await apiFetch('/api/cvs/'+id,{method:'DELETE'});loadCVs();}
 
 // Pipeline
 async function runPipeline(){
@@ -521,8 +768,7 @@ function log(msg,cls=''){
     msg.includes('[SOURCE]')?'log-source':
     msg==='DONE'||msg.includes('Pipeline complete')?'log-done':cls
   );
-  if(msg==='DONE'){
-    msg='✅ Pipeline complete!';
+  if(msg==='DONE'||msg.includes('Pipeline complete')){
     const btn=document.getElementById('run-btn');if(btn){btn.disabled=false;btn.textContent='🤖 Run AI Search';}
     const badge=document.getElementById('pipeline-badge');if(badge)badge.textContent='Idle';
     loadDashboard();
@@ -531,35 +777,90 @@ function log(msg,cls=''){
 }
 
 // Settings
-async function loadHealth(){
-  const el=document.getElementById('health-info');
+async function loadSettings(){
   try{
-    const h=await get('/system/health');
-    el.innerHTML=`<div style="display:flex;flex-direction:column;gap:10px;font-size:13px">
-      <div>🗄️ Database: <strong style="color:var(--pos)">${h.database||'ok'}</strong></div>
-      <div>📅 Scheduler: <strong style="color:var(--pos)">${h.scheduler||'running'}</strong></div>
-      <div>🤖 LLM Provider: <strong style="color:${h.llm==='ok'?'var(--pos)':'var(--warn)'}">${h.llm||'not configured — set GROQ_API_KEY'}</strong></div>
-      <div>📱 Telegram: <strong style="color:${h.telegram==='ok'?'var(--pos)':'var(--warn)'}">${h.telegram||'not configured — set TELEGRAM_BOT_TOKEN'}</strong></div>
-      <div style="color:var(--tx3);font-size:11px">v${h.version||'1.0.0'}</div>
-    </div>`;
-  }catch(e){el.textContent='Could not load health info';}
+    const s=await get('/user/settings');
+    if(!s)return;
+    setVal('s-tg-token',s.telegram_bot_token||'');
+    setVal('s-tg-chat',s.telegram_chat_id||'');
+    setVal('s-li-email',s.linkedin_email||'');
+    setVal('s-li-pass',s.linkedin_password||'');
+    setVal('s-in-email',s.indeed_email||'');
+    setVal('s-in-pass',s.indeed_password||'');
+    setVal('s-rz-email',s.rozee_email||'');
+    setVal('s-rz-pass',s.rozee_password||'');
+    setVal('s-groq',s.groq_api_key||'');
+    setVal('s-remote',s.remote_preference||'worldwide_remote');
+    setVal('s-location',s.location||'');
+    setVal('s-salary',s.salary_min||'');
+    setVal('s-terms',(s.search_terms||[]).join(', '));
+    document.getElementById('s-notify-apply').checked=!!s.notify_on_apply;
+    document.getElementById('s-notify-daily').checked=!!s.notify_daily_summary;
+  }catch(e){console.error('loadSettings',e);}
+}
+
+async function saveSettings(){
+  const btn=document.getElementById('save-btn');
+  const res=document.getElementById('save-result');
+  btn.disabled=true;btn.textContent='Saving...';res.textContent='';
+  try{
+    const terms=document.getElementById('s-terms').value.split(',').map(x=>x.trim()).filter(Boolean);
+    const body={
+      telegram_bot_token:document.getElementById('s-tg-token').value||null,
+      telegram_chat_id:document.getElementById('s-tg-chat').value||null,
+      linkedin_email:document.getElementById('s-li-email').value||null,
+      linkedin_password:document.getElementById('s-li-pass').value||null,
+      indeed_email:document.getElementById('s-in-email').value||null,
+      indeed_password:document.getElementById('s-in-pass').value||null,
+      rozee_email:document.getElementById('s-rz-email').value||null,
+      rozee_password:document.getElementById('s-rz-pass').value||null,
+      groq_api_key:document.getElementById('s-groq').value||null,
+      remote_preference:document.getElementById('s-remote').value,
+      location:document.getElementById('s-location').value||null,
+      salary_min:parseFloat(document.getElementById('s-salary').value)||null,
+      search_terms:terms.length?terms:null,
+      notify_on_apply:document.getElementById('s-notify-apply').checked,
+      notify_daily_summary:document.getElementById('s-notify-daily').checked,
+    };
+    await put('/user/settings',body);
+    res.innerHTML='<span style="color:var(--pos)">✅ Saved</span>';
+    setTimeout(()=>{res.textContent='';},3000);
+  }catch(e){
+    res.innerHTML=`<span style="color:var(--neg)">❌ ${e.message}</span>`;
+  }finally{btn.disabled=false;btn.textContent='💾 Save Settings';}
 }
 
 async function testTelegram(){
   const el=document.getElementById('tg-result');el.textContent='Sending...';
   try{
-    const r=await post('/cvs/test-telegram');
-    el.innerHTML=`<span style="color:var(--pos)">✅ ${r.message}</span>`;
+    const r=await apiFetch('/api/user/test-telegram',{method:'POST'});
+    if(r)el.innerHTML=`<span style="color:var(--pos)">✅ Message sent!</span>`;
   }catch(e){el.innerHTML=`<span style="color:var(--neg)">❌ ${e.message}</span>`;}
+}
+
+async function loadHealth(){
+  const el=document.getElementById('health-info');
+  try{
+    const h=await get('/system/health');
+    if(!h){el.textContent='Could not load';return;}
+    el.innerHTML=`<div style="display:flex;flex-direction:column;gap:10px;font-size:13px">
+      <div>🗄️ Database: <strong style="color:var(--pos)">${h.database||'ok'}</strong></div>
+      <div>📅 Scheduler: <strong style="color:var(--pos)">${h.scheduler||'running'}</strong></div>
+      <div>🤖 LLM: <strong style="color:${h.llm==='ok'?'var(--pos)':'var(--warn)'}">${h.llm||'not configured'}</strong></div>
+      <div>📱 Telegram: <strong style="color:${h.telegram==='ok'?'var(--pos)':'var(--warn)'}">${h.telegram||'set in Settings'}</strong></div>
+      <div style="color:var(--tx3);font-size:11px">v${h.version||'1.0.0'}</div>
+    </div>`;
+  }catch(e){el.textContent='Could not load health info';}
 }
 
 // Utils
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function set(id,val){const e=document.getElementById(id);if(e)e.textContent=val;}
+function setVal(id,val){const e=document.getElementById(id);if(e)e.value=val;}
 function fmtSize(b){if(!b)return'';if(b<1024)return b+'B';if(b<1048576)return(b/1024).toFixed(0)+'KB';return(b/1048576).toFixed(1)+'MB';}
 function emptyEl(icon,title,sub){return`<div class="empty"><div class="empty-icon">${icon}</div><div class="empty-title">${title}</div><div>${sub}</div></div>`;}
 
-document.addEventListener('DOMContentLoaded',()=>{loadDashboard();connectSSE();});
+document.addEventListener('DOMContentLoaded',checkSession);
 </script>
 </body>
 </html>

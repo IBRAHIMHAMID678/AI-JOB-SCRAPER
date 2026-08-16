@@ -44,27 +44,33 @@ def _get_today() -> str:
     return date.today().isoformat()
 
 
-def get_daily_count(tier: int) -> int:
+def get_daily_count(tier: int, user_id: Optional[str] = None) -> int:
     with db_session() as db:
-        log = db.query(DailyApplyLog).filter_by(date=_get_today(), tier=tier).first()
+        q = db.query(DailyApplyLog).filter_by(date=_get_today(), tier=tier)
+        if user_id:
+            q = q.filter_by(user_id=user_id)
+        log = q.first()
         return log.count if log else 0
 
 
-def _increment_daily(tier: int) -> None:
+def _increment_daily(tier: int, user_id: Optional[str] = None) -> None:
     today = _get_today()
     with db_session() as db:
-        log = db.query(DailyApplyLog).filter_by(date=today, tier=tier).first()
+        q = db.query(DailyApplyLog).filter_by(date=today, tier=tier)
+        if user_id:
+            q = q.filter_by(user_id=user_id)
+        log = q.first()
         if log:
             log.count += 1
         else:
-            db.add(DailyApplyLog(date=today, tier=tier, count=1))
+            db.add(DailyApplyLog(date=today, tier=tier, count=1, user_id=user_id))
 
 
-def can_apply(score: int) -> bool:
+def can_apply(score: int, user_id: Optional[str] = None) -> bool:
     if score >= settings.TIER1_SCORE_MIN:
-        return get_daily_count(1) < settings.DAILY_APPLY_LIMIT_TIER1
+        return get_daily_count(1, user_id) < settings.DAILY_APPLY_LIMIT_TIER1
     if score >= settings.TIER2_SCORE_MIN:
-        return get_daily_count(2) < settings.DAILY_APPLY_LIMIT_TIER2
+        return get_daily_count(2, user_id) < settings.DAILY_APPLY_LIMIT_TIER2
     return False
 
 
@@ -303,14 +309,27 @@ def apply_to_job(
     description: str,
     cv_path: str,
     cover_letter: str = "",
+    user_id: Optional[str] = None,
 ) -> bool:
     """
-    Attempt to apply to a job. Enforces daily limits.
+    Attempt to apply to a job using per-user credentials. Enforces daily limits.
     Returns True if application was submitted successfully.
     """
-    if not can_apply(score):
+    if not can_apply(score, user_id=user_id):
         logger.info("Daily limit reached for tier %d — skipping %s", _tier(score), job_title)
         return False
+
+    # Get user credentials from their settings
+    candidate_name = settings.CANDIDATE_NAME
+    candidate_email = settings.CANDIDATE_EMAIL
+    if user_id:
+        try:
+            from .auth_service import get_settings, get_decrypted_password
+            s = get_settings(user_id)
+            if s:
+                candidate_email = s.linkedin_email or s.indeed_email or s.rozee_email or candidate_email
+        except Exception:
+            pass
 
     success = False
 
@@ -324,8 +343,8 @@ def apply_to_job(
             company=company,
             cv_path=cv_path,
             cover_letter=cover_letter,
-            candidate_name=settings.CANDIDATE_NAME,
-            candidate_email=settings.CANDIDATE_EMAIL,
+            candidate_name=candidate_name,
+            candidate_email=candidate_email,
         )
 
     # Strategy 2: browser apply
@@ -334,9 +353,16 @@ def apply_to_job(
         success = _playwright_apply(apply_url, source, cv_path, cover_letter)
 
     if success:
-        _increment_daily(_tier(score))
-        _mark_submitted(job_id)
-        notify_applied(job_title, company, source, score, apply_url)
+        _increment_daily(_tier(score), user_id=user_id)
+        _mark_submitted(job_id, user_id=user_id)
+        try:
+            from .telegram_service import notify_applied_for_user
+            if user_id:
+                notify_applied_for_user(user_id, job_title, company, source, score, apply_url)
+            else:
+                notify_applied(job_title, company, source, score, apply_url)
+        except Exception:
+            pass
         logger.info("Successfully applied: %s @ %s (score=%d)", job_title, company, score)
     else:
         logger.warning("Could not auto-apply to %s @ %s — marked for manual review", job_title, company)
@@ -344,10 +370,13 @@ def apply_to_job(
     return success
 
 
-def _mark_submitted(job_id: str) -> None:
+def _mark_submitted(job_id: str, user_id: Optional[str] = None) -> None:
     try:
         with db_session() as db:
-            app = db.query(Application).filter_by(job_id=job_id).first()
+            q = db.query(Application).filter_by(job_id=job_id)
+            if user_id:
+                q = q.filter_by(user_id=user_id)
+            app = q.first()
             if app:
                 app.status = ApplicationStatus.SUBMITTED.value
                 from datetime import datetime

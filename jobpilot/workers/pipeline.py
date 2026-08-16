@@ -46,11 +46,10 @@ def get_source_stats() -> Dict[str, int]:
     return dict(_source_stats)
 
 
-def run_pipeline(trigger: str = "manual") -> dict:
+def run_pipeline(trigger: str = "manual", user_id: Optional[str] = None) -> dict:
     """
-    Full job discovery → evaluation pipeline.
-    Safe to call from a background thread.
-    Returns summary dict.
+    Full job discovery → evaluation pipeline, scoped to user_id.
+    Jobs are scraped globally; matching/applications are per-user.
     """
     global _is_running, _source_stats
 
@@ -64,8 +63,29 @@ def run_pipeline(trigger: str = "manual") -> dict:
     bus.emit(EventType.PIPELINE_STARTED, {"trigger": trigger})
     summary = {"matched": 0, "pending": 0, "skipped": 0, "errors": 0}
 
+    # Resolve which users to run for
+    if user_id:
+        user_ids = [user_id]
+    else:
+        # Scheduled run — process all active users with at least one CV
+        from ..core.models import User, UploadedCV
+        with db_session() as db:
+            users_with_cvs = (
+                db.query(User.id)
+                .join(UploadedCV, UploadedCV.user_id == User.id)
+                .filter(User.is_active == True, UploadedCV.is_active == True)
+                .distinct()
+                .all()
+            )
+            user_ids = [u[0] for u in users_with_cvs]
+
+    if not user_ids:
+        sse_log("[JOBPILOT] No users with CVs found. Upload a CV first.")
+        _is_running = False
+        return summary
+
     try:
-        # ── Phase 1: Source fetching (parallel) ─────────────────────────────
+        # ── Phase 1: Source fetching (parallel, shared for all users) ────────
         sse_log("[JOBPILOT] Phase 1: Discovering jobs from all sources...")
         raw_jobs = _fetch_all_sources()
         sse_log(f"[JOBPILOT] Raw jobs collected: {len(raw_jobs)}")
@@ -86,9 +106,10 @@ def run_pipeline(trigger: str = "manual") -> dict:
             sse_log("[JOBPILOT] No new jobs found. Pipeline complete.")
             return summary
 
-        # ── Phase 4-6: Analysis + Matching + Persist (parallel per job) ───────
-        sse_log(f"[JOBPILOT] Phase 4-6: Analyzing, scoring, and persisting {len(unique)} jobs...")
-        _analyze_match_and_persist(unique, summary)
+        # ── Phase 4-6: Per-user matching + persist ───────────────────────────
+        for uid in user_ids:
+            sse_log(f"[JOBPILOT] Phase 4-6: Scoring {len(unique)} jobs for user {uid[:8]}...")
+            _analyze_match_and_persist(unique, summary, uid)
 
     except Exception as exc:
         logger.error("Pipeline error: %s", exc)
@@ -102,15 +123,18 @@ def run_pipeline(trigger: str = "manual") -> dict:
             f"[JOBPILOT] Pipeline complete in {duration:.1f}s — "
             f"Matched: {summary['matched']}, Pending: {summary['pending']}, Skipped: {summary['skipped']}"
         )
-        try:
-            from ..services.telegram_service import notify_pipeline_done
-            notify_pipeline_done(
-                total=summary["matched"] + summary["pending"] + summary["skipped"],
-                applied=summary.get("applied", 0),
-                high=summary["matched"],
-            )
-        except Exception:
-            pass
+        # Telegram notify per user
+        for uid in (user_ids if 'user_ids' in dir() else []):
+            try:
+                from ..services.telegram_service import notify_pipeline_done_for_user
+                notify_pipeline_done_for_user(
+                    user_id=uid,
+                    total=summary["matched"] + summary["pending"] + summary["skipped"],
+                    applied=summary.get("applied", 0),
+                    high=summary["matched"],
+                )
+            except Exception:
+                pass
         sse_log("DONE")
 
     return summary
@@ -165,14 +189,28 @@ def _fetch_all_sources() -> List[RawJob]:
     return all_jobs
 
 
-def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict) -> None:
-    """Run analysis + matching + DB persistence in parallel per job."""
+def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict, user_id: str) -> None:
+    """Run analysis + per-user matching + DB persistence in parallel per job."""
     from ..agents.analysis.agent import AnalysisAgent
     from ..agents.matching.agent import MatchingAgent
-    from ..core.models import Job, JobAnalysis, JobMatch, Application
+    from ..core.models import Job, JobAnalysis, JobMatch, Application, UploadedCV, UserSettings
+    from ..services.auth_service import get_settings
 
     analysis_agent = AnalysisAgent()
     matching_agent = MatchingAgent()
+
+    # Load this user's default CV path once
+    with db_session() as db:
+        cv = (
+            db.query(UploadedCV)
+            .filter_by(user_id=user_id, is_default=True, is_active=True)
+            .first()
+        )
+        if not cv:
+            cv = db.query(UploadedCV).filter_by(user_id=user_id, is_active=True).first()
+        cv_path = cv.file_path if cv else ""
+        cv_skills = cv.skills or [] if cv else []
+        cv_roles = cv.roles or [] if cv else []
 
     def process_job(job: NormalizedJob) -> Optional[str]:
         """Returns 'matched', 'pending', 'skipped', or None on error."""
@@ -266,6 +304,7 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict) -> None
 
                 db.add(JobMatch(
                     job_id=job_orm.id,
+                    user_id=user_id,
                     overall_score=match.overall_score,
                     score_label=match.score_label,
                     skills_score=match.breakdown.skills_score,
@@ -290,23 +329,18 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict) -> None
 
                 db.add(Application(
                     job_id=job_orm.id,
+                    user_id=user_id,
                     status="MATCHED" if match.auto_approved else "DISCOVERED",
                     mode=settings.APPLICATION_MODE,
                 ))
                 db.flush()
                 job_orm_id = job_orm.id
 
-            # ── Auto-apply for high-score jobs ─────────────────────────────
-            if match.overall_score >= settings.TIER2_SCORE_MIN:
+            # ── Auto-apply for high-score jobs (per-user credentials) ─────────
+            if match.overall_score >= settings.TIER2_SCORE_MIN and cv_path:
                 try:
                     from ..services.auto_apply import apply_to_job, can_apply
-                    from ..core.models import UploadedCV
-                    if can_apply(match.overall_score):
-                        with db_session() as db2:
-                            cv = db2.query(UploadedCV).filter_by(is_default=True, is_active=True).first()
-                            if not cv:
-                                cv = db2.query(UploadedCV).filter_by(is_active=True).first()
-                            cv_path = cv.file_path if cv else ""
+                    if can_apply(match.overall_score, user_id=user_id):
                         apply_to_job(
                             job_id=job_orm_id,
                             job_title=job.title,
@@ -316,6 +350,7 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict) -> None
                             score=match.overall_score,
                             description=job.description or "",
                             cv_path=cv_path,
+                            user_id=user_id,
                         )
                 except Exception as apply_exc:
                     logger.warning("Auto-apply error for %s: %s", job.title, apply_exc)

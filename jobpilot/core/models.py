@@ -35,6 +35,74 @@ def _now() -> datetime:
     return datetime.utcnow()
 
 
+# ── Users ─────────────────────────────────────────────────────────────────────
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(String(36), primary_key=True, default=_uuid)
+    username = Column(String(100), unique=True, nullable=False)
+    email = Column(String(200), unique=True, nullable=False)
+    password_hash = Column(String(200), nullable=False)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=_now)
+    updated_at = Column(DateTime, default=_now, onupdate=_now)
+
+    settings = relationship("UserSettings", back_populates="user", uselist=False)
+    cvs = relationship("UploadedCV", back_populates="user")
+
+
+class UserSettings(Base):
+    """Per-user credentials and preferences — stored encrypted."""
+    __tablename__ = "user_settings"
+
+    id = Column(String(36), primary_key=True, default=_uuid)
+    user_id = Column(String(36), ForeignKey("users.id"), unique=True, nullable=False)
+
+    # Telegram
+    telegram_bot_token = Column(String(500), nullable=True)
+    telegram_chat_id = Column(String(100), nullable=True)
+
+    # LinkedIn
+    linkedin_email = Column(String(200), nullable=True)
+    linkedin_password_enc = Column(String(500), nullable=True)  # encrypted
+
+    # Indeed
+    indeed_email = Column(String(200), nullable=True)
+    indeed_password_enc = Column(String(500), nullable=True)
+
+    # Rozee.pk
+    rozee_email = Column(String(200), nullable=True)
+    rozee_password_enc = Column(String(500), nullable=True)
+
+    # LLM key (optional per-user override)
+    groq_api_key = Column(String(500), nullable=True)
+
+    # Search preferences
+    search_terms = Column(JSON, default=list)
+    remote_preference = Column(String(50), default="worldwide_remote")
+    location = Column(String(200), nullable=True)
+    salary_min = Column(Float, nullable=True)
+
+    # Notification preferences
+    notify_on_apply = Column(Boolean, default=True)
+    notify_daily_summary = Column(Boolean, default=True)
+
+    updated_at = Column(DateTime, default=_now, onupdate=_now)
+
+    user = relationship("User", back_populates="settings")
+
+
+class UserSession(Base):
+    __tablename__ = "user_sessions"
+
+    id = Column(String(36), primary_key=True, default=_uuid)
+    user_id = Column(String(36), ForeignKey("users.id"), nullable=False)
+    token = Column(String(200), unique=True, nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+    created_at = Column(DateTime, default=_now)
+
+
 # ── Enums ─────────────────────────────────────────────────────────────────────
 
 import enum as _enum
@@ -217,7 +285,12 @@ class JobMatch(Base):
     __tablename__ = "job_matches"
 
     id = Column(String(36), primary_key=True, default=_uuid)
-    job_id = Column(String(36), ForeignKey("jobs.id"), unique=True, nullable=False)
+    job_id = Column(String(36), ForeignKey("jobs.id"), nullable=False)
+    user_id = Column(String(36), ForeignKey("users.id"), nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint("job_id", "user_id", name="uq_job_match_job_user"),
+    )
 
     # Overall
     overall_score = Column(Integer, default=0)
@@ -301,7 +374,12 @@ class Application(Base):
     __tablename__ = "applications"
 
     id = Column(String(36), primary_key=True, default=_uuid)
-    job_id = Column(String(36), ForeignKey("jobs.id"), unique=True, nullable=False)
+    job_id = Column(String(36), ForeignKey("jobs.id"), nullable=False)
+    user_id = Column(String(36), ForeignKey("users.id"), nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint("job_id", "user_id", name="uq_application_job_user"),
+    )
 
     status = Column(String(50), default=ApplicationStatus.DISCOVERED.value)
     mode = Column(String(20), default="manual")
@@ -517,6 +595,7 @@ class UploadedCV(Base):
     __tablename__ = "uploaded_cvs"
 
     id = Column(String(36), primary_key=True, default=_uuid)
+    user_id = Column(String(36), ForeignKey("users.id"), nullable=True)
     name = Column(String(200), nullable=False)          # user-given label
     filename = Column(String(500), nullable=False)
     file_path = Column(String(1000), nullable=False)
@@ -541,6 +620,8 @@ class UploadedCV(Base):
     created_at = Column(DateTime, default=_now)
     updated_at = Column(DateTime, default=_now, onupdate=_now)
 
+    user = relationship("User", back_populates="cvs")
+
 
 # ── Daily Apply Tracker ───────────────────────────────────────────────────────
 
@@ -548,6 +629,7 @@ class DailyApplyLog(Base):
     __tablename__ = "daily_apply_logs"
 
     id = Column(String(36), primary_key=True, default=_uuid)
+    user_id = Column(String(36), ForeignKey("users.id"), nullable=True)
     date = Column(String(10), nullable=False)           # YYYY-MM-DD
     tier = Column(Integer, nullable=False)              # 1=90%+, 2=80-89%
     count = Column(Integer, default=0)
@@ -555,7 +637,7 @@ class DailyApplyLog(Base):
     updated_at = Column(DateTime, default=_now, onupdate=_now)
 
     __table_args__ = (
-        UniqueConstraint("date", "tier", name="uq_daily_apply_date_tier"),
+        UniqueConstraint("user_id", "date", "tier", name="uq_daily_apply_user_date_tier"),
     )
 
 
