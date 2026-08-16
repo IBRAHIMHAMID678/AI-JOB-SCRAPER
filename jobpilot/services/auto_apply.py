@@ -14,15 +14,22 @@ Daily limits enforced:
 """
 from __future__ import annotations
 
+import random
 import re
 import smtplib
 import pathlib
+import time
 from datetime import date
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email import encoders
 from typing import Optional
+
+
+def _human_delay(lo: float = 1.5, hi: float = 3.5) -> None:
+    """Random delay to mimic human browsing between actions."""
+    time.sleep(random.uniform(lo, hi))
 
 from ..core.config import settings
 from ..core.database import db_session
@@ -147,12 +154,27 @@ def _playwright_apply(url: str, source: str, cv_path: str, cover_letter: str) ->
         logger.warning("Playwright not installed — skipping browser apply")
         return False
 
+    # Randomised user agents to reduce fingerprinting
+    _USER_AGENTS = [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    ]
+
     try:
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=settings.PLAYWRIGHT_HEADLESS)
-            context = browser.new_context(
-                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            browser = p.chromium.launch(
+                headless=settings.PLAYWRIGHT_HEADLESS,
+                args=["--disable-blink-features=AutomationControlled"],
             )
+            context = browser.new_context(
+                user_agent=random.choice(_USER_AGENTS),
+                viewport={"width": random.randint(1280, 1920), "height": random.randint(800, 1080)},
+                locale="en-US",
+                timezone_id="America/New_York",
+            )
+            # Mask navigator.webdriver
+            context.add_init_script("Object.defineProperty(navigator,'webdriver',{get:()=>undefined})")
             page = context.new_page()
 
             if "linkedin.com" in url:
@@ -171,38 +193,40 @@ def _linkedin_easy_apply(page, url: str, cv_path: str, cover_letter: str) -> boo
     if not settings.LINKEDIN_EMAIL:
         return False
     try:
-        page.goto("https://www.linkedin.com/login", timeout=15000)
+        page.goto("https://www.linkedin.com/login", timeout=20000)
+        _human_delay(1.5, 3.0)
         page.fill("#username", settings.LINKEDIN_EMAIL)
+        _human_delay(0.5, 1.2)
         page.fill("#password", settings.LINKEDIN_PASSWORD or "")
+        _human_delay(0.8, 1.5)
         page.click("[type=submit]")
-        page.wait_for_timeout(3000)
-        page.goto(url, timeout=15000)
-        page.wait_for_timeout(2000)
+        _human_delay(3.0, 5.0)  # wait for login redirect
+        page.goto(url, timeout=20000)
+        _human_delay(2.0, 4.0)
 
         easy_btn = page.query_selector(".jobs-apply-button, button:has-text('Easy Apply')")
         if not easy_btn:
             return False
         easy_btn.click()
-        page.wait_for_timeout(2000)
+        _human_delay(2.0, 3.5)
 
-        # Upload CV if file input exists
         file_input = page.query_selector("input[type=file]")
         if file_input and cv_path and pathlib.Path(cv_path).exists():
             file_input.set_input_files(cv_path)
-            page.wait_for_timeout(1000)
+            _human_delay(1.0, 2.0)
 
-        # Click through multi-step form
+        # Click through multi-step form with human-like pauses
         for _ in range(6):
             next_btn = page.query_selector("button:has-text('Next'), button:has-text('Review')")
             if not next_btn:
                 break
             next_btn.click()
-            page.wait_for_timeout(1500)
+            _human_delay(1.5, 3.0)
 
         submit_btn = page.query_selector("button:has-text('Submit application')")
         if submit_btn:
             submit_btn.click()
-            page.wait_for_timeout(2000)
+            _human_delay(2.0, 3.5)
             return True
         return False
     except Exception as exc:
@@ -214,26 +238,29 @@ def _indeed_apply(page, url: str, cv_path: str) -> bool:
     if not settings.INDEED_EMAIL:
         return False
     try:
-        page.goto(url, timeout=15000)
-        page.wait_for_timeout(2000)
+        page.goto(url, timeout=20000)
+        _human_delay(2.0, 4.0)
         apply_btn = page.query_selector("button:has-text('Apply now'), .indeed-apply-button")
         if not apply_btn:
             return False
         apply_btn.click()
-        page.wait_for_timeout(2000)
+        _human_delay(2.0, 3.5)
 
         email_input = page.query_selector("input[type=email], input[name=email]")
         if email_input:
+            _human_delay(0.5, 1.2)
             email_input.fill(settings.INDEED_EMAIL)
 
         file_input = page.query_selector("input[type=file]")
         if file_input and cv_path and pathlib.Path(cv_path).exists():
             file_input.set_input_files(cv_path)
+            _human_delay(1.0, 2.0)
 
         submit = page.query_selector("button:has-text('Submit'), button[type=submit]")
         if submit:
+            _human_delay(0.8, 1.5)
             submit.click()
-            page.wait_for_timeout(2000)
+            _human_delay(2.0, 3.5)
             return True
         return False
     except Exception as exc:
