@@ -511,6 +511,54 @@ class CandidateProfile(Base):
     updated_at = Column(DateTime, default=_now, onupdate=_now)
 
 
+# ── Uploaded CVs ──────────────────────────────────────────────────────────────
+
+class UploadedCV(Base):
+    __tablename__ = "uploaded_cvs"
+
+    id = Column(String(36), primary_key=True, default=_uuid)
+    name = Column(String(200), nullable=False)          # user-given label
+    filename = Column(String(500), nullable=False)
+    file_path = Column(String(1000), nullable=False)
+    file_size = Column(Integer, nullable=True)
+    mime_type = Column(String(100), nullable=True)
+
+    # Parsed content
+    raw_text = Column(Text, nullable=True)
+    skills = Column(JSON, default=list)
+    keywords = Column(JSON, default=list)
+    roles = Column(JSON, default=list)                  # target roles extracted
+    experience_years = Column(Float, nullable=True)
+    education = Column(JSON, default=list)
+    summary = Column(Text, nullable=True)
+
+    # Targeting
+    target_roles = Column(JSON, default=list)           # user-defined role tags
+    is_active = Column(Boolean, default=True)
+    is_default = Column(Boolean, default=False)
+
+    parsed_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=_now)
+    updated_at = Column(DateTime, default=_now, onupdate=_now)
+
+
+# ── Daily Apply Tracker ───────────────────────────────────────────────────────
+
+class DailyApplyLog(Base):
+    __tablename__ = "daily_apply_logs"
+
+    id = Column(String(36), primary_key=True, default=_uuid)
+    date = Column(String(10), nullable=False)           # YYYY-MM-DD
+    tier = Column(Integer, nullable=False)              # 1=90%+, 2=80-89%
+    count = Column(Integer, default=0)
+    created_at = Column(DateTime, default=_now)
+    updated_at = Column(DateTime, default=_now, onupdate=_now)
+
+    __table_args__ = (
+        UniqueConstraint("date", "tier", name="uq_daily_apply_date_tier"),
+    )
+
+
 # ── System Settings ───────────────────────────────────────────────────────────
 
 class SystemSetting(Base):

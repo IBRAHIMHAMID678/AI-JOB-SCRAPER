@@ -102,6 +102,15 @@ def run_pipeline(trigger: str = "manual") -> dict:
             f"[JOBPILOT] Pipeline complete in {duration:.1f}s — "
             f"Matched: {summary['matched']}, Pending: {summary['pending']}, Skipped: {summary['skipped']}"
         )
+        try:
+            from ..services.telegram_service import notify_pipeline_done
+            notify_pipeline_done(
+                total=summary["matched"] + summary["pending"] + summary["skipped"],
+                applied=summary.get("applied", 0),
+                high=summary["matched"],
+            )
+        except Exception:
+            pass
         sse_log("DONE")
 
     return summary
@@ -117,6 +126,7 @@ def _fetch_all_sources() -> List[RawJob]:
     from ..integrations.sources.arbeitnow import ArbeitnowAdapter
     from ..integrations.sources.themuse import TheMuseAdapter
     from ..integrations.sources.nodesk import NodeDeskAdapter
+    from ..integrations.sources.rozee import RozeeAdapter
 
     adapters = [
         ("JobSpy", JobSpyAdapter()),
@@ -127,6 +137,7 @@ def _fetch_all_sources() -> List[RawJob]:
         ("Arbeitnow", ArbeitnowAdapter()),
         ("TheMuse", TheMuseAdapter()),
         ("NodeDesk", NodeDeskAdapter()),
+        ("Rozee", RozeeAdapter()),
     ]
 
     all_jobs: List[RawJob] = []
@@ -282,6 +293,32 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict) -> None
                     status="MATCHED" if match.auto_approved else "DISCOVERED",
                     mode=settings.APPLICATION_MODE,
                 ))
+                db.flush()
+                job_orm_id = job_orm.id
+
+            # ── Auto-apply for high-score jobs ─────────────────────────────
+            if match.overall_score >= settings.TIER2_SCORE_MIN:
+                try:
+                    from ..services.auto_apply import apply_to_job, can_apply
+                    from ..core.models import UploadedCV
+                    if can_apply(match.overall_score):
+                        with db_session() as db2:
+                            cv = db2.query(UploadedCV).filter_by(is_default=True, is_active=True).first()
+                            if not cv:
+                                cv = db2.query(UploadedCV).filter_by(is_active=True).first()
+                            cv_path = cv.file_path if cv else ""
+                        apply_to_job(
+                            job_id=job_orm_id,
+                            job_title=job.title,
+                            company=job.company,
+                            source=job.source_name,
+                            apply_url=job.application_url,
+                            score=match.overall_score,
+                            description=job.description or "",
+                            cv_path=cv_path,
+                        )
+                except Exception as apply_exc:
+                    logger.warning("Auto-apply error for %s: %s", job.title, apply_exc)
 
             return "matched" if match.auto_approved else "pending"
 

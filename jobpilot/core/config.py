@@ -112,6 +112,28 @@ class Settings(BaseSettings):
     CANDIDATE_WORK_AUTHORIZATION: str = "Pakistan"
     CANDIDATE_REMOTE_PREFERENCE: str = "worldwide_remote"
 
+    # ── Telegram ──────────────────────────────────────────────────────────────
+    TELEGRAM_BOT_TOKEN: Optional[str] = None
+    TELEGRAM_CHAT_ID: Optional[str] = None
+
+    # ── Auto-Apply Limits ─────────────────────────────────────────────────────
+    DAILY_APPLY_LIMIT_TIER1: int = 15   # 90%+ match
+    DAILY_APPLY_LIMIT_TIER2: int = 15   # 80-89% match
+    TIER1_SCORE_MIN: int = 90
+    TIER2_SCORE_MIN: int = 80
+
+    # ── CV Storage ────────────────────────────────────────────────────────────
+    CV_UPLOAD_DIR: str = "uploads/cvs"
+
+    # ── Playwright (auto-apply) ───────────────────────────────────────────────
+    PLAYWRIGHT_HEADLESS: bool = True
+    LINKEDIN_EMAIL: Optional[str] = None
+    LINKEDIN_PASSWORD: Optional[str] = None
+    INDEED_EMAIL: Optional[str] = None
+    INDEED_PASSWORD: Optional[str] = None
+    ROZEE_EMAIL: Optional[str] = None
+    ROZEE_PASSWORD: Optional[str] = None
+
     # ── Observability ─────────────────────────────────────────────────────────
     LOG_LEVEL: str = "INFO"
     LOG_FORMAT: str = "json"                 # json | text

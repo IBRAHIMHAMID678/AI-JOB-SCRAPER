@@ -43,3 +43,15 @@ httpx>=0.27.0
 
 # ── Utilities ─────────────────────────────────────────────────────────────────
 aiofiles>=23.2.1
+
+# ── CV Parsing ────────────────────────────────────────────────────────────────
+PyMuPDF>=1.24.0
+
+# ── Browser automation (auto-apply) ──────────────────────────────────────────
+playwright>=1.44.0
+
+# ── Telegram notifications ────────────────────────────────────────────────────
+# (uses httpx which is already listed above — no extra dep needed)
+
+# ── HTML scraping (Rozee.pk fallback) ────────────────────────────────────────
+beautifulsoup4>=4.12.0

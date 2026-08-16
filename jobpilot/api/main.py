@@ -27,7 +27,7 @@ from ..core.logging import (
     _sse_job_queue,
     _sse_pending_queue,
 )
-from .routes import jobs, applications, agents, analytics, notifications, system, profile, email, whatsapp
+from .routes import jobs, applications, agents, analytics, notifications, system, profile, email, whatsapp, cvs
 
 logger = get_logger(__name__)
 
@@ -107,6 +107,7 @@ app.include_router(system.router, prefix="/api")
 app.include_router(profile.router, prefix="/api")
 app.include_router(email.router, prefix="/api")
 app.include_router(whatsapp.router, prefix="/api")
+app.include_router(cvs.router, prefix="/api")
 
 
 # ── SSE stream ────────────────────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 # JOBPILOT — Claude Checkpoint
 
-## Status: COMPLETE (pending credential configuration)
+## Status: COMPLETE (pending credential configuration + one-time Vercel link)
 
 ## Completed
 - [x] core/ — config, models (15 tables), schemas, database, logging, security, events, state_machine
@@ -19,10 +19,13 @@
 - [x] run.py, requirements.txt, .env.example, Dockerfile, docker-compose.yml
 - [x] README.md, PROJECT_STATUS.md
 
-## Pending (credentials only, not code)
+## Pending (credentials + one-time setup only)
 - [ ] Set GROQ_API_KEY in .env for LLM features
 - [ ] Set WHATSAPP_API_TOKEN + Meta Business approval for WhatsApp
 - [ ] Set EMAIL_OAUTH_CLIENT_ID/SECRET + Google OAuth for email monitoring
+- [ ] Vercel one-time link: run `vercel link` locally (logged in as Uswarooj account),
+      then add VERCEL_TOKEN to GitHub repo secrets (Settings → Secrets → Actions).
+      After that, every push to master auto-deploys via .github/workflows/deploy.yml.
 
 ## To Run
 ```bash

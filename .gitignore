@@ -67,3 +67,6 @@ test_*.db
 
 # Vercel
 .vercel/
+
+.vercel
+.env*
