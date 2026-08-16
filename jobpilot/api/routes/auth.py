@@ -26,6 +26,16 @@ class LoginBody(BaseModel):
     password: str
 
 
+class ForgotPasswordBody(BaseModel):
+    email: str
+
+
+class ResetPasswordBody(BaseModel):
+    email: str
+    otp: str
+    new_password: str
+
+
 class SettingsBody(BaseModel):
     telegram_bot_token: Optional[str] = None
     telegram_chat_id: Optional[str] = None
@@ -100,6 +110,24 @@ def logout(request: Request):
     token = _token_from_request(request)
     if token:
         auth_service.logout(token)
+    return {"ok": True}
+
+
+@router.post("/api/auth/forgot-password")
+def forgot_password(body: ForgotPasswordBody):
+    try:
+        result = auth_service.request_password_reset(body.email)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    return result
+
+
+@router.post("/api/auth/reset-password")
+def reset_password(body: ResetPasswordBody):
+    try:
+        auth_service.reset_password(body.email, body.otp, body.new_password)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
     return {"ok": True}
 
 

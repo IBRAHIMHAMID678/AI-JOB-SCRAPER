@@ -135,42 +135,92 @@ nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px}
     <div style="text-align:center;margin-bottom:20px">
       <div style="width:48px;height:48px;background:var(--acc);border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:#fff;margin-bottom:12px">JP</div>
       <div class="modal-title">JOBPILOT</div>
-      <div class="modal-sub">AI-powered job search automation</div>
+      <div class="modal-sub" id="auth-sub">AI-powered job search automation</div>
     </div>
-    <div class="modal-tabs">
+
+    <!-- Tabs (hidden during forgot-password flow) -->
+    <div class="modal-tabs" id="auth-tabs">
       <button class="modal-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
       <button class="modal-tab" id="tab-register" onclick="switchTab('register')">Register</button>
     </div>
-    <!-- Login form -->
+
+    <!-- ── Sign In ── -->
     <div id="form-login">
       <div class="form-group">
-        <label class="form-label">Username or Email</label>
+        <label class="form-label">Email or Username</label>
         <input class="form-input" id="login-user" type="text" placeholder="your@email.com" autocomplete="username">
       </div>
-      <div class="form-group" style="margin-bottom:20px">
+      <div class="form-group">
         <label class="form-label">Password</label>
         <input class="form-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div style="text-align:right;margin-bottom:16px">
+        <a href="#" style="font-size:12px;color:var(--tx3)" onclick="switchTab('forgot');return false">Forgot password?</a>
       </div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px" onclick="doLogin()" id="login-btn">Sign In</button>
       <div class="modal-err" id="login-err"></div>
     </div>
-    <!-- Register form -->
+
+    <!-- ── Register ── -->
     <div id="form-register" style="display:none">
       <div class="form-group">
-        <label class="form-label">Username</label>
-        <input class="form-input" id="reg-user" type="text" placeholder="johndoe" autocomplete="username">
+        <label class="form-label">Username <span style="color:var(--tx3)">(min 3 characters)</span></label>
+        <input class="form-input" id="reg-user" type="text" placeholder="johndoe" autocomplete="username" oninput="clearErr('reg-err')">
       </div>
       <div class="form-group">
         <label class="form-label">Email</label>
-        <input class="form-input" id="reg-email" type="email" placeholder="your@email.com" autocomplete="email">
+        <input class="form-input" id="reg-email" type="email" placeholder="your@email.com" autocomplete="email" oninput="clearErr('reg-err')">
       </div>
       <div class="form-group" style="margin-bottom:20px">
-        <label class="form-label">Password</label>
-        <input class="form-input" id="reg-pass" type="password" placeholder="min 6 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()">
+        <label class="form-label">Password <span style="color:var(--tx3)">(min 6 characters)</span></label>
+        <input class="form-input" id="reg-pass" type="password" placeholder="••••••••" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()">
       </div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px" onclick="doRegister()" id="reg-btn">Create Account</button>
       <div class="modal-err" id="reg-err"></div>
     </div>
+
+    <!-- ── Forgot password — step 1: enter email ── -->
+    <div id="form-forgot" style="display:none">
+      <div class="form-group" style="margin-bottom:20px">
+        <label class="form-label">Your registered email</label>
+        <input class="form-input" id="fp-email" type="email" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doForgot()">
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px" onclick="doForgot()" id="fp-btn">Send Reset Code</button>
+      <div class="modal-err" id="fp-err"></div>
+      <div style="text-align:center;margin-top:12px">
+        <a href="#" style="font-size:12px;color:var(--tx3)" onclick="switchTab('login');return false">← Back to Sign In</a>
+      </div>
+    </div>
+
+    <!-- ── Forgot password — step 2: enter OTP + new password ── -->
+    <div id="form-reset" style="display:none">
+      <div id="reset-otp-box" style="display:none;background:var(--warn);background:rgba(210,153,34,.15);border:1px solid rgba(210,153,34,.4);border-radius:8px;padding:12px;margin-bottom:16px;text-align:center">
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:4px">Your reset code (no Telegram configured)</div>
+        <div style="font-size:28px;font-weight:800;letter-spacing:6px;color:var(--warn)" id="reset-otp-display"></div>
+        <div style="font-size:11px;color:var(--tx3);margin-top:4px">Valid for 15 minutes</div>
+      </div>
+      <div id="reset-tg-box" style="display:none" class="alert alert-info" style="margin-bottom:14px">
+        📱 Reset code sent to your Telegram. Check your bot.
+      </div>
+      <div class="form-group">
+        <label class="form-label">6-digit Reset Code</label>
+        <input class="form-input" id="reset-otp" type="text" placeholder="123456" maxlength="6" style="letter-spacing:4px;font-size:18px;text-align:center">
+      </div>
+      <div class="form-group">
+        <label class="form-label">New Password <span style="color:var(--tx3)">(min 6 characters)</span></label>
+        <input class="form-input" id="reset-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doReset()">
+      </div>
+      <div class="form-group" style="margin-bottom:20px">
+        <label class="form-label">Confirm New Password</label>
+        <input class="form-input" id="reset-pass2" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doReset()">
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px" onclick="doReset()" id="reset-btn">Set New Password</button>
+      <div class="modal-err" id="reset-err"></div>
+      <div style="text-align:center;margin-top:12px">
+        <a href="#" style="font-size:12px;color:var(--tx3)" onclick="switchTab('forgot');return false">← Request new code</a>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -481,52 +531,152 @@ async function put(path,body){return apiFetch('/api'+path,{method:'PUT',headers:
 
 // ── Auth modal ──────────────────────────────────────────────────────────────
 
+const EMAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+let _fpEmail=''; // remember email across forgot-password steps
+
 function showAuthModal(){document.getElementById('auth-modal').style.display='flex';document.getElementById('app').style.display='none';}
 function hideAuthModal(){document.getElementById('auth-modal').style.display='none';document.getElementById('app').style.display='flex';}
+function clearErr(id){document.getElementById(id).textContent='';}
 
 function switchTab(t){
-  document.getElementById('form-login').style.display=t==='login'?'':'none';
-  document.getElementById('form-register').style.display=t==='register'?'':'none';
-  document.getElementById('tab-login').classList.toggle('active',t==='login');
-  document.getElementById('tab-register').classList.toggle('active',t==='register');
-  document.getElementById('login-err').textContent='';
-  document.getElementById('reg-err').textContent='';
+  ['login','register','forgot','reset'].forEach(n=>{
+    const el=document.getElementById('form-'+n);
+    if(el)el.style.display=n===t?'':'none';
+  });
+  const tabs=document.getElementById('auth-tabs');
+  const sub=document.getElementById('auth-sub');
+  if(t==='login'||t==='register'){
+    tabs.style.display='';
+    sub.textContent='AI-powered job search automation';
+    document.getElementById('tab-login').classList.toggle('active',t==='login');
+    document.getElementById('tab-register').classList.toggle('active',t==='register');
+  } else if(t==='forgot'){
+    tabs.style.display='none';
+    sub.textContent='Reset your password';
+    document.getElementById('fp-err').textContent='';
+    document.getElementById('fp-email').value=_fpEmail||'';
+  } else if(t==='reset'){
+    tabs.style.display='none';
+    sub.textContent='Enter your reset code';
+    document.getElementById('reset-err').textContent='';
+    document.getElementById('reset-otp').value='';
+    document.getElementById('reset-pass').value='';
+    document.getElementById('reset-pass2').value='';
+  }
+  ['login-err','reg-err','fp-err','reset-err'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='';});
 }
 
 async function doLogin(){
   const btn=document.getElementById('login-btn');
-  btn.disabled=true;btn.textContent='Signing in...';
-  document.getElementById('login-err').textContent='';
+  const errEl=document.getElementById('login-err');
+  const user=document.getElementById('login-user').value.trim();
+  const pass=document.getElementById('login-pass').value;
+  if(!user){errEl.textContent='Please enter your email or username.';return;}
+  if(!pass){errEl.textContent='Please enter your password.';return;}
+  btn.disabled=true;btn.textContent='Signing in...';errEl.textContent='';
   try{
-    const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username_or_email:document.getElementById('login-user').value,password:document.getElementById('login-pass').value})});
+    const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username_or_email:user,password:pass})});
     const d=await r.json();
-    if(!r.ok)throw new Error(d.detail||'Login failed');
+    if(!r.ok)throw new Error(d.detail||'Invalid email or password');
     _token=d.token;_user=d.user;
     localStorage.setItem('jp_token',_token);
     onLoggedIn();
-  }catch(e){document.getElementById('login-err').textContent=e.message;}
+  }catch(e){errEl.textContent=e.message;}
   finally{btn.disabled=false;btn.textContent='Sign In';}
 }
 
 async function doRegister(){
   const btn=document.getElementById('reg-btn');
-  btn.disabled=true;btn.textContent='Creating account...';
-  document.getElementById('reg-err').textContent='';
+  const errEl=document.getElementById('reg-err');
+  const username=document.getElementById('reg-user').value.trim();
+  const email=document.getElementById('reg-email').value.trim();
+  const pass=document.getElementById('reg-pass').value;
+
+  // Client-side validation
+  if(username.length<3){errEl.textContent='Username must be at least 3 characters.';return;}
+  if(!EMAIL_RE.test(email)){errEl.textContent='Please enter a valid email address (e.g. you@gmail.com).';return;}
+  if(pass.length<6){errEl.textContent='Password must be at least 6 characters.';return;}
+
+  btn.disabled=true;btn.textContent='Creating account...';errEl.textContent='';
   try{
-    const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:document.getElementById('reg-user').value,email:document.getElementById('reg-email').value,password:document.getElementById('reg-pass').value})});
+    const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,email,password:pass})});
     const d=await r.json();
-    if(!r.ok)throw new Error(d.detail||'Registration failed');
+    if(!r.ok){
+      const msg=d.detail||'Registration failed';
+      // If email taken, offer to sign in instead
+      if(msg.toLowerCase().includes('already exists')||msg.toLowerCase().includes('already taken')){
+        errEl.innerHTML=msg+' — <a href="#" onclick="switchTab(\'login\');return false">Sign in instead</a>';
+      } else {
+        errEl.textContent=msg;
+      }
+      return;
+    }
     _token=d.token;_user=d.user;
     localStorage.setItem('jp_token',_token);
     onLoggedIn();
-  }catch(e){document.getElementById('reg-err').textContent=e.message;}
+  }catch(e){errEl.textContent=e.message;}
   finally{btn.disabled=false;btn.textContent='Create Account';}
+}
+
+async function doForgot(){
+  const btn=document.getElementById('fp-btn');
+  const errEl=document.getElementById('fp-err');
+  const email=document.getElementById('fp-email').value.trim();
+  if(!EMAIL_RE.test(email)){errEl.textContent='Please enter a valid email address.';return;}
+  btn.disabled=true;btn.textContent='Sending...';errEl.textContent='';
+  _fpEmail=email;
+  try{
+    const r=await fetch('/api/auth/forgot-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.detail||'Could not send reset code');
+    switchTab('reset');
+    // Show OTP on screen if Telegram not configured, or Telegram confirmation
+    if(d.sent_via==='screen'&&d.otp){
+      document.getElementById('reset-otp-box').style.display='';
+      document.getElementById('reset-tg-box').style.display='none';
+      document.getElementById('reset-otp-display').textContent=d.otp;
+    } else if(d.sent_via==='telegram'){
+      document.getElementById('reset-tg-box').style.display='';
+      document.getElementById('reset-otp-box').style.display='none';
+    } else {
+      // no account found — show generic message (don't reveal)
+      document.getElementById('reset-tg-box').style.display='';
+      document.getElementById('reset-tg-box').textContent='If this email is registered, a reset code has been sent.';
+      document.getElementById('reset-otp-box').style.display='none';
+    }
+  }catch(e){errEl.textContent=e.message;}
+  finally{btn.disabled=false;btn.textContent='Send Reset Code';}
+}
+
+async function doReset(){
+  const btn=document.getElementById('reset-btn');
+  const errEl=document.getElementById('reset-err');
+  const otp=document.getElementById('reset-otp').value.trim();
+  const pass=document.getElementById('reset-pass').value;
+  const pass2=document.getElementById('reset-pass2').value;
+  if(otp.length!==6||!/^\d+$/.test(otp)){errEl.textContent='Enter the 6-digit code.';return;}
+  if(pass.length<6){errEl.textContent='Password must be at least 6 characters.';return;}
+  if(pass!==pass2){errEl.textContent='Passwords do not match.';return;}
+  btn.disabled=true;btn.textContent='Resetting...';errEl.textContent='';
+  try{
+    const r=await fetch('/api/auth/reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:_fpEmail,otp,new_password:pass})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.detail||'Reset failed');
+    // Success — go to login with pre-filled email
+    switchTab('login');
+    document.getElementById('login-user').value=_fpEmail;
+    document.getElementById('login-err').style.color='var(--pos)';
+    document.getElementById('login-err').textContent='Password reset! Please sign in with your new password.';
+    setTimeout(()=>{document.getElementById('login-err').style.color='';},4000);
+  }catch(e){errEl.textContent=e.message;}
+  finally{btn.disabled=false;btn.textContent='Set New Password';}
 }
 
 async function doLogout(){
   try{await fetch('/api/auth/logout',{method:'POST',headers:authHeaders()});}catch(_){}
   _token='';_user=null;localStorage.removeItem('jp_token');
   showAuthModal();
+  switchTab('login');
 }
 
 function onLoggedIn(){
