@@ -24,9 +24,9 @@ class JobSourceAdapter(ABC):
     """
 
     source_name: str = "unknown"
-    rate_limit_delay: float = 1.0
-    max_retries: int = 3
-    timeout: int = 30
+    rate_limit_delay: float = 0.5
+    max_retries: int = 1
+    timeout: int = 10
 
     def __init__(self) -> None:
         self.logger = get_logger(f"sources.{self.source_name}")

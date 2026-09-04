@@ -18,7 +18,9 @@ from scrapers.weworkremotely_scraper import get_weworkremotely_jobs
 from scrapers.nodesk_python_scraper import get_nodesk_python_jobs
 from scrapers.themuse_scraper import get_themuse_jobs
 from scrapers.arbeitnow_scraper import get_arbeitnow_jobs
-from evaluator import evaluate_job_single
+from scrapers.jobicy import fetch_jobicy_jobs
+from scrapers.workingnomads import fetch_workingnomads_jobs
+from evaluator import evaluate_job_single, clear_all_scraped_data
 from database import (
     save_job_to_db, 
     get_saved_jobs_from_db, 
@@ -29,6 +31,9 @@ from database import (
     delete_all_jobs_from_db
 )
 from log_manager import log_queue, job_queue, pending_job_queue, log
+from application_engine import JobApplicationEngine, ApplicationConfig
+from email_service import EmailService
+import asyncio
 
 
 app = FastAPI()
@@ -76,7 +81,9 @@ def run_pipeline():
         ("WeWorkRemotely RSS", get_weworkremotely_jobs),
         ("Python.org & NoDesk RSS", get_nodesk_python_jobs),
         ("The Muse API", get_themuse_jobs),
-        ("Arbeitnow API", get_arbeitnow_jobs)
+        ("Arbeitnow API", get_arbeitnow_jobs),
+        ("Jobicy API", fetch_jobicy_jobs),
+        ("Working Nomads API", fetch_workingnomads_jobs)
     ]
     
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
@@ -272,6 +279,7 @@ def mark_job_applied_endpoint(req: ApplyJobRequest):
         raise HTTPException(status_code=404, detail="Job not found")
 
 @app.post("/api/jobs/clear")
+@app.post("/api/purge")
 def clear_all_jobs_endpoint():
     """
     Clears all jobs in memory, MongoDB, and the evaluation cache.
@@ -282,15 +290,9 @@ def clear_all_jobs_endpoint():
         global_pending_jobs = []
         global_source_stats = {}
         
-    db_cleared = False
-    if is_mongo_connected:
-        db_cleared = delete_all_jobs_from_db()
-        
-    from evaluator import clear_eval_cache_local
-    cache_cleared = clear_eval_cache_local()
-    
-    log("[SYSTEM] Database, memory, and evaluation cache have been cleared successfully.")
-    return {"status": "success", "db_cleared": db_cleared, "cache_cleared": cache_cleared}
+    cleared = clear_all_scraped_data()
+    log("[SYSTEM] Database, memory, and evaluation cache have been purged successfully.")
+    return {"status": "success", "cleared": cleared}
 
 
 @app.post("/api/verify-job")

@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "name": "ai-job-scraper-orchestrator",
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/static/(.*)",
+      "dest": "jobpilot/static/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "jobpilot/static/index.html"
+    }
+  ]
+}

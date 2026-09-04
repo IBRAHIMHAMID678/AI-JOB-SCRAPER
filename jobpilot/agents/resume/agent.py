@@ -40,7 +40,7 @@ def _load_prompt(name: str) -> str:
 
 MASTER_RESUME = """
 # {name}
-{email} | {location} | LinkedIn: [Your LinkedIn] | GitHub: [Your GitHub]
+{email} | {location} | LinkedIn: {linkedin} | GitHub: {github}
 
 ## Professional Summary
 Computer Science graduate (2026) specializing in AI/ML engineering and full-stack development.
@@ -56,7 +56,7 @@ Passionate about integrating LLMs into scalable web applications.
 - **DevOps**: Docker, Git, GitHub Actions, AWS (basic)
 
 ## Education
-**Bachelor of Science in Computer Science** | [Your University] | 2022–2026
+**Bachelor of Science in Computer Science** | {university} | 2022–2026
 - Relevant Coursework: Data Structures, Algorithms, Machine Learning, Database Systems, Software Engineering
 
 ## Projects
@@ -82,9 +82,12 @@ Passionate about integrating LLMs into scalable web applications.
 Available for worldwide remote positions (based in Pakistan)
 Open to USD hourly contracts ($15-$60/hr) or full-time USD roles
 """.format(
-    name=settings.CANDIDATE_NAME,
-    email=settings.CANDIDATE_EMAIL,
-    location=settings.CANDIDATE_LOCATION,
+    name=settings.CANDIDATE_NAME or "Ibrahim Hamid",
+    email=settings.CANDIDATE_EMAIL or "ibrahimhamid.2600@gmail.com",
+    location=settings.CANDIDATE_LOCATION or "Islamabad, Pakistan",
+    linkedin=getattr(settings, "CANDIDATE_LINKEDIN", None) or "https://linkedin.com/in/ibrahim-hamid678",
+    github=getattr(settings, "CANDIDATE_GITHUB", None) or "https://github.com/IBRAHIMHAMID678",
+    university="NUST (National University of Sciences and Technology)",
 )
 
 

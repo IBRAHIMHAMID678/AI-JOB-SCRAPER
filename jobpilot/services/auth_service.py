@@ -45,15 +45,18 @@ def _hash_password(password: str) -> str:
 
 
 def _verify_password(password: str, hashed: str) -> bool:
-    try:
-        import bcrypt
-        if hashed.startswith("sha256:"):
-            raise ImportError
-        return bcrypt.checkpw(password.encode(), hashed.encode())
-    except ImportError:
-        if hashed.startswith("sha256:"):
+    if not hashed:
+        return False
+    if hashed.startswith("sha256:"):
+        try:
             _, salt, h = hashed.split(":", 2)
             return hashlib.sha256((salt + password).encode()).hexdigest() == h
+        except Exception:
+            return False
+    try:
+        import bcrypt
+        return bcrypt.checkpw(password.encode(), hashed.encode())
+    except Exception:
         return False
 
 

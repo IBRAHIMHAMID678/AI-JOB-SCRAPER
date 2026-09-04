@@ -50,13 +50,20 @@ Thumbs.db
 
 # Databases
 *.db
+*.db-shm
+*.db-wal
 *.sqlite
 
 # Testing
 .pytest_cache/
 .coverage
 htmlcov/
-test_*.db
+test_*.db*
+
+# Screenshots / Local media
+*.png
+screenshots/
+jobpilot/screenshots/
 
 # IDE
 .vscode/
@@ -69,3 +76,7 @@ test_*.db
 
 .vercel
 .env*
+
+# Allow tracking curated CSV outputs if needed
+!linkedin_job_posts_100.csv
+!linkedin_job_posts_audit_all.csv

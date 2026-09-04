@@ -499,9 +499,10 @@ specifically AI Engineer, AI Full Stack Developer, or Full Stack Developer. Cand
         renderMatchedJobs();
     });
 
-    filterBtns.forEach(btn => {
+    const filterPills = document.querySelectorAll(".filter-pill");
+    filterPills.forEach(btn => {
         btn.addEventListener("click", () => {
-            filterBtns.forEach(b => b.classList.remove("active"));
+            filterPills.forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
             activeFilter = btn.getAttribute("data-filter");
             renderMatchedJobs();
@@ -515,11 +516,11 @@ specifically AI Engineer, AI Full Stack Developer, or Full Stack Developer. Cand
     });
 
     clearAllBtn.addEventListener("click", async () => {
-        if (!confirm("Are you sure you want to clear all scraped jobs, pending review list, and the AI evaluation cache? This cannot be undone.")) {
+        if (!confirm("Are you sure you want to purge all scraped jobs, pending review list, and the evaluation cache? This cannot be undone.")) {
             return;
         }
         try {
-            const res = await fetch("/api/jobs/clear", { method: "POST" });
+            const res = await fetch("/api/purge", { method: "POST" });
             const data = await res.json();
             if (data.status === "success") {
                 matchedJobsList = [];

@@ -67,9 +67,17 @@ _TECH_SKILLS = [
 ]
 
 
+_ISLAMABAD_KEYWORDS = ["islamabad", "rawalpindi", "pindi", "isb"]
+
+
+def _is_local_pk(location: str, description: str) -> bool:
+    text = (location + " " + description).lower()
+    return any(k in text for k in _ISLAMABAD_KEYWORDS)
+
+
 def _is_us_only(location: str, description: str) -> bool:
     text = (location + " " + description).lower()
-    if any(k in text for k in _WORLDWIDE_KEYWORDS):
+    if any(k in text for k in _WORLDWIDE_KEYWORDS) or _is_local_pk(location, description):
         return False
     for pat in _US_COMPILED:
         if pat.search(text):
@@ -139,13 +147,19 @@ class AnalysisAgent(BaseAgent[NormalizedJob, JobAnalysisResult]):
         loc = job.location or "Remote"
         full_text = f"{title} {desc}"
 
+        us_only_flag = _is_us_only(loc, desc)
+        is_pk_local = _is_local_pk(loc, desc)
+        evidence = "Islamabad/Rawalpindi local job" if is_pk_local else ("Worldwide/Global remote opportunity" if not us_only_flag else "US location restriction detected")
+
         # Fast rule-based analysis (always runs)
         result = JobAnalysisResult(
             required_skills=_extract_skills(full_text),
             technologies=_extract_skills(full_text),
             seniority=_extract_seniority(title, desc),
-            us_only=_is_us_only(loc, desc),
-            pakistan_eligible=not _is_us_only(loc, desc),
+            us_only=us_only_flag,
+            pakistan_eligible=not us_only_flag,
+            is_local_pk=is_pk_local,
+            eligibility_evidence=evidence,
             prompt_version="1.0",
             model_used="rule-based",
             confidence=0.7,
@@ -154,8 +168,9 @@ class AnalysisAgent(BaseAgent[NormalizedJob, JobAnalysisResult]):
         result.years_experience_min = exp_min
         result.years_experience_max = exp_max
 
-        # LLM analysis for deeper extraction (only if not US-only and has description)
-        if not result.us_only and desc and len(desc) > 100:
+        # LLM analysis for deeper extraction (only if not US-only, has description, and API key configured)
+        has_key = bool(settings.GROQ_API_KEY or settings.OPENROUTER_API_KEY or settings.OPENAI_API_KEY)
+        if not result.us_only and desc and len(desc) > 100 and has_key:
             try:
                 llm_result = self._llm_analyze(title, desc, loc)
                 if llm_result:

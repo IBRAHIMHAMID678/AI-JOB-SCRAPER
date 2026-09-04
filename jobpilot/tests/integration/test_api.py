@@ -4,10 +4,18 @@ from fastapi.testclient import TestClient
 from jobpilot.api.main import app
 
 
+from jobpilot.api.routes.auth import get_current_user
+from jobpilot.core.models import User
+
+
 @pytest.fixture(scope="module")
 def client():
+    mock_user = User(id="test-user-id", username="testuser", email="test@example.com")
+    app.dependency_overrides[get_current_user] = lambda: mock_user
     with TestClient(app, raise_server_exceptions=True) as c:
         yield c
+    app.dependency_overrides.clear()
+
 
 
 class TestHealth:
@@ -37,7 +45,7 @@ class TestProfile:
         r = client.get("/api/profile")
         assert r.status_code == 200
         data = r.json()
-        assert data["name"] == "Hamza Ahsin"
+        assert data["name"] == "Ibrahim Hamid"
         assert isinstance(data["skills"], list)
         assert "Python" in data["skills"]
 
@@ -60,7 +68,7 @@ class TestProfile:
         r = client.get("/api/profile")
         data = r.json()
         assert data["location"] == "Lahore, Pakistan"
-        assert data["email"] == "hamzaahsin786@gmail.com"  # unchanged
+        assert data["email"] == "ibrahimhamid.2600@gmail.com"  # unchanged
 
 
 class TestSettings:

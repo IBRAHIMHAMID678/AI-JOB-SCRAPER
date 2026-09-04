@@ -61,7 +61,7 @@ def run_pipeline(trigger: str = "manual", user_id: Optional[str] = None) -> dict
 
     started_at = datetime.utcnow()
     bus.emit(EventType.PIPELINE_STARTED, {"trigger": trigger})
-    summary = {"matched": 0, "pending": 0, "skipped": 0, "errors": 0}
+    summary = {"matched": 0, "pending": 0, "skipped": 0, "errors": 0, "applied": 0}
 
     # Resolve which users to run for
     if user_id:
@@ -86,28 +86,36 @@ def run_pipeline(trigger: str = "manual", user_id: Optional[str] = None) -> dict
 
     try:
         # ── Phase 1: Source fetching (parallel, shared for all users) ────────
+        print("[JOBPILOT] Phase 1: Discovering jobs from all sources...", flush=True)
         sse_log("[JOBPILOT] Phase 1: Discovering jobs from all sources...")
         raw_jobs = _fetch_all_sources()
+        print(f"[JOBPILOT] Raw jobs collected: {len(raw_jobs)}", flush=True)
         sse_log(f"[JOBPILOT] Raw jobs collected: {len(raw_jobs)}")
 
         # ── Phase 2: Normalization ───────────────────────────────────────────
+        print(f"[JOBPILOT] Phase 2: Normalizing {len(raw_jobs)} raw jobs...", flush=True)
         sse_log("[JOBPILOT] Phase 2: Normalizing job data...")
         from ..agents.normalization.agent import NormalizationAgent
         normalized = NormalizationAgent().run(raw_jobs, trigger=trigger) or []
+        print(f"[JOBPILOT] Normalized: {len(normalized)} jobs", flush=True)
         sse_log(f"[JOBPILOT] Normalized: {len(normalized)} jobs")
 
         # ── Phase 3: Deduplication ───────────────────────────────────────────
+        print(f"[JOBPILOT] Phase 3: Deduplicating {len(normalized)} jobs...", flush=True)
         sse_log("[JOBPILOT] Phase 3: Deduplicating...")
         from ..agents.deduplication.agent import DeduplicationAgent
         unique = DeduplicationAgent().run(normalized, trigger=trigger) or []
+        print(f"[JOBPILOT] Unique new jobs: {len(unique)}", flush=True)
         sse_log(f"[JOBPILOT] Unique new jobs: {len(unique)}")
 
         if not unique:
+            print("[JOBPILOT] No new jobs found. Pipeline complete.", flush=True)
             sse_log("[JOBPILOT] No new jobs found. Pipeline complete.")
             return summary
 
         # ── Phase 4-6: Per-user matching + persist ───────────────────────────
         for uid in user_ids:
+            print(f"[JOBPILOT] Phase 4-6: Scoring & Auto-Applying across {len(unique)} jobs for user {uid[:8]}...", flush=True)
             sse_log(f"[JOBPILOT] Phase 4-6: Scoring {len(unique)} jobs for user {uid[:8]}...")
             _analyze_match_and_persist(unique, summary, uid)
 
@@ -150,16 +158,26 @@ def _fetch_all_sources() -> List[RawJob]:
     from ..integrations.sources.themuse import TheMuseAdapter
     from ..integrations.sources.nodesk import NodeDeskAdapter
     from ..integrations.sources.rozee import RozeeAdapter
+    from ..integrations.sources.scrapfly_adapter import ScrapflyAdapter
+    from ..integrations.sources.ats_greenhouse import GreenhouseATSAdapter
+    from ..integrations.sources.ats_lever import LeverATSAdapter
+    from ..integrations.sources.jobicy import JobicyAdapter
+    from ..integrations.sources.workingnomads import WorkingNomadsAdapter
 
     adapters = [
-        ("Himalayas", HimalayasAdapter()),
+        ("Jobicy", JobicyAdapter()),
+        ("WorkingNomads", WorkingNomadsAdapter()),
         ("Remotive", RemotiveAdapter()),
-        ("RemoteOK", RemoteOKAdapter()),
         ("WeWorkRemotely", WeWorkRemotelyAdapter()),
-        ("Arbeitnow", ArbeitnowAdapter()),
         ("TheMuse", TheMuseAdapter()),
+        ("Arbeitnow", ArbeitnowAdapter()),
+        ("RemoteOK", RemoteOKAdapter()),
+        ("Himalayas", HimalayasAdapter()),
         ("NodeDesk", NodeDeskAdapter()),
+        ("GreenhouseATS", GreenhouseATSAdapter()),
+        ("LeverATS", LeverATSAdapter()),
         ("Rozee", RozeeAdapter()),
+        ("Scrapfly", ScrapflyAdapter()),
     ]
 
     # JobSpy (LinkedIn/Indeed) is optional — requires pandas + python-jobspy
@@ -213,10 +231,11 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict, user_id
         )
         if not cv:
             cv = db.query(UploadedCV).filter_by(user_id=user_id, is_active=True).first()
-        cv_path = cv.file_path if cv else ""
-        cv_skills = (cv.skills or []) if cv else []
-        cv_roles = (cv.roles or []) if cv else []
-        cv_keywords = (cv.keywords or []) if cv else []
+        cv_path = str(cv.file_path or "") if cv else ""
+        cv_skills = list(cv.skills or []) if cv else []
+        cv_roles = list(cv.roles or []) if cv else []
+        cv_keywords = list(cv.keywords or []) if cv else []
+        cv_exp_years = float(getattr(cv, "experience_years", 0) or 0) if cv else 0.0
 
         user_settings = db.query(UserSettings).filter_by(user_id=user_id).first()
         user_location = (user_settings.location or "").strip().lower() if user_settings else ""
@@ -229,7 +248,7 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict, user_id
         "seniority_preference": ["junior", "entry", "mid"],
         "min_hourly_usd": 15,
         "max_hourly_usd": 60,
-        "years_experience": getattr(cv, "experience_years", 0) or 0 if cv else 0,
+        "years_experience": cv_exp_years,
         "career_level": "junior",
     }
 
@@ -276,6 +295,11 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict, user_id
             analysis: Optional[JobAnalysisResult] = analysis_agent.run(job, trigger="pipeline")
             if analysis and analysis.us_only:
                 sse_log(f"[SKIP] US-only: {title} at {company}")
+                return "skipped"
+
+            # Filter jobs requiring more than 3 years experience (target max 2-3 years)
+            if analysis and analysis.years_experience_min and analysis.years_experience_min > 3:
+                sse_log(f"[SKIP] Experience required ({analysis.years_experience_min} yrs > 3 yrs): {title} at {company}")
                 return "skipped"
 
             match: Optional[JobMatchResult] = matching_agent.run(
@@ -387,7 +411,7 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict, user_id
                 try:
                     from ..services.auto_apply import apply_to_job, can_apply
                     if can_apply(match.overall_score, user_id=user_id):
-                        apply_to_job(
+                        applied = apply_to_job(
                             job_id=job_orm_id,
                             job_title=job.title,
                             company=job.company,
@@ -398,6 +422,9 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict, user_id
                             cv_path=cv_path,
                             user_id=user_id,
                         )
+                        if applied:
+                            summary["applied"] += 1
+                            print(f"[APPLY SUCCESS #{summary['applied']}] {job.title} @ {job.company} (Score: {match.overall_score}%)", flush=True)
                 except Exception as apply_exc:
                     logger.warning("Auto-apply error for %s: %s", job.title, apply_exc)
 

@@ -48,7 +48,7 @@ def analytics_summary(db: Session = Depends(get_db), user=Depends(get_current_us
 
     new_today = db.query(JobMatch).filter(
         JobMatch.user_id == user.id,
-        func.date(JobMatch.created_at) == datetime.utcnow().date(),
+        func.date(JobMatch.matched_at) == datetime.utcnow().date(),
     ).count()
 
     return {

@@ -21,8 +21,9 @@ def init_mongo():
         db_client.admin.command('ping')
         db_instance = db_client[DB_NAME]
         jobs_collection = db_instance["matched_jobs"]
-        # Ensure unique index on job URL
+        # Ensure unique index on job URL and index on job_hash
         jobs_collection.create_index("url", unique=True)
+        jobs_collection.create_index("job_hash")
         is_mongo_connected = True
         log(f"[DATABASE] Connected to MongoDB successfully ({DB_NAME}.matched_jobs)")
     except Exception as e:

@@ -229,8 +229,8 @@ Everything else has sensible defaults.
 
 | Variable | Default | Description |
 |---|---|---|
-| `CANDIDATE_NAME` | `Hamza Ahsin` | Your full name |
-| `CANDIDATE_EMAIL` | `hamzaahsin786@gmail.com` | Your email |
+| `CANDIDATE_NAME` | `Ibrahim Hamid` | Your full name |
+| `CANDIDATE_EMAIL` | `ibrahimhamid.2600@gmail.com` | Your email |
 | `CANDIDATE_LOCATION` | `Islamabad, Pakistan` | Your location |
 | `CANDIDATE_TIMEZONE` | `Asia/Karachi` | Your timezone |
 | `CANDIDATE_REMOTE_PREFERENCE` | `worldwide_remote` | Remote work preference |

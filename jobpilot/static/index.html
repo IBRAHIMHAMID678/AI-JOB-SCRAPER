@@ -251,7 +251,8 @@ nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px}
   <nav>
     <button class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard"><span class="nav-icon">📊</span>Dashboard</button>
     <button class="nav-item" onclick="showPage('cvs')" id="nav-cvs"><span class="nav-icon">📄</span>My CVs<span class="nav-badge" id="cv-badge" style="display:none"></span></button>
-    <button class="nav-item" onclick="showPage('jobs')" id="nav-jobs"><span class="nav-icon">💼</span>Jobs Found<span class="nav-badge" id="job-badge" style="display:none"></span></button>
+    <button class="nav-item" onclick="showPage('jobs')" id="nav-jobs"><span class="nav-icon">💼</span>Global Remote Jobs<span class="nav-badge" id="job-badge" style="display:none"></span></button>
+    <button class="nav-item" onclick="showPage('localpk')" id="nav-localpk"><span class="nav-icon">📍</span>Islamabad / Rawalpindi Jobs<span class="nav-badge" id="localpk-badge" style="display:none"></span></button>
     <button class="nav-item" onclick="showPage('applied')" id="nav-applied"><span class="nav-icon">✅</span>Applied Jobs<span class="nav-badge" id="applied-badge" style="display:none"></span></button>
     <button class="nav-item" onclick="showPage('pipeline')" id="nav-pipeline"><span class="nav-icon">🤖</span>AI Pipeline</button>
     <button class="nav-item" onclick="showPage('settings')" id="nav-settings"><span class="nav-icon">⚙️</span>Settings</button>
@@ -326,7 +327,7 @@ nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px}
 
   <!-- JOBS -->
   <div id="page-jobs" style="display:none">
-    <div class="page-header"><div class="page-title">Jobs Found</div><div class="page-sub">AI-discovered and scored jobs matching your profile</div></div>
+    <div class="page-header"><div class="page-title">Global Remote Jobs</div><div class="page-sub">AI-discovered and scored jobs matching your profile</div></div>
     <div class="content">
       <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
         <select id="filter-score" style="background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--tx);font-size:13px" onchange="loadJobs()">
@@ -339,6 +340,17 @@ nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px}
       </div>
       <div id="jobs-list" class="job-list"><div class="empty"><div class="empty-icon">💼</div><div class="empty-title">No jobs yet</div><div>Run the AI pipeline to start</div></div></div>
       <div id="load-more-btn" style="text-align:center;margin-top:14px;display:none"><button class="btn btn-ghost" onclick="loadMoreJobs()">Load more</button></div>
+    </div>
+  </div>
+
+  <!-- ISLAMABAD / RAWALPINDI LOCAL JOBS -->
+  <div id="page-localpk" style="display:none">
+    <div class="page-header"><div class="page-title">Islamabad & Rawalpindi Jobs</div><div class="page-sub">Onsite, Hybrid, and Local Remote postings for Islamabad / Rawalpindi, Pakistan</div></div>
+    <div class="content">
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+        <button class="btn btn-ghost btn-sm" onclick="loadLocalPkJobs()">🔄 Refresh Local Jobs</button>
+      </div>
+      <div id="localpk-jobs-list" class="job-list"><div class="empty"><div class="empty-icon">📍</div><div class="empty-title">No local Islamabad/Rawalpindi jobs found yet</div><div>Run the AI search pipeline to fetch local postings</div></div></div>
     </div>
   </div>
 
@@ -763,9 +775,28 @@ function showPage(p){
   if(n)n.classList.add('active');
   if(p==='dashboard')loadDashboard();
   if(p==='jobs'){jobOffset=0;loadJobs();}
+  if(p==='localpk')loadLocalPkJobs();
   if(p==='applied')loadApplied();
   if(p==='cvs')loadCVs();
   if(p==='settings'){loadSettings();loadHealth();}
+}
+
+async function loadLocalPkJobs(){
+  const el=document.getElementById('localpk-jobs-list');
+  el.innerHTML='<div style="padding:30px;text-align:center"><div class="spinner"></div></div>';
+  try{
+    const jobs=await get('/jobs?limit=50&offset=0');
+    const localJobs=(jobs||[]).filter(j=>{
+      const loc=(j.location||'').toLowerCase();
+      return loc.includes('islamabad')||loc.includes('rawalpindi')||loc.includes('pindi')||(j.is_local_pk===true);
+    });
+    if(!localJobs||!localJobs.length){
+      el.innerHTML=emptyEl('📍','No local Islamabad/Rawalpindi jobs found yet','Run the AI search pipeline to discover local jobs');
+      return;
+    }
+    el.innerHTML=localJobs.map(jobCard).join('');
+    const b=document.getElementById('localpk-badge');b.textContent=localJobs.length;b.style.display='';
+  }catch(e){el.innerHTML=emptyEl('⚠️','Error loading local jobs','');}
 }
 
 // Dashboard

@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field, HttpUrl, field_validator
+from .unified_model import UnifiedJobOpportunity
 
 
 # ── Raw Job (from scrapers) ───────────────────────────────────────────────────
@@ -85,6 +86,8 @@ class JobAnalysisResult(BaseModel):
     visa_required: bool = False
     us_only: bool = False
     pakistan_eligible: bool = True
+    is_local_pk: bool = False
+    eligibility_evidence: str = ""
     red_flags: List[str] = Field(default_factory=list)
     suspicious_requirements: List[str] = Field(default_factory=list)
     model_used: Optional[str] = None

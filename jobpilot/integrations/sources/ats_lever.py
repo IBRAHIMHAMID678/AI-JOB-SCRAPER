@@ -1,0 +1,75 @@
+"""
+Lever ATS Source Ingestor
+
+Retrieves structured public job listings directly from Lever API board endpoints.
+"""
+from __future__ import annotations
+
+import requests
+from typing import Any, Dict, List, Optional
+from ...core.logging import get_logger
+from ...core.schemas import RawJob
+from .base import JobSourceAdapter
+
+logger = get_logger("sources.ats_lever")
+
+
+class LeverATSAdapter(JobSourceAdapter):
+    """
+    Direct ATS Ingestor for Lever company boards.
+    API URL: https://api.lever.co/v0/postings/{company}?mode=json
+    """
+    source_name = "ats_lever"
+    rate_limit_delay = 1.0
+
+    TARGET_COMPANIES = [
+        "palantir", "netflix", "shopify", "coursera", "docker",
+        "airtable", "dbtlabs", "n8n", "replit", "supabase"
+    ]
+
+    def fetch_company_jobs(self, company_name: str) -> List[RawJob]:
+        url = f"https://api.lever.co/v0/postings/{company_name}?mode=json"
+        jobs: List[RawJob] = []
+
+        try:
+            res = requests.get(url, timeout=5)
+            if res.status_code != 200:
+                return []
+
+            data = res.json()
+            if not isinstance(data, list):
+                return []
+
+            for item in data:
+                title = str(item.get("text", ""))
+                hosted_url = str(item.get("hostedUrl", ""))
+                loc = str(item.get("categories", {}).get("location", "Remote"))
+                desc = str(item.get("descriptionPlain", ""))
+
+                if hosted_url:
+                    jobs.append(RawJob(
+                        title=title,
+                        company=company_name.capitalize(),
+                        location=loc,
+                        description=desc,
+                        application_url=hosted_url,
+                        source=f"Lever ATS ({company_name})",
+                        source_job_id=str(item.get("id", "")),
+                    ))
+            logger.info("[Lever ATS] Fetched %d structured jobs from '%s'", len(jobs), company_name)
+        except Exception as exc:
+            logger.warning("[Lever ATS] Error fetching board '%s': %s", company_name, exc)
+
+        return jobs
+
+    def fetch(self) -> List[RawJob]:
+        import concurrent.futures
+        all_jobs: List[RawJob] = []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as ex:
+            futures = [ex.submit(self.fetch_company_jobs, company) for company in self.TARGET_COMPANIES]
+            for f in concurrent.futures.as_completed(futures):
+                try:
+                    all_jobs.extend(f.result())
+                except Exception:
+                    pass
+        return all_jobs

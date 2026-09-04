@@ -51,22 +51,27 @@ _DEFAULT_PROFILE = {
 
 def _build_role_map(preferred_roles: List[str]) -> dict:
     """Build a role→points map from the user's preferred roles."""
-    role_map: dict[str, int] = {}
-    base_pts = 22
+    role_map: dict[str, int] = {
+        "ai engineer": 25,
+        "ai developer": 25,
+        "llm engineer": 25,
+        "full stack developer": 20,
+        "python developer": 20,
+        "backend developer": 18,
+        "software engineer": 15,
+    }
     for i, role in enumerate(preferred_roles):
         role_lower = role.lower().strip()
-        if role_lower:
-            # Earlier entries in the list score higher
-            pts = max(base_pts - i * 2, 14)
-            role_map[role_lower] = pts
-    # Generic tech fallbacks
+        if role_lower and role_lower not in role_map:
+            role_map[role_lower] = max(25 - i * 2, 10)
     role_map.setdefault("developer", 10)
     role_map.setdefault("engineer", 12)
     role_map.setdefault("programmer", 10)
     return role_map
 
 
-def _role_score(title: str, profile: dict) -> tuple[int, List[str]]:
+def _role_score(title: str, profile: dict = None) -> tuple[int, List[str]]:
+    profile = profile or _DEFAULT_PROFILE
     title_lower = title.lower()
     role_map = _build_role_map(profile.get("preferred_roles", []))
     matches = []
@@ -78,7 +83,8 @@ def _role_score(title: str, profile: dict) -> tuple[int, List[str]]:
     return min(best, 25), matches
 
 
-def _skills_score(job_skills: List[str], job_desc: str, profile: dict) -> tuple[int, List[str]]:
+def _skills_score(job_skills: List[str], job_desc: str, profile: dict = None) -> tuple[int, List[str]]:
+    profile = profile or _DEFAULT_PROFILE
     text = " ".join(job_skills).lower() + " " + (job_desc or "").lower()
     user_skills = profile.get("skills", [])
     if not user_skills:

@@ -74,11 +74,11 @@ class Settings(BaseSettings):
     SCORE_MIN_THRESHOLD: int = 30
 
     # ── Application Settings ──────────────────────────────────────────────────
-    APPLICATION_MODE: str = "manual"         # manual | approval | controlled
-    AUTO_APPLICATION_ENABLED: bool = False
-    REQUIRE_APPROVAL: bool = True
-    MAX_APPLICATIONS_PER_DAY: int = 10
-    MAX_APPLICATIONS_PER_SOURCE: int = 3
+    APPLICATION_MODE: str = "controlled"     # manual | approval | controlled
+    AUTO_APPLICATION_ENABLED: bool = True
+    REQUIRE_APPROVAL: bool = False
+    MAX_APPLICATIONS_PER_DAY: int = 150
+    MAX_APPLICATIONS_PER_SOURCE: int = 50
 
     # ── Email ─────────────────────────────────────────────────────────────────
     EMAIL_SCAN_INTERVAL_MINUTES: int = 15
@@ -100,27 +100,37 @@ class Settings(BaseSettings):
     NOTIFY_INTERVIEW: bool = True
     NOTIFY_DAILY_SUMMARY: bool = True
 
+    # ── SMTP (email applications & notifications) ─────────────────────────────
+    SMTP_HOST: Optional[str] = None
+    SMTP_PORT: int = 587
+    SMTP_USER: Optional[str] = None
+    SMTP_PASS: Optional[str] = None
+
     # ── Follow-up ─────────────────────────────────────────────────────────────
     FOLLOWUP_DELAY_DAYS: int = 7
     FOLLOWUP_MAX_PER_APPLICATION: int = 2
 
     # ── Candidate Profile ─────────────────────────────────────────────────────
-    CANDIDATE_NAME: str = "Hamza Ahsin"
-    CANDIDATE_EMAIL: str = "hamzaahsin786@gmail.com"
+    CANDIDATE_NAME: str = "Ibrahim Hamid"
+    CANDIDATE_EMAIL: str = "ibrahimhamid.2600@gmail.com"
+    CANDIDATE_PHONE: str = "+92 318 0584128"
     CANDIDATE_LOCATION: str = "Islamabad, Pakistan"
     CANDIDATE_TIMEZONE: str = "Asia/Karachi"
     CANDIDATE_WORK_AUTHORIZATION: str = "Pakistan"
     CANDIDATE_REMOTE_PREFERENCE: str = "worldwide_remote"
+    CANDIDATE_LINKEDIN: str = "https://linkedin.com/in/ibrahim-hamid678"
+    CANDIDATE_GITHUB: str = "https://github.com/IBRAHIMHAMID678"
+    CANDIDATE_PORTFOLIO: str = "https://github.com/IBRAHIMHAMID678"
 
     # ── Telegram ──────────────────────────────────────────────────────────────
     TELEGRAM_BOT_TOKEN: Optional[str] = None
     TELEGRAM_CHAT_ID: Optional[str] = None
 
     # ── Auto-Apply Limits ─────────────────────────────────────────────────────
-    DAILY_APPLY_LIMIT_TIER1: int = 15   # 90%+ match
-    DAILY_APPLY_LIMIT_TIER2: int = 15   # 80-89% match
-    TIER1_SCORE_MIN: int = 90
-    TIER2_SCORE_MIN: int = 80
+    DAILY_APPLY_LIMIT_TIER1: int = 100   # 70%+ match
+    DAILY_APPLY_LIMIT_TIER2: int = 100   # 40-69% match
+    TIER1_SCORE_MIN: int = 70
+    TIER2_SCORE_MIN: int = 40
 
     # ── CV Storage ────────────────────────────────────────────────────────────
     CV_UPLOAD_DIR: str = "uploads/cvs"

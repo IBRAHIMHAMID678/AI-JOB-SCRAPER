@@ -19,10 +19,16 @@ ROZEE_API = "https://www.rozee.pk/api/jobs/search"
 ROZEE_SEARCH = "https://www.rozee.pk/job/jsearch/q/{query}/ft/1"
 
 
+from ...core.schemas import RawJob
+
+
 class RozeeAdapter(JobSourceAdapter):
     source_name = "rozee"
 
-    def fetch(self, search_terms: List[str], max_results: int = 15) -> List[Dict[str, Any]]:
+    def fetch(self, search_terms: Optional[List[str]] = None, max_results: int = 15) -> List[RawJob]:
+        from ...core.config import settings
+        if not search_terms:
+            search_terms = settings.SEARCH_TERMS
         jobs = []
         for term in search_terms[:4]:  # limit to 4 terms to avoid rate limits
             try:
@@ -34,7 +40,7 @@ class RozeeAdapter(JobSourceAdapter):
                 logger.warning("Rozee fetch failed for '%s': %s", term, exc)
         return jobs[:max_results * 2]
 
-    def _search(self, query: str, limit: int) -> List[Dict[str, Any]]:
+    def _search(self, query: str, limit: int) -> List[RawJob]:
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
             "Accept": "application/json, text/html, */*",
@@ -57,7 +63,7 @@ class RozeeAdapter(JobSourceAdapter):
         # fallback: scrape HTML listing page
         return self._scrape_listing(query, limit, headers)
 
-    def _scrape_listing(self, query: str, limit: int, headers: dict) -> List[Dict[str, Any]]:
+    def _scrape_listing(self, query: str, limit: int, headers: dict) -> List[RawJob]:
         from bs4 import BeautifulSoup
         url = f"https://www.rozee.pk/job/jsearch/q/{requests.utils.quote(query)}"
         try:
@@ -82,7 +88,7 @@ class RozeeAdapter(JobSourceAdapter):
             logger.warning("Rozee scrape failed: %s", exc)
             return []
 
-    def _normalize(self, raw: dict) -> Dict[str, Any]:
+    def _normalize(self, raw: dict) -> RawJob:
         url = raw.get("url") or raw.get("job_url") or f"https://www.rozee.pk/job/{raw.get('id', '')}"
         if not url.startswith("http"):
             url = "https://www.rozee.pk" + url
@@ -96,19 +102,15 @@ class RozeeAdapter(JobSourceAdapter):
         )
 
     def _build_job(self, title: str, company: str, url: str,
-                   location: str = "Pakistan", description: str = "", salary: str = "") -> Dict[str, Any]:
-        url_hash = hashlib.sha256(url.encode()).hexdigest()
-        return {
-            "title": title,
-            "company": company,
-            "location": location,
-            "remote_type": "remote" if "remote" in (location + title).lower() else "unknown",
-            "employment_type": "full_time",
-            "description": description,
-            "application_url": url,
-            "salary_raw": salary,
-            "source_name": "rozee",
-            "url_hash": url_hash,
-            "posting_date": datetime.utcnow().isoformat(),
-            "discovered_at": datetime.utcnow().isoformat(),
-        }
+                   location: str = "Pakistan", description: str = "", salary: str = "") -> RawJob:
+        return RawJob(
+            title=title,
+            company=company,
+            location=location,
+            remote_type="remote" if "remote" in (location + title).lower() else "unknown",
+            employment_type="full_time",
+            description=description,
+            application_url=url,
+            salary_raw=salary,
+            source="rozee",
+        )

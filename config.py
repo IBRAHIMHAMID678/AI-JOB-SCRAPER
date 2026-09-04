@@ -12,13 +12,15 @@ OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 # Scraping Settings
 SEARCH_TERMS = [
     "AI Engineer",
-    "AI Full Stack Developer",
-    "Python AI Developer",
     "LLM Engineer",
+    "RAG Engineer",
+    "Python AI Developer",
+    "AI Full Stack Developer",
     "Full Stack Developer",
-    "Software Engineer",
-    "React Developer",
-    "FastAPI Developer"
+    "FastAPI Developer",
+    "Python Backend Developer",
+    "Remote Developer UK",
+    "Software Engineer Remote"
 ]
 RESULTS_PER_TERM = 15
 
@@ -32,8 +34,8 @@ EVAL_CACHE_FILE = "eval_cache.json"
 # Target Profile Details
 CANDIDATE_PROFILE = """
 Computer Science graduate (2026), Junior Software Engineer / AI Engineer skilled in 
-Python (FastAPI), React, Next.js, Node.js, NestJS, LangChain, RAG, vector databases (MongoDB Atlas), 
-and LLM integration. Looking for Remote, USD pay ($15-$60/hr or equivalent USD salary), 0-2 years experience roles, 
-specifically AI Engineer, AI Full Stack Developer, or Full Stack Developer.
-Candidate is based in Pakistan and requires Worldwide Remote / Work from Anywhere / Remote in Pakistan.
+Python (FastAPI, Django, Flask), React, Next.js, Node.js, NestJS, LangChain, RAG, vector databases (MongoDB Atlas), 
+and LLM integration. Looking for Remote, USD/GBP pay, 0-2 years experience roles, 
+specifically AI Engineer, AI Full Stack Developer, Full Stack Developer, or Backend Engineer.
+Candidate is based in Pakistan and accepts Worldwide Remote / Work from Anywhere / Remote in Pakistan / UK Remote.
 """

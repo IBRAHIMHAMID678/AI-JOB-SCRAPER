@@ -76,27 +76,30 @@ Do NOT start with 'I am writing to express my interest'. Be direct and specific.
     def _fallback(self, title: str, company: str) -> str:
         return f"""Dear Hiring Manager at {company},
 
-I am a Computer Science graduate (2026) with hands-on experience in Python, FastAPI, React, and LangChain-based AI systems. Your {title} role aligns directly with my technical background and passion for building production AI applications.
+I am a Computer Science graduate (2026) and Software Engineer with hands-on experience in Python (FastAPI), React, Next.js, Node.js, and LangChain-based AI systems. Your {title} position aligns directly with my technical background and experience building scalable web applications and AI agents.
 
-In my projects, I have built multi-source job scrapers, RAG document systems, and full-stack applications — demonstrating the exact skill set your role requires. I work well remotely and am available immediately for worldwide remote positions.
+In my recent engineering internships and projects, I have developed AI conversational agents, RAG retrieval pipelines over vector databases (MongoDB Atlas Vector Search), presentation platforms, and automated software test suites — demonstrating the exact technical versatility your team requires. I am based in Pakistan, fully set up for worldwide remote collaboration, and available immediately.
 
-I would welcome the opportunity to discuss how my skills can contribute to {company}'s goals.
+I would welcome the opportunity to discuss how my skills and background can add value to {company}.
 
 Best regards,
-{settings.CANDIDATE_NAME}
-{settings.CANDIDATE_EMAIL}"""
+Ibrahim Hamid
+ibrahimhamid.2600@gmail.com | +92 318 0584128
+github.com/IBRAHIMHAMID678 | linkedin.com/in/ibrahim-hamid678"""
 
     def _save(self, input_data: dict, content: str) -> None:
         try:
             from ...core.database import db_session
-            from ...core.models import CoverLetter
+            from ...core.models import CoverLetter, _uuid
             with db_session() as db:
                 cl = CoverLetter(
+                    id=_uuid(),
                     job_id=input_data.get("job_id", ""),
                     content=content,
                     model_used=settings.LLM_PROVIDER,
                 )
                 db.add(cl)
+                db.commit()
         except Exception as exc:
             self.logger.warning("Could not save cover letter: %s", exc)
 
