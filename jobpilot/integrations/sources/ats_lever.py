@@ -24,7 +24,9 @@ class LeverATSAdapter(JobSourceAdapter):
 
     TARGET_COMPANIES = [
         "palantir", "netflix", "shopify", "coursera", "docker",
-        "airtable", "dbtlabs", "n8n", "replit", "supabase"
+        "airtable", "dbtlabs", "n8n", "replit", "supabase",
+        "postman", "synthesia", "modal", "resend", "railway",
+        "convex", "prisma", "cal", "clerk", "fly"
     ]
 
     def fetch_company_jobs(self, company_name: str) -> List[RawJob]:
@@ -47,6 +49,12 @@ class LeverATSAdapter(JobSourceAdapter):
                 desc = str(item.get("descriptionPlain", ""))
 
                 if hosted_url:
+                    created_ms = item.get("createdAt")
+                    created_iso = None
+                    if created_ms:
+                        from datetime import datetime, timezone
+                        created_iso = datetime.fromtimestamp(created_ms / 1000.0, tz=timezone.utc).isoformat()
+
                     jobs.append(RawJob(
                         title=title,
                         company=company_name.capitalize(),
@@ -55,6 +63,7 @@ class LeverATSAdapter(JobSourceAdapter):
                         application_url=hosted_url,
                         source=f"Lever ATS ({company_name})",
                         source_job_id=str(item.get("id", "")),
+                        posting_date=created_iso,
                     ))
             logger.info("[Lever ATS] Fetched %d structured jobs from '%s'", len(jobs), company_name)
         except Exception as exc:

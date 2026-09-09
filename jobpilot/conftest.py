@@ -50,6 +50,8 @@ def _set_test_env():
     }
     original = {k: os.environ.get(k) for k in env_patch}
     os.environ.update(env_patch)
+    from jobpilot.core.database import init_db
+    init_db()
     yield
     # Restore original values after the session finishes.
     for key, value in original.items():

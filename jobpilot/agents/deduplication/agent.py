@@ -35,16 +35,27 @@ class DeduplicationAgent(BaseAgent[List[NormalizedJob], List[NormalizedJob]]):
     name = "deduplication_agent"
 
     def _execute(self, jobs: List[NormalizedJob]) -> List[NormalizedJob]:
-        # Check DB for already-seen URL hashes
-        seen_url_hashes = self._load_existing_hashes()
+        # Check DB for already-seen URL hashes and canonical IDs
+        hashes_res = self._load_existing_hashes()
+        if isinstance(hashes_res, tuple) and len(hashes_res) == 2:
+            seen_url_hashes, seen_canon_ids = hashes_res
+        else:
+            seen_url_hashes, seen_canon_ids = (hashes_res, set())
 
         unique_url_hashes: Set[str] = set(seen_url_hashes)
+        unique_canon_ids: Set[str] = set(seen_canon_ids)
         unique_content_hashes: Set[str] = set()
         unique_title_company: Set[Tuple[str, str]] = set()
         unique_jobs: List[NormalizedJob] = []
         duplicate_count = 0
 
         for job in jobs:
+            # Signal 0: Canonical Job ID (Cross-source identity match)
+            if job.canonical_job_id and job.canonical_job_id in unique_canon_ids:
+                duplicate_count += 1
+                self.logger.debug("Duplicate canonical job ID: %s (%s at %s)", job.canonical_job_id, job.title, job.company)
+                continue
+
             # Signal 1: URL hash
             if job.url_hash in unique_url_hashes:
                 duplicate_count += 1
@@ -66,6 +77,8 @@ class DeduplicationAgent(BaseAgent[List[NormalizedJob], List[NormalizedJob]]):
                 self.logger.debug("Near-duplicate: %s at %s", job.title, job.company)
                 continue
 
+            if job.canonical_job_id:
+                unique_canon_ids.add(job.canonical_job_id)
             unique_url_hashes.add(job.url_hash)
             if job.content_hash:
                 unique_content_hashes.add(job.content_hash)
@@ -78,14 +91,16 @@ class DeduplicationAgent(BaseAgent[List[NormalizedJob], List[NormalizedJob]]):
         )
         return unique_jobs
 
-    def _load_existing_hashes(self) -> Set[str]:
-        """Load URL hashes of already-processed jobs from the database."""
+    def _load_existing_hashes(self) -> Tuple[Set[str], Set[str]]:
+        """Load URL hashes and canonical IDs of already-processed jobs from the database."""
         try:
             from ...core.database import db_session
             from ...core.models import Job
             with db_session() as db:
-                rows = db.query(Job.url_hash).all()
-                return {r[0] for r in rows if r[0]}
+                rows = db.query(Job.url_hash, Job.canonical_job_id).all()
+                url_hashes = {r[0] for r in rows if r[0]}
+                canon_ids = {r[1] for r in rows if len(r) > 1 and r[1]}
+                return url_hashes, canon_ids
         except Exception as exc:
             self.logger.warning("Could not load existing hashes: %s", exc)
-            return set()
+            return set(), set()

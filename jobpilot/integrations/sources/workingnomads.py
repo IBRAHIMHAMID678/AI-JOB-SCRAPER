@@ -34,6 +34,7 @@ class WorkingNomadsAdapter(JobSourceAdapter):
                         application_url=url,
                         source="WorkingNomads",
                         remote_type="remote",
+                        posting_date=j.get("pub_date"),
                         skills_raw=j.get("tags", "").split(",") if j.get("tags") else [],
                     ))
         except Exception as exc:

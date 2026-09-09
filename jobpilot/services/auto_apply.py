@@ -141,11 +141,19 @@ def _tier(score: int) -> int:
 
 def _find_apply_email(description: str) -> Optional[str]:
     emails = EMAIL_PATTERN.findall(description)
+    excluded = ["accommodat", "privacy", "legal", "abuse", "press", "billing", "support", "help", "contact@figma"]
     for email in emails:
         local = email.split("@")[0].lower()
+        full = email.lower()
+        if any(ex in full for ex in excluded):
+            continue
         if any(kw in local for kw in APPLY_EMAIL_KEYWORDS):
             return email
-    return emails[0] if emails else None
+    for email in emails:
+        full = email.lower()
+        if not any(ex in full for ex in excluded):
+            return email
+    return None
 
 
 def _send_email_application(
@@ -227,10 +235,18 @@ def _classify_and_resolve_field(
 
     # 1. Textarea Priority: Open-ended / Descriptive Questions
     if tag_name == "textarea" or "cover_letter" in combined or "cover letter" in combined:
+        if _has_word(combined, "linux", "open source", "ubuntu"):
+            return ("linux_experience", "I have extensive experience working in Ubuntu Linux environments, scripting with Bash and Python, deploying services with Docker containers, and managing source control via Git. I actively develop software on Linux and use it as my daily development environment.")
+        if _has_word(combined, "leadership", "organizational", "team work", "initiative"):
+            return ("leadership_experience", "Led collaborative team sprints in academic and internship projects, organizing task backlogs, coordinating Git workflows, and ensuring timely project milestones with high code quality.")
         if _has_word(combined, "why", "interest", "interested", "motivat", "reason", "fit", "join"):
             return ("why_interested", candidate["why_interested"])
         if _has_word(combined, "project", "achievement", "built", "accomplish", "portfolio desc"):
             return ("project_experience", candidate["project_experience"])
+        if _has_word(combined, "high school", "rationale"):
+            return ("high_school_rationale", "Maintained top academic performance and A grades in mathematics and core sciences throughout high school.")
+        if _has_word(combined, "degree result", "expected result"):
+            return ("degree_result", "Expected graduation July 2026 with a cumulative GPA of 3.4/4.0 in BS Computer Science.")
         if _has_word(combined, "about you", "summary", "bio", "tell us about", "introduce", "background"):
             return ("about_me", candidate["about_me"])
         if _has_word(combined, "additional", "comment", "anything else", "notes", "other information"):
@@ -241,9 +257,40 @@ def _classify_and_resolve_field(
     if input_type == "file" or _has_word(combined, "resume", "cv", "curriculum vitae", "upload file", "attachment", "attach file"):
         return ("file_upload", "RESUME")
 
-    # 3. First Name
-    if _has_word(combined, "first name", "firstname", "given name", "fname", "first_name", "first"):
-        return ("first_name", candidate["first_name"])
+    # 2b. Specific ATS Question Prompts (Evaluated before generic single keywords)
+    if _has_word(combined, "agree to use only my own words", "agree to use only my own work", "own words", "own work", "integrity"):
+        return ("own_work", "Yes")
+    if _has_word(combined, "first university degree", "degree (bachelor or master)", "bachelor of science in computer science"):
+        return ("cs_degree", "Yes")
+    if _has_word(combined, "mathematics at high school", "math"):
+        return ("high_school_math", "Top 10%")
+    if _has_word(combined, "native language at high school", "native language"):
+        return ("high_school_lang", "Top 10%")
+    if _has_word(combined, "recruitment privacy notice", "privacy policy", "privacy notice"):
+        return ("privacy_policy", "Acknowledge/Confirm")
+    if _has_word(combined, "meet in person", "week-long sprints", "sprints a year"):
+        return ("travel_sprints", "Yes")
+    if _has_word(combined, "remote work policy"):
+        return ("remote_policy", "Yes")
+    if _has_word(combined, "country do you currently work", "current work country"):
+        return ("country", "Pakistan")
+    if _has_word(combined, "nationality"):
+        return ("nationality", "Pakistan")
+    if _has_word(combined, "preferred first name", "preferred name", "preferred firstname"):
+        return ("preferred_name", candidate.get("preferred_name", candidate["first_name"]))
+    if _has_word(combined, "intend to work", "where do you intend", "from where do you intend", "intended location"):
+        return ("intend_to_work", "Worldwide Remote / Islamabad, Pakistan")
+    if _has_word(combined, "worked for", "worked here before", "previously employed", "previous employee", "worked as an employee"):
+        return ("previously_employed", "No")
+    if _has_word(combined, "18 years", "18 or older", "age of 18", "legal age"):
+        return ("legal_age", "Yes")
+
+    # 3. First Name (ensure not "first degree" or "first university")
+    if not _has_word(combined, "first degree", "first university", "first job"):
+        if _has_word(combined, "first name", "firstname", "given name", "fname", "first_name") or (
+            "first" in combined and "name" in combined
+        ):
+            return ("first_name", candidate["first_name"])
 
     # 4. Last Name / Surname
     if _has_word(combined, "last name", "lastname", "surname", "family name", "lname", "last_name", "last"):
@@ -275,8 +322,10 @@ def _classify_and_resolve_field(
     # 10. Education / University / Degree / Graduation Year / Month / GPA
     if _has_word(combined, "university", "college", "school", "institution", "campus", "academic"):
         return ("university", candidate["university"])
-    if _has_word(combined, "degree", "qualification", "field of study", "major", "discipline"):
-        return ("degree", candidate["degree"])
+    if _has_word(combined, "discipline", "major", "field of study"):
+        return ("discipline", "Computer Science")
+    if _has_word(combined, "degree", "qualification"):
+        return ("degree", "Bachelor's Degree")
     if _has_word(combined, "graduation date", "date of graduation", "grad date", "completion date"):
         return ("graduation_date", candidate.get("graduation_date", "2026-07-01"))
     if _has_word(combined, "graduation month", "grad month", "month of graduation"):
@@ -289,6 +338,8 @@ def _classify_and_resolve_field(
         return ("gpa", candidate["gpa"])
 
     # 11. Work Authorization & Visa Sponsorship
+    if _has_word(combined, "authorized to work in the country", "authorized in the country", "authorized to work in"):
+        return ("authorized_in_country", "Yes")
     if _has_word(combined, "authorized to work", "legally authorized", "eligible to work", "work permit", "work authorization", "right to work", "authorized"):
         return ("work_authorization", "Yes")
     if _has_word(combined, "require sponsorship", "require visa", "need sponsorship", "visa sponsorship", "sponsorship", "visa"):
@@ -352,9 +403,11 @@ def _classify_and_resolve_field(
     if _has_word(combined, "pronoun", "pronouns"):
         return ("pronouns", "He/Him")
     if _has_word(combined, "veteran", "military"):
-        return ("veteran", "No")
+        return ("veteran", "I am not a protected veteran")
     if _has_word(combined, "disability", "handicap", "physical limitation"):
-        return ("disability", "No")
+        return ("disability", "No, I do not have a disability")
+    if _has_word(combined, "hispanic", "latino"):
+        return ("hispanic", "No")
     if _has_word(combined, "race", "ethnicity"):
         return ("race", "Asian")
 
@@ -382,17 +435,77 @@ def _classify_and_resolve_field(
 # =============================================================================
 
 def _human_type(element, text: str) -> None:
-    """Type text into a Playwright element with small random delays."""
+    """Type text into a Playwright element and dispatch native React prototype setters/events."""
     try:
-        element.click()
-        element.fill("")
-        time.sleep(0.05)
-        element.fill(str(text))
+        element.click(timeout=1500)
     except Exception:
-        try:
-            element.fill(str(text))
-        except Exception:
-            pass
+        pass
+    try:
+        element.fill(str(text), timeout=2000)
+    except Exception:
+        pass
+    try:
+        element.evaluate("""(el, val) => {
+            const proto = el.tagName.toLowerCase() === 'textarea' ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
+            const setter = Object.getOwnPropertyDescriptor(proto, 'value')?.set;
+            if (setter) {
+                setter.call(el, val);
+            } else {
+                el.value = val;
+            }
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+            el.dispatchEvent(new Event('blur', { bubbles: true }));
+        }""", str(text))
+    except Exception:
+        pass
+
+
+def _get_element_prompt(el) -> str:
+    """Climbs label and ancestor container hierarchy to reliably extract question prompt text."""
+    try:
+        prompt = el.evaluate("""e => {
+            // Check direct id
+            if (e.id) {
+                const l = document.querySelector(`label[for='${e.id}']`) || document.getElementById(`${e.id}-label`);
+                if (l && l.innerText.trim()) return l.innerText.trim();
+            }
+            // Check inner input id (for custom select controls, comboboxes, dropzones)
+            const innerInp = e.tagName.toLowerCase() === 'input' ? e : e.querySelector('input');
+            if (innerInp && innerInp.id) {
+                const l = document.querySelector(`label[for='${innerInp.id}']`) || document.getElementById(`${innerInp.id}-label`);
+                if (l && l.innerText.trim()) return l.innerText.trim();
+            }
+            // Check parent field/question container label
+            const field = e.closest('.field, [class*="field"], [class*="question"]');
+            if (field) {
+                const l = field.querySelector('label, legend, [class*="label"], [class*="title"], h3, strong');
+                if (l && l.innerText.trim()) return l.innerText.trim();
+            }
+            const lClosest = e.closest('label');
+            if (lClosest && lClosest.innerText.trim()) return lClosest.innerText.trim();
+
+            const ariaLabel = e.getAttribute('aria-label');
+            if (ariaLabel && ariaLabel.trim()) return ariaLabel.trim();
+            const ariaLabelledby = e.getAttribute('aria-labelledby');
+            if (ariaLabelledby) {
+                const elLabel = document.getElementById(ariaLabelledby);
+                if (elLabel && elLabel.innerText.trim()) return elLabel.innerText.trim();
+            }
+
+            let cur = e.parentElement;
+            for (let depth = 0; depth < 6 && cur; depth++) {
+                const labelElem = cur.querySelector('label, [class*="label"], [class*="title"], legend, p, strong, h3, h4');
+                if (labelElem && labelElem.innerText.trim() && !labelElem.innerText.toLowerCase().includes('select...')) {
+                    return labelElem.innerText.trim();
+                }
+                cur = cur.parentElement;
+            }
+            return '';
+        }""")
+        return (prompt or "").strip()
+    except Exception:
+        return ""
 
 
 def _fill_select(select_el, desired_value: str) -> bool:
@@ -462,11 +575,84 @@ def _fill_radio_or_checkbox(element, field_category: str, desired_value: str) ->
         logger.debug("Could not interact with radio/checkbox: %s", exc)
 
 
+def _handle_custom_react_select(page, csel, category: str, value: str) -> bool:
+    """Clicks custom React-Select or combobox control and selects the best matching option cleanly."""
+    try:
+        csel.click(timeout=2500)
+        time.sleep(0.2)
+
+        search_kw = str(value)
+        if category in ("work_authorization", "authorized_in_country", "legal_age", "own_work", "cs_degree", "travel_sprints", "remote_policy"):
+            search_kw = "Yes"
+        elif category in ("currently_employed", "previously_employed", "sponsorship_needed", "hispanic"):
+            search_kw = "No"
+        elif category == "veteran":
+            search_kw = "not a protected"
+        elif category == "disability":
+            search_kw = "No"
+        elif category in ("country", "nationality"):
+            search_kw = "Pakistan"
+        elif category == "gender":
+            search_kw = "Male"
+        elif category == "pronouns":
+            search_kw = "He/Him"
+        elif category in ("high_school_math", "high_school_lang"):
+            search_kw = "Top 10%"
+        elif category == "race":
+            search_kw = "Asian"
+        elif category == "degree":
+            search_kw = "Bachelor"
+        elif category in ("discipline", "major"):
+            search_kw = "Computer Science"
+        elif category in ("privacy_policy", "privacy_notice", "recruitment_privacy"):
+            search_kw = "Acknowledge"
+        elif category == "university":
+            search_kw = "Other"
+
+        if len(search_kw) > 30:
+            search_kw = "Yes" if any(w in search_kw.lower() for w in ["yes", "agree", "confirm", "true", "bachelor", "cs"]) else ""
+
+        if search_kw:
+            page.keyboard.type(search_kw, delay=15)
+            # Wait up to 1.5s for async menu options to populate
+            for _ in range(6):
+                time.sleep(0.25)
+                opts = page.locator(".select__menu [class*='option'], [class*='-option'], div[role='option']").all()
+                if opts:
+                    break
+
+        # Look for visible options in menu
+        menu_options = page.locator(".select__menu [class*='option'], [class*='-option'], div[role='option']").all()
+        if menu_options:
+            target_opt = menu_options[0]
+            val_lower = search_kw.lower()
+            for opt in menu_options:
+                txt = (opt.inner_text() or "").strip().lower()
+                if val_lower == "male":
+                    if txt == "male":
+                        target_opt = opt
+                        break
+                elif val_lower in txt:
+                    target_opt = opt
+                    break
+            target_opt.click(timeout=2500)
+            time.sleep(0.2)
+            return True
+        else:
+            # Safely close without pressing Enter (prevents premature form submission!)
+            page.keyboard.press("Escape")
+            time.sleep(0.1)
+            return False
+    except Exception as exc:
+        logger.debug("Error selecting custom dropdown: %s", exc)
+        return False
+
+
 def _fill_all_form_fields(page, candidate: dict, cv_path: str, cover_letter: Optional[str] = None) -> int:
     """
     Universal Form Filler:
     Finds every input, textarea, select, file upload, radio, and checkbox on the page
-    and fills it appropriately from Ibrahim Hamid's candidate profile.
+    and fills it appropriately from Ibrahim Hamid's candidate profile using React synthetic events.
     Returns the count of successfully filled fields.
     """
     filled_count = 0
@@ -479,26 +665,33 @@ def _fill_all_form_fields(page, candidate: dict, cv_path: str, cover_letter: Opt
                 finput.set_input_files(cv_path)
                 filled_count += 1
                 logger.info("Uploaded resume file from %s", cv_path)
-                time.sleep(0.5)
+                time.sleep(2.5)  # Wait for cloud / S3 attachment to complete
             except Exception as exc:
                 logger.debug("File input upload failed: %s", exc)
 
     # -- 2. Text / Email / Tel / Number / Date Inputs --------------------------
     inputs = page.locator("input:not([type='file']):not([type='hidden']):not([type='submit']):not([type='button']):not([type='reset']):not([type='radio']):not([type='checkbox'])").all()
+    logger.info("Processing %d text inputs", len(inputs))
     for inp in inputs:
         try:
             if not inp.is_visible():
                 continue
 
             input_type = (inp.get_attribute("type") or "text").lower()
+            role = (inp.get_attribute("role") or "").lower()
+            cls = (inp.get_attribute("class") or "").lower()
+            tabindex = inp.get_attribute("tabindex") or ""
+            aria_hidden = inp.get_attribute("aria-hidden") or ""
+
+            if tabindex == "-1" or aria_hidden == "true" or role == "combobox" or "select" in cls or input_type == "search":
+                # Handled specifically by React-Select combobox handler
+                continue
+
             name_attr = inp.get_attribute("name") or ""
             id_attr = inp.get_attribute("id") or ""
             placeholder = inp.get_attribute("placeholder") or ""
             aria_label = inp.get_attribute("aria-label") or ""
-            label_text = inp.evaluate("""el => {
-                const label = document.querySelector(`label[for='${el.id}']`) || el.closest('label') || el.parentElement;
-                return label ? label.innerText : '';
-            }""") or ""
+            label_text = _get_element_prompt(inp)
 
             category, value = _classify_and_resolve_field(
                 tag_name="input",
@@ -516,34 +709,27 @@ def _fill_all_form_fields(page, candidate: dict, cv_path: str, cover_letter: Opt
             if not current_val and value:
                 # If entering phone and country code is already handled by a separate element
                 if category == "phone":
-                    # Check if a country code selector exists on page
                     country_selector = page.locator("[id*='country'], [class*='country'], button[aria-label*='Country']").first
                     if country_selector.count() > 0:
-                        value = candidate["phone_national"]  # '03180584128' or '3180584128'
-                        if value.startswith("0"):
-                            value = value[1:]  # e.g. 3180584128
+                        value = candidate["phone_national"]
 
                 _human_type(inp, str(value))
                 filled_count += 1
                 logger.debug("Filled input [%s / %s] with: %s", id_attr or name_attr, category, str(value)[:30])
 
-                # If this is a combobox or autocomplete (e.g. React-Select location)
+                # Autocomplete / combobox handling
                 role = inp.get_attribute("role") or ""
                 if role == "combobox" or "select" in (inp.get_attribute("class") or "").lower():
-                    time.sleep(0.5)
+                    time.sleep(0.4)
                     try:
-                        # Press Enter to select top autocomplete suggestion
-                        page.keyboard.press("ArrowDown")
-                        time.sleep(0.2)
-                        page.keyboard.press("Enter")
-                    except Exception:
-                        pass
-
-                    try:
-                        menu_options = page.locator("[class*='-option'], div[role='option'], [id*='-option-0']").all()
+                        menu_options = page.locator(".select__menu [class*='option'], [class*='-option'], div[role='option']").all()
                         if menu_options:
-                            menu_options[0].click()
-                            time.sleep(0.3)
+                            menu_options[0].click(timeout=2500)
+                            time.sleep(0.2)
+                        else:
+                            page.keyboard.press("ArrowDown")
+                            time.sleep(0.1)
+                            page.keyboard.press("Enter")
                     except Exception:
                         pass
 
@@ -570,10 +756,7 @@ def _fill_all_form_fields(page, candidate: dict, cv_path: str, cover_letter: Opt
             id_attr = ta.get_attribute("id") or ""
             placeholder = ta.get_attribute("placeholder") or ""
             aria_label = ta.get_attribute("aria-label") or ""
-            label_text = ta.evaluate("""el => {
-                const label = document.querySelector(`label[for='${el.id}']`) || el.closest('label') || el.parentElement;
-                return label ? label.innerText : '';
-            }""") or ""
+            label_text = _get_element_prompt(ta)
 
             category, value = _classify_and_resolve_field(
                 tag_name="textarea",
@@ -605,10 +788,7 @@ def _fill_all_form_fields(page, candidate: dict, cv_path: str, cover_letter: Opt
             name_attr = sel.get_attribute("name") or ""
             id_attr = sel.get_attribute("id") or ""
             aria_label = sel.get_attribute("aria-label") or ""
-            label_text = sel.evaluate("""el => {
-                const label = document.querySelector(`label[for='${el.id}']`) || el.closest('label') || el.parentElement;
-                return label ? label.innerText : '';
-            }""") or ""
+            label_text = _get_element_prompt(sel)
 
             category, value = _classify_and_resolve_field(
                 tag_name="select",
@@ -637,15 +817,12 @@ def _fill_all_form_fields(page, candidate: dict, cv_path: str, cover_letter: Opt
                 continue
 
             # Check if dropdown already has a selected value
-            text_inside = csel.inner_text() or ""
-            if text_inside.strip() and not any(ph in text_inside.lower() for ph in ["select", "choose", "type"]):
+            text_inside = (csel.inner_text() or "").strip()
+            if text_inside and not any(ph in text_inside.lower() for ph in ["select", "choose", "type"]):
                 continue
 
             # Get question label
-            label_text = csel.evaluate("""el => {
-                const parent = el.closest('[class*=\"field\"], [class*=\"form-group\"], label') || el.parentElement;
-                return parent ? parent.innerText : '';
-            }""") or ""
+            label_text = _get_element_prompt(csel)
 
             category, value = _classify_and_resolve_field(
                 tag_name="select",
@@ -659,15 +836,9 @@ def _fill_all_form_fields(page, candidate: dict, cv_path: str, cover_letter: Opt
                 cover_letter=cover_letter,
             )
 
-            # Click dropdown control to open menu
-            csel.click()
-            time.sleep(0.3)
-            # Try to pick matching option or top option
-            page.keyboard.press("ArrowDown")
-            time.sleep(0.2)
-            page.keyboard.press("Enter")
-            time.sleep(0.2)
-            filled_count += 1
+            ok = _handle_custom_react_select(page, csel, category, str(value))
+            if ok:
+                filled_count += 1
         except Exception as exc:
             logger.debug("Error handling custom dropdown: %s", exc)
 
@@ -679,7 +850,7 @@ def _fill_all_form_fields(page, candidate: dict, cv_path: str, cover_letter: Opt
                 continue
             name_attr = rad.get_attribute("name") or ""
             id_attr = rad.get_attribute("id") or ""
-            label_text = rad.evaluate("el => el.closest('label')?.innerText || el.parentElement?.innerText || ''") or ""
+            label_text = _get_element_prompt(rad)
 
             category, value = _classify_and_resolve_field(
                 tag_name="input",
@@ -698,27 +869,38 @@ def _fill_all_form_fields(page, candidate: dict, cv_path: str, cover_letter: Opt
             logger.debug("Error handling radio button: %s", exc)
 
     checkboxes = page.locator("input[type='checkbox']").all()
+    group_counts: Dict[str, int] = {}
+    preferred_skills = ["python", "ai/ml", "distributed systems", "javascript", "bash", "linux", "web back-end", "cloud", "data science"]
+
     for chk in checkboxes:
         try:
-            if not chk.is_visible():
-                continue
             name_attr = chk.get_attribute("name") or ""
             id_attr = chk.get_attribute("id") or ""
-            label_text = chk.evaluate("el => el.closest('label')?.innerText || el.parentElement?.innerText || ''") or ""
+            label_text = _get_element_prompt(chk)
+            label_lower = label_text.lower()
 
-            category, value = _classify_and_resolve_field(
-                tag_name="input",
-                input_type="checkbox",
-                name_attr=name_attr,
-                id_attr=id_attr,
-                placeholder_attr="",
-                label_text=label_text,
-                aria_label="",
-                candidate=candidate,
-                cover_letter=cover_letter,
-            )
-            _fill_radio_or_checkbox(chk, category, str(value))
-            filled_count += 1
+            def _toggle_chk(el):
+                parent_box = el.locator("xpath=ancestor::div[contains(@class, 'checkbox')][1]")
+                if parent_box.count() > 0:
+                    parent_box.click(force=True)
+                else:
+                    el.check(force=True)
+
+            # Grouped multi-choice checkboxes (e.g. name ends with [])
+            if "[]" in name_attr:
+                cnt = group_counts.get(name_attr, 0)
+                if cnt >= 3:
+                    continue
+                if any(ps in label_lower for ps in preferred_skills):
+                    _toggle_chk(chk)
+                    group_counts[name_attr] = cnt + 1
+                    filled_count += 1
+                continue
+
+            # Standard single consent / terms checkboxes
+            if any(w in label_lower for w in ["agree", "consent", "privacy", "terms", "policy", "certif", "acknowledge", "confirm", "18 years"]):
+                _toggle_chk(chk)
+                filled_count += 1
         except Exception as exc:
             logger.debug("Error handling checkbox: %s", exc)
 
@@ -956,22 +1138,68 @@ def apply_to_job(
     cv_path: Optional[str] = None,
     cover_letter: Optional[str] = None,
     user_id: Optional[str] = None,
+    canonical_job_id: Optional[str] = None,
     dry_run: bool = False,
+    worker_id: Optional[str] = None,
 ) -> bool:
     """
     Main entry point to execute an auto-application for Ibrahim Hamid.
     Guarantees:
     - Pre-flight Experience and Seniority Gatekeeper check.
     - Zero fake submissions or staged fallbacks.
+    - Idempotency: Checks prior application status in DB before any execution.
+    - Atomic database lock: Prevents concurrent workers or races from double-applying.
     - SUBMITTED is recorded ONLY when affirmative browser evidence exists.
     """
     from ..core.candidate import resolve_resume_path
     from ..core.eligibility import evaluate_job_eligibility
+    from ..core.application_lock import acquire_application_lock, release_application_lock
+    import hashlib
 
     candidate = _candidate()
     tier = _tier(score)
+    user_id = user_id or "3e614c95-b3a4-43d6-805d-3ffed73f64ba"
 
-    logger.info("Attempting auto-apply for '%s' at '%s' (Score: %d, Tier: %d)", job_title, company, score, tier)
+    # Compute canonical_job_id if not provided
+    if not canonical_job_id:
+        norm_co = re.sub(r"[^a-z0-9]", "", company.lower())
+        norm_ti = re.sub(r"[^a-z0-9]", "", job_title.lower())
+        canonical_job_id = hashlib.sha256(f"{norm_co}::{norm_ti}".encode()).hexdigest()[:24]
+
+    logger.info("Attempting auto-apply for '%s' at '%s' (Canonical: %s, Score: %d)", job_title, company, canonical_job_id, score)
+
+    # Pre-flight check: Already applied or actively in-flight in DB?
+    try:
+        with db_session() as db:
+            existing_app = db.query(Application).filter(
+                (Application.job_id == job_id) | (Application.canonical_job_id == canonical_job_id)
+            ).first()
+            if existing_app and existing_app.status in (
+                "SUBMITTED",
+                "CONFIRMED",
+                "SUBMISSION_UNVERIFIED",
+                "SUBMISSION_UNCONFIRMED",
+            ):
+                logger.warning(
+                    "[IDEMPOTENCY BLOCKED] Application already exists for job %s (Canonical: %s) with status '%s'. Skipping to prevent duplicate.",
+                    job_id,
+                    canonical_job_id,
+                    existing_app.status,
+                )
+                return False
+    except Exception as db_chk_err:
+        logger.warning("Error checking existing application: %s", db_chk_err)
+
+    # Acquire Atomic Application Lock
+    lock_acquired = acquire_application_lock(canonical_job_id=canonical_job_id, candidate_id=user_id, worker_id=worker_id, timeout_seconds=240)
+    if not lock_acquired:
+        logger.warning(
+            "[RACE CONDITION BLOCKED] Another worker has acquired lock for %s (%s at %s). Skipping execution.",
+            canonical_job_id,
+            job_title,
+            company,
+        )
+        return False
 
     # 1. Experience, Seniority, and Geographic Gatekeeper Check
     eligibility = evaluate_job_eligibility(
@@ -1023,12 +1251,14 @@ def apply_to_job(
         except Exception:
             pass
 
+        release_application_lock(canonical_job_id, worker_id)
         return False
 
     # 2. Authoritative Resume Validation
     resolved_cv = resolve_resume_path(cv_path)
     if not resolved_cv:
         logger.error("Auto-apply cannot proceed: Valid resume PDF not found!")
+        release_application_lock(canonical_job_id, worker_id)
         return False
     cv_path = resolved_cv
 
@@ -1150,6 +1380,8 @@ def apply_to_job(
                 app = db.query(Application).filter_by(job_id=job_id).first()
                 if app:
                     app.status = final_status
+                    if canonical_job_id:
+                        app.canonical_job_id = canonical_job_id
                     app.user_notes = f"Status: {final_status} via {strategy_used} | Details: {evidence_notes}"
                 db.commit()
         except Exception:
@@ -1164,6 +1396,7 @@ def apply_to_job(
                 {
                     "$set": {
                         "job_id": job_id,
+                        "canonical_job_id": canonical_job_id,
                         "job_title": job_title,
                         "company": company,
                         "status": final_status,
@@ -1180,4 +1413,16 @@ def apply_to_job(
         except Exception:
             pass
 
+    # Ensure canonical_job_id is recorded on the application record if applied
+    if applied_ok and canonical_job_id:
+        try:
+            with db_session() as db:
+                app = db.query(Application).filter_by(job_id=job_id).first()
+                if app and not app.canonical_job_id:
+                    app.canonical_job_id = canonical_job_id
+                    db.commit()
+        except Exception:
+            pass
+
+    release_application_lock(canonical_job_id, worker_id)
     return applied_ok

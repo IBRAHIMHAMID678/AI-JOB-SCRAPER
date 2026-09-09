@@ -236,6 +236,7 @@ class Job(Base):
     # Deduplication
     url_hash = Column(String(64), unique=True, nullable=False)
     content_hash = Column(String(64), nullable=True)
+    canonical_job_id = Column(String(100), nullable=True, index=True)
     is_duplicate = Column(Boolean, default=False)
     duplicate_of_id = Column(String(36), nullable=True)
 
@@ -383,10 +384,12 @@ class Application(Base):
 
     id = Column(String(36), primary_key=True, default=_uuid)
     job_id = Column(String(36), ForeignKey("jobs.id"), nullable=False)
+    canonical_job_id = Column(String(100), nullable=True, index=True)
     user_id = Column(String(36), ForeignKey("users.id"), nullable=True)
 
     __table_args__ = (
         UniqueConstraint("job_id", "user_id", name="uq_application_job_user"),
+        UniqueConstraint("canonical_job_id", "user_id", name="uq_application_canonical_user"),
     )
 
     status = Column(String(50), default=ApplicationStatus.DISCOVERED.value)
@@ -658,3 +661,20 @@ class SystemSetting(Base):
     value = Column(JSON, nullable=True)
     description = Column(Text, nullable=True)
     updated_at = Column(DateTime, default=_now, onupdate=_now)
+
+
+# ── Application Locks (Concurrency & Double-Apply Protection) ────────────────
+
+class ApplicationLock(Base):
+    """
+    Atomic execution lock ensuring that only ONE worker can ever apply
+    to a canonical job at any time, eliminating race conditions.
+    """
+    __tablename__ = "application_locks"
+
+    canonical_job_id = Column(String(100), primary_key=True)
+    candidate_id = Column(String(100), nullable=False)
+    worker_id = Column(String(100), nullable=False)
+    locked_at = Column(DateTime, default=_now, nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+

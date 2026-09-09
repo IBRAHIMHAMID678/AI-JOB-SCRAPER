@@ -32,6 +32,7 @@ class RemotiveAdapter(JobSourceAdapter):
                             description=j.get("description", ""),
                             application_url=url,
                             source="Remotive",
+                            posting_date=j.get("publication_date"),
                             salary_raw=j.get("salary", None),
                             remote_type="remote",
                             skills_raw=j.get("tags", []) or [],

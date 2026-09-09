@@ -417,22 +417,26 @@ def extract_linkedin_post(page, post_url: str) -> Optional[Dict[str, str]]:
         location=location,
     )
 
-    # 12. Classify Final Status
+    # 12. Classify Final Status (Only FRESH, actionable jobs qualify)
     qualification_status = "REJECTED"
     qualification_reason = ""
 
     if not elig_decision.is_eligible:
         qualification_status = "REJECTED"
         qualification_reason = f"{elig_decision.decision}: {elig_decision.reason}"
-    elif freshness_status == "STALE":
+    elif freshness_status in ("STALE", "AGING", "UNKNOWN"):
         qualification_status = "REJECTED"
-        qualification_reason = f"STALE_POST: {freshness_reason}"
+        qualification_reason = f"NOT_FRESH ({freshness_status}): {freshness_reason}"
     elif not (app_url or app_email):
         qualification_status = "BORDERLINE"
         qualification_reason = "Matches candidate profile but missing verified direct application URL or email (only DM route)"
+    elif app_url and "lnkd.in" in app_url and not app_email:
+        # lnkd.in without target destination or email is non-actionable
+        qualification_status = "BORDERLINE"
+        qualification_reason = "Unresolved shortened link without verified company or email route"
     else:
         qualification_status = "QUALIFIED"
-        qualification_reason = f"Verified fresh ({freshness_status}) opportunity matching candidate profile (Role: {job_title}, Tech: {', '.join(matched_techs[:4]) or 'General Software'})"
+        qualification_reason = f"Verified FRESH opportunity matching candidate profile (Role: {job_title}, Tech: {', '.join(matched_techs[:4]) or 'General Software'})"
 
     # Fingerprint
     fingerprint = create_opportunity_fingerprint(company, job_title, app_url, app_email)

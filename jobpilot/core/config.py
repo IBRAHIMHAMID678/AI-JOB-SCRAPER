@@ -5,6 +5,7 @@ All settings come from environment variables; nothing is hard-coded.
 from __future__ import annotations
 
 import os
+import pathlib
 from functools import lru_cache
 from typing import List, Optional
 
@@ -24,7 +25,10 @@ class Settings(BaseSettings):
     ALLOWED_HOSTS: List[str] = ["*"]
 
     # ── Database ──────────────────────────────────────────────────────────────
-    DATABASE_URL: str = "sqlite:///./jobpilot.db"
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL",
+        f"sqlite:///{pathlib.Path(__file__).resolve().parent.parent.parent.as_posix()}/jobpilot.db"
+    )
     DATABASE_POOL_SIZE: int = 5
     DATABASE_ECHO: bool = False
 

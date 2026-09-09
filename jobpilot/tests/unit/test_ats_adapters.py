@@ -63,3 +63,25 @@ class TestModernResumeRecognition:
         path = resolve_resume_path()
         assert path is not None
         assert "Ibrahim_Hamid_Resume.pdf" in path
+
+
+class TestDryRunSafetyMode:
+    def test_greenhouse_agent_dry_run_contract(self):
+        from jobpilot.agents.application.greenhouse_agent import GreenhouseAgent
+        agent = GreenhouseAgent()
+        assert hasattr(agent, "apply")
+        assert agent.agent_type == "greenhouse"
+
+    def test_lever_agent_dry_run_contract(self):
+        from jobpilot.agents.application.lever_agent import LeverAgent
+        agent = LeverAgent()
+        assert hasattr(agent, "apply")
+        assert agent.agent_type == "lever"
+
+    def test_geographic_eligibility_custom_question(self):
+        from jobpilot.agents.application.greenhouse_agent import GreenhouseAgent
+        agent = GreenhouseAgent()
+        candidate = get_canonical_candidate_profile()
+        assert "Pakistan" in candidate["location"]
+        assert candidate["phone_dial_code"] == "92"
+

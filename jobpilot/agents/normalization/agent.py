@@ -104,6 +104,11 @@ class NormalizationAgent(BaseAgent[List[RawJob], List[NormalizedJob]]):
         desc = raw.description or ""
         sal_min, sal_max, currency = _parse_salary(raw.salary_raw)
 
+        norm_co = re.sub(r"[^a-z0-9]", "", raw.company.lower())
+        norm_ti = re.sub(r"[^a-z0-9]", "", raw.title.lower())
+        import hashlib
+        canon_id = hashlib.sha256(f"{norm_co}::{norm_ti}".encode()).hexdigest()[:24]
+
         return NormalizedJob(
             source_name=raw.source,
             source_job_id=raw.source_job_id,
@@ -122,4 +127,5 @@ class NormalizationAgent(BaseAgent[List[RawJob], List[NormalizedJob]]):
             application_url=raw.application_url,
             url_hash=hash_url(raw.application_url),
             content_hash=hash_content(raw.title, raw.company, desc),
+            canonical_job_id=canon_id,
         )

@@ -26,7 +26,12 @@ class GreenhouseATSAdapter(JobSourceAdapter):
     TARGET_COMPANIES = [
         "vercel", "canonical", "gitlab", "stripe", "figma",
         "datadog", "postman", "brex", "gusto", "reddit",
-        "discord", "instacart", "affirm", "elastic", "cockroachlabs"
+        "discord", "instacart", "affirm", "elastic", "cockroachlabs",
+        "hashicorp", "automattic", "zapier", "remote", "sourcegraph",
+        "scale", "perplexity", "writer", "retool", "huggingface",
+        "cursor", "elevenlabs", "mistral", "together", "runway",
+        "deepgram", "baseten", "octoai", "cohere", "pinecone",
+        "weaviate", "qdrant", "anthropic", "openai", "groq"
     ]
 
     def fetch_company_jobs(self, company_board_token: str) -> List[RawJob]:
@@ -60,6 +65,7 @@ class GreenhouseATSAdapter(JobSourceAdapter):
                         application_url=job_url,
                         source=f"Greenhouse ATS ({company_board_token})",
                         source_job_id=str(item.get("id", "")),
+                        posting_date=item.get("updated_at"),
                     ))
             logger.info("[Greenhouse ATS] Fetched %d structured jobs from '%s'", len(jobs), company_board_token)
         except Exception as exc:

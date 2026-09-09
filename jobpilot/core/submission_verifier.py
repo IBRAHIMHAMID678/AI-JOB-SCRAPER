@@ -102,13 +102,32 @@ def collect_validation_errors(page) -> List[Dict[str, str]]:
             except Exception:
                 pass
 
-        # Check for HTML5 required fields that are empty
-        empty_required = page.locator("input[required]:empty, select[required]:empty, textarea[required]:empty").all()
-        for req in empty_required:
+        # Check for HTML5 required fields that are empty (exclude aria-hidden / dummy inputs)
+        required_inputs = page.locator("input[required]:not([aria-hidden='true']):not([tabindex='-1']), textarea[required]:not([aria-hidden='true']):not([tabindex='-1'])").all()
+        for req in required_inputs:
             try:
-                if req.is_visible() and not req.input_value():
-                    name = req.get_attribute("name") or req.get_attribute("id") or "required_field"
-                    errors.append({"field": name, "type": "required_empty", "message": "Required field is empty"})
+                if req.is_visible():
+                    val = (req.input_value() or "").strip()
+                    if not val:
+                        # Check if this input is inside a custom select container that already has a selection
+                        container = req.locator("xpath=ancestor::div[contains(@class, 'select__control') or contains(@class, 'select-shell')][1]")
+                        if container.count() > 0:
+                            txt = (container.inner_text() or "").strip()
+                            if txt and not any(ph in txt.lower() for ph in ["select...", "choose...", "type..."]):
+                                continue
+                        name = req.get_attribute("name") or req.get_attribute("id") or "required_field"
+                        errors.append({"field": name, "type": "required_empty", "message": f"Required field '{name}' is empty"})
+            except Exception:
+                pass
+
+        required_selects = page.locator("select[required]").all()
+        for s in required_selects:
+            try:
+                if s.is_visible():
+                    val = (s.evaluate("el => el.value") or "").strip()
+                    if not val:
+                        name = s.get_attribute("name") or s.get_attribute("id") or "required_select"
+                        errors.append({"field": name, "type": "required_empty", "message": f"Required select '{name}' is empty"})
             except Exception:
                 pass
 

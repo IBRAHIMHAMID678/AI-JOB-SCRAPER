@@ -44,10 +44,11 @@ SENIORITY_TITLE_PATTERNS = [
 ]
 
 # Patterns explicitly stating required years of experience beyond 3 years
-# (4+, 5+, 4-6, minimum 4, at least 4, 4+ yrs, 5-7 years, 5 years required)
+# (4+, 5+, 4-6, minimum 4, at least 4, 4+ yrs, 5-7 years, 5 years required, 8 or more years)
 EXPERIENCE_EXCEEDED_PATTERNS = [
     r"(\b[4-9]|\b[1-9]\d)\s*\+?\s*(?:to|-)\s*\d+\s*(?:years?|yrs?)",
     r"(\b[4-9]|\b[1-9]\d)\s*\+\s*(?:years?|yrs?)",
+    r"(\b[4-9]|\b[1-9]\d)\s+(?:or\s+more|plus)\s+(?:years?|yrs?)",
     r"(?:minimum|at\s+least|no\s+less\s+than)\s*(\b[4-9]|\b[1-9]\d)\s*(?:years?|yrs?)",
     r"(\b[4-9]|\b[1-9]\d)\s*(?:years?|yrs?)\s*(?:of)?\s*(?:relevant\s+|professional\s+)?(?:experience|exp)?\s*(?:minimum|required|mandatory)",
     r"(?:require|requires|seeking)\s*(\b[4-9]|\b[1-9]\d)\s*\+?\s*(?:years?|yrs?)",
@@ -133,16 +134,26 @@ def check_geographic_eligibility(
         "must hold active security clearance",
         "remote - united states",
         "remote – united states",
+        "remote - us",
+        "remote – us",
+        "remote (us)",
+        "remote - usa",
+        "remote – usa",
+        "remote (usa)",
         "remote - latam",
         "remote – latam",
         "remote | colombia",
         "remote (india)",
+        "remote - india",
+        "remote – india",
         "remote - uk",
         "remote – uk",
         "remote - canada",
         "remote – canada",
         "remote - europe",
         "remote – europe",
+        "remote - emea",
+        "remote – emea",
         "bengaluru",
         "bangalore",
         "mumbai",
@@ -153,6 +164,9 @@ def check_geographic_eligibility(
         "noida",
         "gurgaon",
         "india",
+        "us only",
+        "usa only",
+        "uk only",
     ]
     for rk in restricted_keywords:
         if rk in combined:
@@ -161,15 +175,18 @@ def check_geographic_eligibility(
     # If onsite or hybrid role outside Pakistan (Islamabad / Rawalpindi / Pakistan)
     loc_clean = (job_location or "").lower()
     is_pk_location = any(pk in loc_clean for pk in ["pakistan", "islamabad", "rawalpindi"])
-    is_worldwide_remote = any(rem in loc_clean for rem in ["worldwide", "anywhere", "global"])
-    
-    # If location explicitly specifies physical non-Pakistan cities/countries without being remote
+    is_worldwide_remote = any(rem in loc_clean for rem in ["worldwide", "anywhere", "global", "work from anywhere"])
+
+    # If location is not in Pakistan and not explicitly worldwide remote:
     if not is_pk_location and not is_worldwide_remote:
-        if any(w in loc_clean for w in ["hybrid", "onsite", "on-site"]) or ("remote" not in loc_clean and loc_clean.strip() != ""):
-            # Check if it specifies foreign cities/states
-            foreign_indicators = ["san francisco", "new york", "london", "berlin", "dublin", "paris", "sydney", "melbourne", "tokyo", "singapore", "toronto", "ca", "ny", "united states", "germany", "france", "australia"]
-            if any(fi in loc_clean for fi in foreign_indicators):
-                return False, "LOCATION_INELIGIBLE", loc_clean
+        # If explicitly marked onsite/hybrid
+        if any(w in loc_clean for w in ["hybrid", "onsite", "on-site"]):
+            return False, "LOCATION_INELIGIBLE", f"Non-Pakistan onsite/hybrid: {loc_clean}"
+
+        # If it specifies a specific non-remote city/state/country
+        if "remote" not in loc_clean and loc_clean.strip() != "":
+            # Any physical non-remote location outside Pakistan is ineligible
+            return False, "LOCATION_INELIGIBLE", f"Physical non-Pakistan location: {loc_clean}"
 
     return True, None, None
 
@@ -178,7 +195,7 @@ def check_tech_role_relevance(title: str, description: str = "") -> Tuple[bool, 
     """
     Ensures the job is compatible with Ibrahim Hamid's profile:
     Software/AI/Web/Backend/Full-Stack/Python developer and related engineering roles.
-    Rejects sales, account executive, marketing, finance, HR, legal, etc.
+    Rejects sales, deal teams, account executive, marketing, finance, HR, legal, etc.
     """
     title_lower = title.lower()
     tech_keywords = [
@@ -192,6 +209,7 @@ def check_tech_role_relevance(title: str, description: str = "") -> Tuple[bool, 
 
     # Explicit exclusions for non-engineering titles or non-software engineering fields
     non_dev_exclusions = [
+        r"\b(deal\s+team|business\s+affairs|transformation\s+owner)\b",
         r"\b(account\s+executive|sales|marketing|recruiter|finance|counsel|legal|tax|accounting|support\s+specialist|bilingual\s+customer)\b",
         r"\b(civil\s+engineer|mechanical\s+engineer|electrical\s+engineer|chemical\s+engineer|hardware\s+engineer)\b",
         r"\b(product\s+designer|graphic\s+designer|ui\/ux\s+designer|designer|talent\s+acquisition|supply\s+chain|business\s+development)\b",

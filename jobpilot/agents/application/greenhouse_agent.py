@@ -243,6 +243,24 @@ class GreenhouseAgent(BaseApplicationAgent):
             logger.info("[GreenhouseAgent] Selected Pakistan in intl-tel-input and filled national phone: %s", candidate["phone_national"])
             return
 
+        # 1b. Check for React-Select country dropdown
+        try:
+            react_country = page.locator("input#country, [id*='country']").locator("xpath=ancestor::div[contains(@class, 'select__control')][1]")
+            if react_country.count() > 0 and react_country.is_visible():
+                react_country.click(timeout=2500)
+                page.keyboard.type("Pakistan")
+                time.sleep(0.3)
+                opts = page.locator("[class*='-option'], div[role='option']").all()
+                if opts:
+                    opts[0].click()
+                    time.sleep(0.3)
+                phone_input.fill("")
+                phone_input.fill(candidate["phone_national"])
+                logger.info("[GreenhouseAgent] Selected Pakistan in React-Select country dropdown")
+                return
+        except Exception as exc:
+            logger.debug("React-Select country notice: %s", exc)
+
         # 2. Check for native country selector dropdown preceding or near the phone input
         country_selector = page.locator(
             "select[name*='country_code'], select[id*='country_code'], select[aria-label*='Country code'], [class*='country-select'] select"
@@ -289,7 +307,7 @@ class GreenhouseAgent(BaseApplicationAgent):
             file_input = page.locator("input[type='file'][id*='resume'], input[type='file'][name*='resume'], input[type='file']").first
             if file_input.count() > 0:
                 file_input.set_input_files(cv_path)
-                time.sleep(1.5)
+                time.sleep(2.5)  # Wait for cloud/S3 upload to finish
 
                 # Wait for upload indicator / attached filename in DOM
                 for _ in range(10):
@@ -314,7 +332,7 @@ class GreenhouseAgent(BaseApplicationAgent):
         - Verifies validation state clears
         """
         comboboxes = page.locator(
-            "input#candidate-location, [id*='candidate-location'] input"
+            "input#candidate-location, [id*='candidate-location'] input, [id*='candidate-location']"
         ).all()
 
         for cb in comboboxes:
@@ -322,33 +340,35 @@ class GreenhouseAgent(BaseApplicationAgent):
                 if not cb.is_visible():
                     continue
 
-                # If already populated with a valid selection, skip
-                cur_val = cb.input_value() or ""
+                cur_val = cb.input_value() if cb.evaluate("e => e.tagName.toLowerCase() === 'input'") else ""
                 if cur_val and "pakistan" in cur_val.lower():
                     continue
 
-                location_val = "Islamabad, Pakistan"
-                cb.click()
-                cb.fill("")
-                time.sleep(0.1)
-                cb.fill(location_val)
+                # Locate container .select__control
+                ctrl = cb.locator("xpath=ancestor::div[contains(@class, 'select__control')][1]")
+                target = ctrl if ctrl.count() > 0 else cb
+
+                target.click(timeout=2500)
+                time.sleep(0.2)
+                page.keyboard.type("Islamabad, Pakistan", delay=30)
                 time.sleep(0.8)
 
                 # Wait for dropdown options
                 menu_option = page.locator(
-                    "[class*='-option'], div[role='option'], [id*='-option-0'], [class*='menu'] div"
+                    ".select__menu [class*='option'], [class*='-option'], div[role='option']"
                 ).first
 
                 if menu_option.count() > 0 and menu_option.is_visible():
-                    menu_option.click()
-                    time.sleep(0.4)
+                    menu_option.click(timeout=2500)
+                    time.sleep(0.3)
                     logger.info("[GreenhouseAgent] Selected React-Select option for location")
                     break
                 else:
                     # Fallback: keyboard Enter
                     page.keyboard.press("ArrowDown")
-                    time.sleep(0.2)
+                    time.sleep(0.1)
                     page.keyboard.press("Enter")
+                    time.sleep(0.2)
                     break
             except Exception as exc:
                 logger.debug("React-select handling notice: %s", exc)
@@ -413,6 +433,17 @@ class GreenhouseAgent(BaseApplicationAgent):
             elem = page.locator(selector).first
             if elem.count() > 0 and elem.is_visible():
                 elem.fill(str(value))
+                try:
+                    elem.evaluate("""(el, val) => {
+                        const proto = el.tagName.toLowerCase() === 'textarea' ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
+                        const setter = Object.getOwnPropertyDescriptor(proto, 'value')?.set;
+                        if (setter) setter.call(el, val);
+                        el.dispatchEvent(new Event('input', { bubbles: true }));
+                        el.dispatchEvent(new Event('change', { bubbles: true }));
+                        el.dispatchEvent(new Event('blur', { bubbles: true }));
+                    }""", str(value))
+                except Exception:
+                    pass
                 return True
         except Exception:
             pass

@@ -346,6 +346,7 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict, user_id
                     application_url=job.application_url,
                     url_hash=job.url_hash,
                     content_hash=job.content_hash,
+                    canonical_job_id=job.canonical_job_id,
                 )
                 db.add(job_orm)
                 db.flush()
@@ -399,6 +400,7 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict, user_id
 
                 db.add(Application(
                     job_id=job_orm.id,
+                    canonical_job_id=job.canonical_job_id,
                     user_id=user_id,
                     status="MATCHED" if match.auto_approved else "DISCOVERED",
                     mode=settings.APPLICATION_MODE,
@@ -421,6 +423,7 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict, user_id
                             description=job.description or "",
                             cv_path=cv_path,
                             user_id=user_id,
+                            canonical_job_id=job.canonical_job_id,
                         )
                         if applied:
                             summary["applied"] += 1

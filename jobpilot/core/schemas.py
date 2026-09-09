@@ -67,6 +67,7 @@ class NormalizedJob(BaseModel):
     application_url: str
     url_hash: Optional[str] = None
     content_hash: Optional[str] = None
+    canonical_job_id: Optional[str] = None
 
 
 # ── Job Analysis ──────────────────────────────────────────────────────────────

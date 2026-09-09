@@ -50,12 +50,15 @@ class TestProfile:
         assert "Python" in data["skills"]
 
     def test_update_profile_name(self, client):
-        r = client.put("/api/profile", json={"name": "Updated Name"})
-        assert r.status_code == 200
-        assert r.json()["status"] == "updated"
+        try:
+            r = client.put("/api/profile", json={"name": "Updated Name"})
+            assert r.status_code == 200
+            assert r.json()["status"] == "updated"
 
-        r2 = client.get("/api/profile")
-        assert r2.json()["name"] == "Updated Name"
+            r2 = client.get("/api/profile")
+            assert r2.json()["name"] == "Updated Name"
+        finally:
+            client.put("/api/profile", json={"name": "Ibrahim Hamid"})
 
     def test_update_profile_skills(self, client):
         r = client.put("/api/profile", json={"skills": ["Python", "Go", "Rust"]})

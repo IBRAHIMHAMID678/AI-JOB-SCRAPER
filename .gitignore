@@ -76,7 +76,8 @@ jobpilot/screenshots/
 
 .vercel
 .env*
+scratch/
+*.backup
+jobpilot.db.backup
 
-# Allow tracking curated CSV outputs if needed
-!linkedin_job_posts_100.csv
-!linkedin_job_posts_audit_all.csv
+

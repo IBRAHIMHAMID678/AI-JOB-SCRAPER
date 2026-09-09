@@ -31,6 +31,7 @@ class JobicyAdapter(JobSourceAdapter):
                         application_url=url,
                         source="Jobicy",
                         remote_type="remote",
+                        posting_date=j.get("pubDate"),
                         salary_min=float(j.get("annualSalaryMin")) if j.get("annualSalaryMin") and str(j.get("annualSalaryMin")).isdigit() else None,
                         skills_raw=j.get("jobIndustry") if isinstance(j.get("jobIndustry"), list) else (str(j.get("jobIndustry")).split(",") if j.get("jobIndustry") else []),
                     ))

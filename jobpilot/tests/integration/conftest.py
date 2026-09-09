@@ -13,7 +13,10 @@ os.environ["SCRAPE_INTERVAL_HOURS"] = "0"  # disable auto-scheduler in tests
 @pytest.fixture(scope="session", autouse=True)
 def fresh_db():
     """Delete the integration test DB before the session starts."""
-    pathlib.Path("test_integration.db").unlink(missing_ok=True)
+    try:
+        pathlib.Path("test_integration.db").unlink(missing_ok=True)
+    except PermissionError:
+        pass  # Windows file lock from previous process; reuse or let next cleanup handle
     yield
     try:
         pathlib.Path("test_integration.db").unlink(missing_ok=True)
