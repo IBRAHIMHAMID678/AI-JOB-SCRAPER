@@ -88,7 +88,7 @@ def get_canonical_candidate_profile() -> Dict[str, Any]:
         "sponsorship_needed": "No",
         "sponsorship_required": "No",
         "will_require_sponsorship": "No",
-        "currently_employed": "No",
+        "currently_employed": "Yes",
         "notice_period": "Immediately",
         "notice_period_days": "0",
         "notice_period_weeks": "0",
@@ -121,9 +121,9 @@ def get_canonical_candidate_profile() -> Dict[str, Any]:
         "gpa": "3.6/4.0",
 
         # Professional & Experience
-        "title": "Junior Software Engineer / AI Engineer",
-        "current_title": "Junior AI & Full Stack Developer",
-        "current_company": "Freelance / Independent Projects",
+        "title": "AI Engineer",
+        "current_title": "AI Engineer",
+        "current_company": "Brandlya Group",
         "experience_years": 2,
         "experience_years_text": "2 years",
         "years_experience": "2",
@@ -142,12 +142,12 @@ def get_canonical_candidate_profile() -> Dict[str, Any]:
         "english_proficiency": "Fluent / Professional Working Proficiency",
         "english_level": "Fluent",
 
-        # Compensation
-        "salary_range": "$30 - $50 per hour",
-        "salary_min_usd": "30",
-        "salary_max_usd": "50",
-        "desired_salary": "$60,000 / year or $30 / hour",
-        "expected_salary": "$60,000",
+        # Compensation (ground truth: remote $10-40/hr; onsite Isb/Rwp ~PKR 100k/mo)
+        "salary_range": "$10 - $40 per hour",
+        "salary_min_usd": "10",
+        "salary_max_usd": "40",
+        "desired_salary": "$20 - $40 per hour",
+        "expected_salary": "$20 - $40 per hour",
         "hourly_rate": "$30",
         "currency": "USD",
 
@@ -185,13 +185,17 @@ def get_canonical_candidate_profile() -> Dict[str, Any]:
 
 
 def resolve_resume_path(cv_path: Optional[str] = None) -> Optional[str]:
-    """Finds and validates the authoritative resume PDF file."""
+    """Finds and validates the authoritative resume PDF file.
+
+    Candidates are resolved relative to this file (jobpilot/core/ -> repo root)
+    so the lookup works regardless of the process working directory (audit item 51).
+    """
+    repo_root = pathlib.Path(__file__).resolve().parents[2]
     candidates = [
         cv_path,
-        r"d:\Job Scraper\jobpilot\uploads\cvs\Ibrahim_Hamid_Resume.pdf",
-        r"d:\Job Scraper\Ibrahim_Hamid_Resume.pdf",
-        str(pathlib.Path("jobpilot/uploads/cvs/Ibrahim_Hamid_Resume.pdf").resolve()),
-        str(pathlib.Path("Ibrahim_Hamid_Resume.pdf").resolve()),
+        os.environ.get("CANDIDATE_RESUME_PATH"),
+        str(repo_root / "jobpilot" / "uploads" / "cvs" / "Ibrahim_Hamid_Resume.pdf"),
+        str(repo_root / "Ibrahim_Hamid_Resume.pdf"),
     ]
     for path in candidates:
         if path and os.path.exists(path) and os.path.getsize(path) > 0:

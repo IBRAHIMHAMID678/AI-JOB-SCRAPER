@@ -42,8 +42,8 @@ _DEFAULT_PROFILE = {
         "python developer", "backend developer", "software engineer",
     ],
     "seniority_preference": ["junior", "entry", "mid"],
-    "min_hourly_usd": 15,
-    "max_hourly_usd": 60,
+    "min_hourly_usd": 10,
+    "max_hourly_usd": 40,
     "years_experience": 0,
     "career_level": "junior",
 }
@@ -55,6 +55,17 @@ def _build_role_map(preferred_roles: List[str]) -> dict:
         "ai engineer": 25,
         "ai developer": 25,
         "llm engineer": 25,
+        # Item 25: AI title variants that were scoring 12 vs "AI Engineer" 25
+        "ml engineer": 25,
+        "machine learning engineer": 25,
+        "generative ai engineer": 25,
+        "genai engineer": 25,
+        "rag engineer": 25,
+        "ai/ml engineer": 25,
+        "nlp engineer": 25,
+        "prompt engineer": 22,
+        "fastapi developer": 22,
+        "django developer": 20,
         "full stack developer": 20,
         "python developer": 20,
         "backend developer": 18,
@@ -113,7 +124,8 @@ def _experience_score(seniority: Optional[str], years_min: Optional[int]) -> tup
     if seniority in ("junior", "entry"):
         return 15, True
     if seniority == "mid" or seniority is None:
-        if years_min is None or years_min <= 2:
+        # Item 26: approved range is 1-3 years — a 3-year requirement must not be penalized
+        if years_min is None or years_min <= 3:
             return 12, True
         return 5, False
     # senior
@@ -126,7 +138,8 @@ def _location_score(job: NormalizedJob, analysis: Optional[JobAnalysisResult]) -
         return 0, ["Pakistan not eligible"]
     if job.remote_type == "remote":
         loc = (job.location or "").lower()
-        if any(k in loc for k in ["worldwide", "anywhere", "pakistan", "global", ""]):
+        # Item 21: the old list contained "" which is always a substring → 10/10 always.
+        if any(k in loc for k in ["worldwide", "anywhere", "pakistan", "global"]):
             reasons.append("Worldwide remote")
             return 10, reasons
         reasons.append("Remote role")
@@ -140,13 +153,50 @@ def _location_score(job: NormalizedJob, analysis: Optional[JobAnalysisResult]) -
     return 2, reasons
 
 
+def _detect_salary_period(salary_raw: Optional[str]) -> Optional[str]:
+    """Derive hourly/monthly/yearly from the raw salary string (item 28).
+    Kept local to the matcher — no schema field — so period handling survives
+    the schemas.py ownership revert."""
+    if not salary_raw:
+        return None
+    m = re.search(
+        r"/\s*(hr|hrs|h|hour|hours|mo|mos|month|months|yr|yrs|year|years)"
+        r"|\bper\s+(hour|month|year|annum)\b|\b(hourly|monthly|annually|yearly)\b",
+        salary_raw,
+        re.IGNORECASE,
+    )
+    if not m:
+        return None
+    p = m.group(0).lower().replace(" ", "").replace("/", "")
+    if p in ("hr", "hrs", "h", "hour", "hours", "hourly", "perhour"):
+        return "hourly"
+    if p in ("mo", "mos", "month", "months", "monthly", "permonth"):
+        return "monthly"
+    if p in ("yr", "yrs", "year", "years", "annum", "perannum", "annually", "yearly", "peryear"):
+        return "yearly"
+    return None
+
+
 def _salary_score(job: NormalizedJob) -> tuple[int, List[str]]:
+    # Item 28: enforce the $10-40/hr ground-truth band; flag PKR monthly separately.
+    period = (_detect_salary_period(job.salary_raw) or "").lower()
+    currency = (job.currency or "").upper()
     if job.salary_min and job.salary_max:
-        if job.currency == "USD":
-            if 15 <= job.salary_min <= 60 or 15 <= job.salary_max <= 60:
-                return 5, [f"USD salary in range: {job.salary_min}-{job.salary_max}"]
-            if 30000 <= job.salary_min <= 200000:
-                return 4, [f"USD annual salary: {job.salary_min}-{job.salary_max}"]
+        lo, hi = job.salary_min, job.salary_max
+        if currency == "USD":
+            hourly = period == "hourly" or (not period and hi <= 500)
+            if hourly:
+                if 10 <= lo <= 40 or 10 <= hi <= 40:
+                    return 5, [f"USD hourly in $10-40 band: {lo}-{hi}/hr"]
+                return 1, [f"USD hourly outside $10-40 band: {lo}-{hi}/hr (no pay points)"]
+            if period == "monthly":
+                return 3, [f"USD monthly salary disclosed: {lo}-{hi}/mo"]
+            if 30000 <= lo <= 200000 or 30000 <= hi <= 200000:
+                return 4, [f"USD annual salary: {lo}-{hi}"]
+            return 2, ["USD salary disclosed (outside typical bands)"]
+        if currency == "PKR":
+            # Ground truth: ~PKR 100k/mo onsite is acceptable — flagged, not full points
+            return 3, [f"PKR salary disclosed: {lo}-{hi}"]
     if not job.salary_min:
         return 2, ["Salary not disclosed"]
     return 1, []

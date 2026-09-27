@@ -38,6 +38,8 @@ class OpenRouterProvider(LLMProvider):
                     ],
                     "temperature": temperature,
                     "max_tokens": max_tokens,
+                    # Item 38: force JSON output where the API supports it
+                    "response_format": {"type": "json_object"},
                 },
                 timeout=settings.LLM_TIMEOUT,
             )

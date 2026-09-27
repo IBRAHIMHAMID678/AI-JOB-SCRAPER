@@ -89,6 +89,13 @@ class LinkedInPostsAdapter(JobSourceAdapter):
     def fetch(self) -> List[RawJob]:
         """
         Fetch social job leads using Scrapfly when available.
+
+        STUB (2026-09-27): there are no configured post targets, so a real
+        fetch is not feasible yet. This intentionally returns [] and the
+        adapter is NOT registered in workers/pipeline._fetch_all_sources()
+        or production_batch_run.discover_raw_jobs() — counting it as an
+        active source would mislead source stats. Use
+        parse_post_to_raw_job() to convert already-harvested post text.
         """
         # Social post discovery runs on configured targets or periodic lead searches
         logger.info("[LinkedInPosts] Social lead ingestion engine ready.")

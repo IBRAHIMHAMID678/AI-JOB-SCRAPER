@@ -9,7 +9,7 @@ Evaluates job postings against Ibrahim Hamid's verified candidate profile:
 from __future__ import annotations
 
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional, Tuple
 from pydantic import BaseModel
 
@@ -52,6 +52,10 @@ EXPERIENCE_EXCEEDED_PATTERNS = [
     r"(?:minimum|at\s+least|no\s+less\s+than)\s*(\b[4-9]|\b[1-9]\d)\s*(?:years?|yrs?)",
     r"(\b[4-9]|\b[1-9]\d)\s*(?:years?|yrs?)\s*(?:of)?\s*(?:relevant\s+|professional\s+)?(?:experience|exp)?\s*(?:minimum|required|mandatory)",
     r"(?:require|requires|seeking)\s*(\b[4-9]|\b[1-9]\d)\s*\+?\s*(?:years?|yrs?)",
+    # Item 27: bare "N years of <words> experience" (e.g. "5 years of hands-on
+    # experience") — production_batch_run relies on eligibility directly and
+    # never runs analysis extraction, so this gate must catch it here.
+    r"(\b[4-9]|\b[1-9]\d)\s*(?:years?|yrs?)\s+of\s+[\w\s-]{0,30}?(?:experience|exp)",
 ]
 
 # Exclusions: do not trigger on junior or 0-3 years text
@@ -122,8 +126,13 @@ def check_geographic_eligibility(
     """
     candidate = get_canonical_candidate_profile()
     combined = f"{job_location or ''} {description[:800]}".lower()
+    loc_only = (job_location or "").lower()
 
     # If the job explicitly states 'Must reside in US/UK/Canada/Japan/etc.' or is on-site in restricted locations:
+    # Item 29: India is anchored to remote-scope phrasing ("remote - india",
+    # "india only", "must be based in india", "india-based") — a bare "india"
+    # in the description ("team across India and Europe") must NOT reject a
+    # worldwide posting.
     restricted_keywords = [
         "must be located in the us",
         "must reside in the united states",
@@ -146,24 +155,19 @@ def check_geographic_eligibility(
         "remote (india)",
         "remote - india",
         "remote – india",
+        "india only",
+        "india-only",
+        "india based",
+        "india-based",
+        "must be based in india",
+        "based in india",
+        "located in india",
         "remote - uk",
         "remote – uk",
         "remote - canada",
         "remote – canada",
         "remote - europe",
         "remote – europe",
-        "remote - emea",
-        "remote – emea",
-        "bengaluru",
-        "bangalore",
-        "mumbai",
-        "delhi",
-        "hyderabad",
-        "pune",
-        "chennai",
-        "noida",
-        "gurgaon",
-        "india",
         "us only",
         "usa only",
         "uk only",
@@ -171,6 +175,29 @@ def check_geographic_eligibility(
     for rk in restricted_keywords:
         if rk in combined:
             return False, "LOCATION_INELIGIBLE", rk
+
+    # Item 29: bare country/city tokens are disqualifying ONLY when they appear
+    # in the LOCATION field (e.g. location="Mumbai"), never from description text.
+    _location_restricted_tokens = [
+        "india", "bengaluru", "bangalore", "mumbai", "delhi", "hyderabad",
+        "pune", "chennai", "noida", "gurgaon",
+    ]
+    for token in _location_restricted_tokens:
+        if token in loc_only:
+            return False, "LOCATION_INELIGIBLE", f"location restricted: {token}"
+
+    # Item 30: EMEA is eligible for Pakistan-based candidates unless the
+    # description explicitly excludes Pakistan (EMEA is the standard location
+    # value on Himalayas/Jobicy/Remotive). Explicit restrictions above already
+    # ran; EMEA here only bypasses the physical-location fallback below.
+    if "emea" in loc_only:
+        desc_lower = (description or "").lower()
+        if any(x in desc_lower for x in [
+            "pakistan not", "excluding pakistan", "except pakistan", "no pakistan",
+            "not available in pakistan", "pakistan is not", "pakistan excluded",
+        ]):
+            return False, "LOCATION_INELIGIBLE", "EMEA posting excludes Pakistan"
+        return True, None, None
 
     # If onsite or hybrid role outside Pakistan (Islamabad / Rawalpindi / Pakistan)
     loc_clean = (job_location or "").lower()
@@ -233,7 +260,7 @@ def evaluate_job_eligibility(
     Comprehensive pre-flight eligibility check.
     Returns structured decision with evidence.
     """
-    now = datetime.utcnow().isoformat()
+    now = datetime.now(timezone.utc).isoformat()
 
     # 1. Technical Role Relevance Check
     tech_ok, tech_reason, tech_evidence = check_tech_role_relevance(title, description)

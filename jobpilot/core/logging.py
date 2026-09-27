@@ -12,7 +12,7 @@ import threading
 import time
 import uuid
 from contextvars import ContextVar
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
 from .config import settings
@@ -34,7 +34,7 @@ def get_correlation_id() -> str:
 class _JSONFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         entry: Dict[str, Any] = {
-            "ts": datetime.utcnow().isoformat() + "Z",
+            "ts": datetime.now(timezone.utc).isoformat() + "Z",
             "level": record.levelname,
             "logger": record.name,
             "cid": get_correlation_id(),
@@ -59,7 +59,7 @@ class _TextFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         color = self.COLORS.get(record.levelname, "")
-        ts = datetime.utcnow().strftime("%H:%M:%S")
+        ts = datetime.now(timezone.utc).strftime("%H:%M:%S")
         cid = get_correlation_id()
         return f"{color}[{ts}][{cid}][{record.levelname}] {record.getMessage()}{self.RESET}"
 

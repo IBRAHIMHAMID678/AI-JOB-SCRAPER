@@ -13,15 +13,20 @@ If evidence is missing or uncertain, records SUBMISSION_UNCONFIRMED or VALIDATIO
 from __future__ import annotations
 
 import os
+import pathlib
 import re
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from pydantic import BaseModel
 
 from .logging import get_logger
 
 logger = get_logger("core.submission_verifier")
+
+# Repo-root-relative default screenshot directory (audit item 50):
+# jobpilot/core/ -> jobpilot/ (parents[1]).
+_DEFAULT_SCREENSHOT_DIR = str(pathlib.Path(__file__).resolve().parents[1] / "screenshots")
 
 
 class SubmissionEvidence(BaseModel):
@@ -141,20 +146,22 @@ def verify_submission(
     page,
     platform: str,
     application_id: str,
-    screenshot_dir: str = r"d:\Job Scraper\jobpilot\screenshots",
+    screenshot_dir: Optional[str] = None,
 ) -> SubmissionEvidence:
     """
     Conducts strict DOM & URL inspection to verify whether an application was truly submitted.
     Takes a timestamped screenshot as persistent proof.
     """
-    attempted_time = datetime.utcnow().isoformat()
+    if screenshot_dir is None:
+        screenshot_dir = _DEFAULT_SCREENSHOT_DIR
+    attempted_time = datetime.now(timezone.utc).isoformat()
     evidence = SubmissionEvidence(
         platform=platform,
         submission_attempted_at=attempted_time,
     )
 
     os.makedirs(screenshot_dir, exist_ok=True)
-    shot_filename = f"{application_id}_{platform}_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.png"
+    shot_filename = f"{application_id}_{platform}_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.png"
     shot_path = os.path.join(screenshot_dir, shot_filename)
 
     try:
@@ -184,7 +191,7 @@ def verify_submission(
                 evidence.is_confirmed = True
                 evidence.status = "SUBMITTED"
                 evidence.confirmation_type = "url_transition"
-                evidence.confirmation_detected_at = datetime.utcnow().isoformat()
+                evidence.confirmation_detected_at = datetime.now(timezone.utc).isoformat()
                 evidence.confirmation_text = f"URL matched confirmation pattern: {url_pattern}"
                 logger.info("[SUBMISSION VERIFY] CONFIRMED via URL transition: %s", final_url)
                 return evidence
@@ -198,7 +205,7 @@ def verify_submission(
                     evidence.is_confirmed = True
                     evidence.status = "SUBMITTED"
                     evidence.confirmation_type = "dom_confirmation_heading"
-                    evidence.confirmation_detected_at = datetime.utcnow().isoformat()
+                    evidence.confirmation_detected_at = datetime.now(timezone.utc).isoformat()
                     evidence.confirmation_text = txt[:200]
                     logger.info("[SUBMISSION VERIFY] CONFIRMED via DOM selector '%s': %s", sel, txt[:100])
                     return evidence
@@ -215,7 +222,7 @@ def verify_submission(
                         evidence.is_confirmed = True
                         evidence.status = "SUBMITTED"
                         evidence.confirmation_type = "confirmation_text_body"
-                        evidence.confirmation_detected_at = datetime.utcnow().isoformat()
+                        evidence.confirmation_detected_at = datetime.now(timezone.utc).isoformat()
                         evidence.confirmation_text = pattern
                         logger.info("[SUBMISSION VERIFY] CONFIRMED via body text: '%s'", pattern)
                         return evidence

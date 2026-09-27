@@ -1,5 +1,10 @@
+"""Discovery yield smoke test — repo-root-relative, works on any OS."""
 import sys
-sys.path.insert(0, 'd:/Job Scraper')
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(REPO_ROOT))
+
 from production_batch_run import ProductionPipelineOrchestrator
 
 orch = ProductionPipelineOrchestrator()

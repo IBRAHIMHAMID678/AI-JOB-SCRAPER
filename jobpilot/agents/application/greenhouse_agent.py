@@ -184,8 +184,8 @@ class GreenhouseAgent(BaseApplicationAgent):
                     btn.click()
                     time.sleep(1.0)
                     break
-            except Exception:
-                pass
+            except Exception as exc:
+                logger.warning("[GreenhouseAgent] Failed clicking apply selector '%s': %s", sel, exc)
 
     def _fill_identity_and_contact(self, page, candidate: Dict[str, Any]) -> None:
         """Fills First/Last Name, Email, and Normalizes Phone."""
@@ -396,8 +396,8 @@ class GreenhouseAgent(BaseApplicationAgent):
                         # Inspect the question label/text for listed countries
                         if "pakistan" not in txt:
                             return False, "Job restricted to specific country list excluding Pakistan"
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("[GreenhouseAgent] Geographic eligibility check failed: %s", exc)
 
         return True, None
 
@@ -424,8 +424,8 @@ class GreenhouseAgent(BaseApplicationAgent):
                     btn.click()
                     logger.info("[GreenhouseAgent] Clicked submit button: %s", sel)
                     return True
-            except Exception:
-                pass
+            except Exception as exc:
+                logger.warning("[GreenhouseAgent] Failed clicking submit selector '%s': %s", sel, exc)
         return False
 
     def _safe_fill(self, page, selector: str, value: str) -> bool:
@@ -442,9 +442,11 @@ class GreenhouseAgent(BaseApplicationAgent):
                         el.dispatchEvent(new Event('change', { bubbles: true }));
                         el.dispatchEvent(new Event('blur', { bubbles: true }));
                     }""", str(value))
-                except Exception:
-                    pass
+                except Exception as exc:
+                    logger.error("[GreenhouseAgent] React event dispatch failed for '%s': %s", selector, exc)
+                    return False
                 return True
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("[GreenhouseAgent] _safe_fill failed for '%s': %s", selector, exc)
+            return False
         return False

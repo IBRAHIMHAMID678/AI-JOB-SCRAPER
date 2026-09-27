@@ -35,6 +35,12 @@ def _load_prompt(name: str) -> str:
     return ""
 
 
+def _canonical_university() -> str:
+    """Single-sourced university from the canonical candidate profile (audit item 46)."""
+    from ...core.candidate import get_canonical_candidate_profile
+    return get_canonical_candidate_profile()["university"]
+
+
 # ── Candidate master profile ──────────────────────────────────────────────────
 # This is the immutable source of truth. AI can rearrange, not invent.
 
@@ -80,15 +86,22 @@ Passionate about integrating LLMs into scalable web applications.
 
 ## Work Authorization
 Available for worldwide remote positions (based in Pakistan)
-Open to USD hourly contracts ($15-$60/hr) or full-time USD roles
+Open to USD hourly contracts ($10-$40/hr) or full-time USD roles
 """.format(
     name=settings.CANDIDATE_NAME or "Ibrahim Hamid",
     email=settings.CANDIDATE_EMAIL or "ibrahimhamid.2600@gmail.com",
     location=settings.CANDIDATE_LOCATION or "Islamabad, Pakistan",
     linkedin=getattr(settings, "CANDIDATE_LINKEDIN", None) or "https://linkedin.com/in/ibrahim-hamid678",
     github=getattr(settings, "CANDIDATE_GITHUB", None) or "https://github.com/IBRAHIMHAMID678",
-    university="NUST (National University of Sciences and Technology)",
+    university=_canonical_university(),
 )
+
+
+# TODO (audit item 45, partial): ResumeAgent currently outputs tailored markdown
+# saved to the DB (ResumeVersion) but there is NO PDF render/upload pipeline —
+# applications always attach the canonical PDF from resolve_resume_path().
+# Wiring a markdown→PDF renderer + per-job upload selection is future work;
+# the agent files are intentionally kept in place. Do not fabricate resume PDFs.
 
 
 class _ResumeTailoringSchema(BaseModel):

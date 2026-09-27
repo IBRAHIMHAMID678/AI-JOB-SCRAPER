@@ -105,72 +105,6 @@ class PortalSubmitter:
         
         self.last_request_time = time.time()
 
-class LinkedInSubmitter(PortalSubmitter):
-    """LinkedIn job application handler"""
-    
-    async def submit_application(self, job: Dict, optimized_resume: Dict) -> Dict:
-        """Submit application to LinkedIn"""
-        self._rate_limit()
-        
-        application_result = {
-            "url": job.get("url"),
-            "title": job.get("title"),
-            "company": job.get("company"),
-            "source": job.get("source"),
-            "applied_at": datetime.now(),
-            "status": "submitted",
-            "platform": "LinkedIn",
-            "confirmation": None
-        }
-        
-        # Simulate LinkedIn submission
-        await asyncio.sleep(3)  # Simulate form filling and submission time
-        
-        # In real implementation, this would:
-        # 1. Use Selenium/Webdriver to navigate to job
-        # 2. Fill application form with optimized resume
-        # 3. Submit application
-        # 4. Parse confirmation
-        
-        application_result["confirmation"] = {
-            "reference_id": f"LI-{datetime.now().timestamp()}",
-            "submitted_at": datetime.now(),
-            "estimated_response": "2-3 weeks"
-        }
-        
-        logger.info(f"Successfully applied to {job['title']} at {job['company']} via LinkedIn")
-        return application_result
-
-class IndeedSubmitter(PortalSubmitter):
-    """Indeed job application handler"""
-    
-    async def submit_application(self, job: Dict, optimized_resume: Dict) -> Dict:
-        """Submit application to Indeed"""
-        self._rate_limit()
-        
-        application_result = {
-            "url": job.get("url"),
-            "title": job.get("title"),
-            "company": job.get("company"),
-            "source": job.get("source"),
-            "applied_at": datetime.now(),
-            "status": "submitted",
-            "platform": "Indeed",
-            "confirmation": None
-        }
-        
-        # Simulate Indeed submission
-        await asyncio.sleep(2)
-        
-        application_result["confirmation"] = {
-            "reference_id": f"IND-{datetime.now().timestamp()}",
-            "submitted_at": datetime.now(),
-            "estimated_response": "1-2 weeks"
-        }
-        
-        logger.info(f"Successfully applied to {job['title']} at {job['company']} via Indeed")
-        return application_result
-
 class JobApplicationEngine:
     """Main application engine orchestrating job applications"""
     
@@ -178,52 +112,68 @@ class JobApplicationEngine:
         self.config = config
         self.applications_submitted = 0
         self.resume_optimizer = None
-        self.portal_submitters = {}
+        self.resume_path: Optional[str] = None
+        # NOTE: Portal submitters were removed (audit item 41). This legacy
+        # engine now delegates to the real evidence-based pipeline in
+        # jobpilot.services.auto_apply — it never fabricates "submitted" results.
         self.application_history = []
     
     def initialize(self, resume_path: str):
         """Initialize application engine with resume and portal handlers"""
         self.resume_optimizer = ResumeOptimizer(resume_path)
-        
-        # Initialize portal submitters
-        self.portal_submitters = {
-            "LinkedIn": LinkedInSubmitter(self.config),
-            "Indeed": IndeedSubmitter(self.config),
-            "Remote OK": LinkedInSubmitter(self.config),  # Use LinkedIn as base
-            "WeWorkRemotely": LinkedInSubmitter(self.config),
-            "JobSpy": IndeedSubmitter(self.config),
-            # Add more portal handlers as needed
-        }
+        self.resume_path = resume_path
         
         logger.info("Job Application Engine initialized successfully")
     
     async def apply_to_job(self, job: Dict) -> Dict:
-        """Apply to a single job with optimized resume"""
+        """
+        Apply to a single job via the real evidence-based pipeline
+        (jobpilot.services.auto_apply.apply_to_job). "submitted" is returned
+        ONLY when real browser/SMTP evidence confirms the submission.
+        """
         if self.applications_submitted >= self.config.max_daily_applications:
             logger.warning("Daily application limit reached")
             return {"status": "skipped", "reason": "daily_limit_reached"}
-        
-        # Determine which portal submitter to use
-        portal_name = job.get("source", "LinkedIn").split(" - ")[0]
-        submitter = self.portal_submitters.get(portal_name, self.portal_submitters["LinkedIn"])
-        
-        # Optimize resume for this specific job
-        candidate_profile = self._get_candidate_profile()
-        optimized_resume = await self.resume_optimizer.optimize_for_job(
-            job.get("description", ""), candidate_profile
+
+        import hashlib
+
+        try:
+            from jobpilot.services.auto_apply import apply_to_job as real_apply_to_job
+        except ImportError as exc:
+            logger.error("Real auto-apply pipeline unavailable: %s", exc)
+            return {"status": "failed", "reason": f"auto_apply unavailable: {exc}"}
+
+        job_url = job.get("url") or ""
+        legacy_job_id = "legacy_" + hashlib.sha256(job_url.encode()).hexdigest()[:16]
+
+        success = await asyncio.to_thread(
+            real_apply_to_job,
+            job_id=legacy_job_id,
+            job_title=job.get("title", ""),
+            company=job.get("company", ""),
+            source=job.get("source", ""),
+            apply_url=job_url or None,
+            score=int(job.get("match_score", 0) or 0),
+            description=job.get("description", ""),
+            cv_path=self.resume_path,
+            dry_run=False,
         )
-        
-        if "error" in optimized_resume:
-            logger.warning(f"Resume optimization failed for {job['title']}: {optimized_resume['error']}")
-            optimized_resume = {}
-        
-        # Submit application
-        application_result = await submitter.submit_application(job, optimized_resume)
-        
+
+        application_result = {
+            "url": job_url,
+            "title": job.get("title"),
+            "company": job.get("company"),
+            "source": job.get("source"),
+            "applied_at": datetime.now(),
+            # Honest mapping: the real pipeline returns True only when
+            # affirmative submission evidence was detected.
+            "status": "submitted" if success else "failed",
+        }
+
         # Track application
         self.applications_submitted += 1
         self.application_history.append(application_result)
-        
+
         return application_result
     
     def _get_candidate_profile(self) -> str:

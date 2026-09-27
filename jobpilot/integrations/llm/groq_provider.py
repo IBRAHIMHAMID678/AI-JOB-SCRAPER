@@ -29,6 +29,8 @@ class GroqProvider(LLMProvider):
                 temperature=temperature,
                 max_tokens=max_tokens,
                 timeout=settings.LLM_TIMEOUT,
+                # Item 38: force JSON output where the API supports it
+                response_format={"type": "json_object"},
             )
             return response.choices[0].message.content or ""
         except Exception as exc:

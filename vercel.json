@@ -20,7 +20,7 @@
     { "src": "/(.*)", "dest": "api/index.py" }
   ],
   "env": {
-    "DATABASE_URL": "sqlite:////tmp/jobpilot.db",
+    "DATABASE_URL": "@jobpilot-database-url",
     "SCRAPE_INTERVAL_HOURS": "0",
     "LLM_PROVIDER": "groq"
   }

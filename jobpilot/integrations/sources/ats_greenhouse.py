@@ -24,14 +24,16 @@ class GreenhouseATSAdapter(JobSourceAdapter):
     rate_limit_delay = 1.0
 
     TARGET_COMPANIES = [
+        # Live-verified 2026-09-27 (HTTP 200 with jobs). Dead boards were
+        # removed: openai, cursor, mistral, elevenlabs, runway, deepgram,
+        # baseten, octoai, qdrant, huggingface, groq, cohere, pinecone,
+        # weaviate, scale, perplexity, postman, hashicorp, automattic,
+        # zapier, sourcegraph, writer, retool, together (all 404; the AI
+        # companies moved to Ashby — see integrations/sources/ashby.py).
         "vercel", "canonical", "gitlab", "stripe", "figma",
-        "datadog", "postman", "brex", "gusto", "reddit",
+        "datadog", "brex", "gusto", "reddit",
         "discord", "instacart", "affirm", "elastic", "cockroachlabs",
-        "hashicorp", "automattic", "zapier", "remote", "sourcegraph",
-        "scale", "perplexity", "writer", "retool", "huggingface",
-        "cursor", "elevenlabs", "mistral", "together", "runway",
-        "deepgram", "baseten", "octoai", "cohere", "pinecone",
-        "weaviate", "qdrant", "anthropic", "openai", "groq"
+        "remote", "anthropic",
     ]
 
     def fetch_company_jobs(self, company_board_token: str) -> List[RawJob]:
@@ -45,6 +47,12 @@ class GreenhouseATSAdapter(JobSourceAdapter):
         try:
             res = requests.get(url, timeout=10)
             if res.status_code != 200:
+                # Loud failure — a dead/renamed board must never fail silently.
+                logger.error(
+                    "[Greenhouse ATS] Board '%s' returned HTTP %d — "
+                    "token may be dead; remove it from TARGET_COMPANIES",
+                    company_board_token, res.status_code,
+                )
                 return []
 
             data = res.json()
@@ -69,7 +77,8 @@ class GreenhouseATSAdapter(JobSourceAdapter):
                     ))
             logger.info("[Greenhouse ATS] Fetched %d structured jobs from '%s'", len(jobs), company_board_token)
         except Exception as exc:
-            logger.warning("[Greenhouse ATS] Error fetching board '%s': %s", company_board_token, exc)
+            logger.error("[Greenhouse ATS] Error fetching board '%s': %s", company_board_token, exc)
+            raise
 
         return jobs
 
@@ -81,6 +90,6 @@ class GreenhouseATSAdapter(JobSourceAdapter):
             for f in concurrent.futures.as_completed(futures):
                 try:
                     all_jobs.extend(f.result())
-                except Exception:
-                    pass
+                except Exception as exc:
+                    logger.error("[Greenhouse ATS] Board fetch raised: %s", exc)
         return all_jobs

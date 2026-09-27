@@ -5,24 +5,47 @@ Detects duplicate jobs across sources using multiple signals:
   2. Content hash (title + company + description snippet)
   3. Title similarity + same company (fuzzy)
 Prevents duplicate applications to the same role.
+
+Item 24: historical suppression is bounded to the freshness window (30 days),
+not forever — a reposted listing becomes eligible again after the window.
 """
 from __future__ import annotations
 
 import re
-from typing import Dict, List, Set, Tuple
+from datetime import datetime, timedelta, timezone
+from typing import Dict, List, Optional, Set, Tuple
 
 from ...core.schemas import NormalizedJob
 from ..base import BaseAgent
 
+# Freshness window for historical dedup suppression (portal rule: <= 30 days)
+_DEDUP_HISTORY_DAYS = 30
+
 
 def _normalize_title(title: str) -> str:
-    """Strip common variations to find near-duplicate titles."""
+    """Normalize titles for near-duplicate detection.
+
+    Item 24 fix: seniority markers are CANONICALIZED, not stripped. 'Senior AI
+    Engineer' and 'Junior AI Engineer' at the same company are different roles
+    and must never collapse into one fuzzy key; abbreviations ('Sr.', 'Jr.')
+    still fuzzy-match their full forms.
+    """
     t = title.lower().strip()
-    t = re.sub(r"\b(senior|sr|junior|jr|lead|staff|principal)\b", "", t)
-    t = re.sub(r"\b(i|ii|iii|iv|v)\b", "", t)
+    t = re.sub(r"\bsr\.?\b", "senior", t)
+    t = re.sub(r"\bjr\.?\b", "junior", t)
     t = re.sub(r"[^a-z0-9 ]", " ", t)
     t = re.sub(r"\s+", " ", t).strip()
     return t
+
+
+def _location_key(location: Optional[str]) -> str:
+    """Coarse location bucket for the fuzzy key (item 24): remote-like scopes
+    collapse to 'remote'; physical cities stay distinct so an onsite Islamabad
+    posting never dedups against a remote posting of the same title."""
+    loc = (location or "").lower().strip()
+    if any(k in loc for k in ("remote", "worldwide", "anywhere", "global", "wfh")):
+        return "remote"
+    return re.sub(r"[^a-z0-9]", "", loc)[:32]
 
 
 def _company_key(company: str) -> str:
@@ -45,7 +68,7 @@ class DeduplicationAgent(BaseAgent[List[NormalizedJob], List[NormalizedJob]]):
         unique_url_hashes: Set[str] = set(seen_url_hashes)
         unique_canon_ids: Set[str] = set(seen_canon_ids)
         unique_content_hashes: Set[str] = set()
-        unique_title_company: Set[Tuple[str, str]] = set()
+        unique_title_company: Set[Tuple[str, str, str]] = set()
         unique_jobs: List[NormalizedJob] = []
         duplicate_count = 0
 
@@ -68,10 +91,12 @@ class DeduplicationAgent(BaseAgent[List[NormalizedJob], List[NormalizedJob]]):
                 self.logger.debug("Duplicate content: %s at %s", job.title, job.company)
                 continue
 
-            # Signal 3: Fuzzy title + company match
+            # Signal 3: Fuzzy title + company + location match (item 24: seniority
+            # is retained in the title key, location in the key)
             title_key = _normalize_title(job.title)
             company_key = _company_key(job.company)
-            tk = (title_key, company_key)
+            location_key = _location_key(job.location)
+            tk = (title_key, company_key, location_key)
             if tk in unique_title_company:
                 duplicate_count += 1
                 self.logger.debug("Near-duplicate: %s at %s", job.title, job.company)
@@ -92,12 +117,18 @@ class DeduplicationAgent(BaseAgent[List[NormalizedJob], List[NormalizedJob]]):
         return unique_jobs
 
     def _load_existing_hashes(self) -> Tuple[Set[str], Set[str]]:
-        """Load URL hashes and canonical IDs of already-processed jobs from the database."""
+        """Load URL hashes and canonical IDs of jobs processed within the freshness
+        window (item 24: reposts are only suppressed for 30 days, not forever)."""
         try:
             from ...core.database import db_session
             from ...core.models import Job
+            cutoff = datetime.now(timezone.utc) - timedelta(days=_DEDUP_HISTORY_DAYS)
             with db_session() as db:
-                rows = db.query(Job.url_hash, Job.canonical_job_id).all()
+                rows = (
+                    db.query(Job.url_hash, Job.canonical_job_id)
+                    .filter(Job.created_at >= cutoff)
+                    .all()
+                )
                 url_hashes = {r[0] for r in rows if r[0]}
                 canon_ids = {r[1] for r in rows if len(r) > 1 and r[1]}
                 return url_hashes, canon_ids

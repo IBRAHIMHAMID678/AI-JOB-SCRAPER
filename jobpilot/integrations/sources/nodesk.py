@@ -21,18 +21,57 @@ _TECH_KEYWORDS = [
 ]
 
 
+def _repair_xml(content: bytes) -> bytes:
+    """Best-effort repair for feeds with unescaped '&' (e.g. nodesk.co/index.xml)."""
+    text = content.decode("utf-8", errors="replace")
+    # Escape bare '&' that is not part of a valid entity reference.
+    text = re.sub(r"&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9a-fA-F]+;)", "&amp;", text)
+    return text.encode("utf-8")
+
+
+def _parse_feed(content: bytes, feed_url: str, logger) -> ET.Element:
+    """Parse an RSS feed robustly: strict parse first, repaired fallback second."""
+    try:
+        return ET.fromstring(content)
+    except ET.ParseError as exc:
+        logger.warning("Strict XML parse failed for %s (%s); trying repaired parse", feed_url, exc)
+        return ET.fromstring(_repair_xml(content))  # raises if still broken
+
+
+def _split_title_company(raw_title: str) -> tuple[str, str]:
+    """
+    Split an RSS item title into (title, company).
+    Real formats: Python.org uses "Title, Company" (e.g. 'Django Developer,
+    The Developer Society'). Do NOT swap on " - " — titles like
+    "Senior Backend Engineer - Remote" are not "Company - Title".
+    """
+    title = (raw_title or "").strip()
+    company = "Remote Tech Employer"
+    if ", " in title:
+        # "Title, Company" — split on the LAST comma so titles containing
+        # commas (e.g. "Engineer, Backend, Acme") keep working.
+        title_part, company_part = title.rsplit(", ", 1)
+        if title_part.strip() and company_part.strip():
+            title, company = title_part.strip(), company_part.strip()
+    elif " at " in title:
+        parts = title.split(" at ", 1)
+        title, company = parts[0].strip(), parts[1].strip() or company
+    return title, company
+
+
 class NodeDeskAdapter(JobSourceAdapter):
     source_name = "nodesk"
 
     def fetch(self) -> List[RawJob]:
         jobs: List[RawJob] = []
         seen_urls: set = set()
+        failed_feeds = 0
 
         for feed in _FEEDS:
             try:
                 resp = requests.get(feed["url"], timeout=self.timeout)
                 resp.raise_for_status()
-                root = ET.fromstring(resp.content)
+                root = _parse_feed(resp.content, feed["url"], self.logger)
                 items = root.findall("./channel/item")
 
                 for item in items:
@@ -47,17 +86,7 @@ class NodeDeskAdapter(JobSourceAdapter):
                     if not job_url or job_url in seen_urls:
                         continue
 
-                    # Parse "Title at Company" or "Company - Title"
-                    company = "Remote Tech Employer"
-                    title   = raw_title
-                    if " at " in raw_title:
-                        parts   = raw_title.split(" at ", 1)
-                        title   = parts[0].strip()
-                        company = parts[1].strip()
-                    elif " - " in raw_title:
-                        parts   = raw_title.split(" - ", 1)
-                        company = parts[0].strip()
-                        title   = parts[1].strip()
+                    title, company = _split_title_company(raw_title)
 
                     # Only keep tech-relevant listings
                     if not any(kw in title.lower() for kw in _TECH_KEYWORDS):
@@ -72,25 +101,27 @@ class NodeDeskAdapter(JobSourceAdapter):
                     )
                     salary_raw = pay_match.group(0) if pay_match else None
 
-                    try:
-                        jobs.append(RawJob(
-                            title=title,
-                            company=company,
-                            location="Worldwide Remote",
-                            description=raw_desc or "No description available",
-                            application_url=job_url,
-                            source=feed["name"],
-                            salary_raw=salary_raw,
-                            remote_type="remote",
-                        ))
-                        seen_urls.add(job_url)
-                    except Exception:
-                        pass
+                    jobs.append(RawJob(
+                        title=title,
+                        company=company,
+                        location="Worldwide Remote",
+                        description=raw_desc or "No description available",
+                        application_url=job_url,
+                        source=feed["name"],
+                        salary_raw=salary_raw,
+                        remote_type="remote",
+                    ))
+                    seen_urls.add(job_url)
 
             except Exception as exc:
-                self.logger.warning(
+                # Loud per-feed failure; keep the other feed. If every feed
+                # failed, raise so get_jobs() retries the source with backoff.
+                failed_feeds += 1
+                self.logger.error(
                     "NodeDesk feed error for '%s' (%s): %s",
                     feed["name"], feed["url"], exc,
                 )
 
+        if not jobs and failed_feeds == len(_FEEDS):
+            raise RuntimeError(f"NodeDesk: all {len(_FEEDS)} feeds failed")
         return jobs

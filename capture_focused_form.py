@@ -1,11 +1,13 @@
 import sys
 import time
+from pathlib import Path
 
-sys.path.insert(0, r"d:\Job Scraper")
+REPO_ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(REPO_ROOT))
 from playwright.sync_api import sync_playwright
 
 job_url = "https://boards.greenhouse.io/figma/jobs/6158162004?gh_jid=6158162004"
-cv_path = r"d:\Job Scraper\jobpilot\uploads\cvs\Ibrahim_Hamid_Resume.pdf"
+cv_path = REPO_ROOT / "jobpilot" / "uploads" / "cvs" / "Ibrahim_Hamid_Resume.pdf"
 
 with sync_playwright() as p:
     b = p.chromium.launch(headless=True)
@@ -26,6 +28,8 @@ with sync_playwright() as p:
     time.sleep(1.0)
     page.locator("#first_name").scroll_into_view_if_needed()
     time.sleep(1.0)
-    page.screenshot(path=r"C:\Users\dell\.gemini\antigravity-ide\brain\4b5de1eb-7dd1-48bc-8e19-b10758268b46\screenshots\live_figma_form_proof.png")
+    screenshot_dir = REPO_ROOT / "jobpilot" / "screenshots"
+    screenshot_dir.mkdir(parents=True, exist_ok=True)
+    page.screenshot(path=str(screenshot_dir / "live_figma_form_proof.png"))
     b.close()
     print("Focused form screenshot captured successfully!")

@@ -9,7 +9,7 @@ import os
 import time
 import threading
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict
 
 from fastapi import FastAPI, Request
@@ -126,7 +126,7 @@ async def sse_stream():
                     yield {"event": "log", "data": json.dumps({
                         "message": msg,
                         "sources": get_source_stats(),
-                        "timestamp": datetime.utcnow().isoformat(),
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
                     })}
                 except Exception:
                     break
@@ -148,7 +148,7 @@ async def sse_stream():
                     break
 
             if not is_pipeline_running() and _sse_log_queue.empty():
-                yield {"event": "heartbeat", "data": json.dumps({"ts": datetime.utcnow().isoformat()})}
+                yield {"event": "heartbeat", "data": json.dumps({"ts": datetime.now(timezone.utc).isoformat()})}
 
             await asyncio.sleep(0.4)
 

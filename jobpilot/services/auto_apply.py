@@ -25,7 +25,7 @@ import re
 import smtplib
 import pathlib
 import time
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
@@ -58,6 +58,34 @@ def _has_word(text: str, *words: str) -> bool:
         if re.search(pattern, text):
             return True
     return False
+
+
+# Countries the candidate is NOT authorized to work in as a local employee.
+# Used to answer work-authorization questions truthfully (audit item 55).
+_FOREIGN_AUTH_PATTERNS = [
+    r"united states", r"u\.s\.a?", r"america", r"united kingdom", r"\buk\b",
+    r"england", r"scotland", r"wales", r"canada", r"australia", r"germany",
+    r"france", r"netherlands", r"ireland", r"spain", r"italy", r"sweden",
+    r"norway", r"denmark", r"finland", r"poland", r"portugal", r"belgium",
+    r"switzerland", r"austria", r"singapore", r"united arab emirates",
+    r"saudi arabia", r"qatar", r"kuwait",
+]
+
+
+def _truthful_work_authorization(combined: str) -> str:
+    """
+    Answer work-authorization questions honestly for a Pakistan-based
+    candidate: "Yes" for Pakistan / remote-worldwide eligibility questions;
+    "No" when the question names a specific country he is not authorized in.
+    """
+    text = combined.lower()
+    if "pakistan" in text:
+        return "Yes"
+    for pat in _FOREIGN_AUTH_PATTERNS:
+        if re.search(r"\b" + pat + r"\b", text):
+            return "No"
+    # Generic question on a Pakistan-eligible posting -> authorized.
+    return "Yes"
 
 
 # =============================================================================
@@ -171,8 +199,11 @@ def _send_email_application(
     smtp_port = getattr(settings, "SMTP_PORT", 587)
 
     if not all([smtp_host, smtp_user, smtp_pass]):
-        logger.warning("SMTP not configured - simulated email application to %s", to_email)
-        return True
+        logger.error(
+            "SMTP not configured - cannot send application email to %s; returning False (not sent)",
+            to_email,
+        )
+        return False
 
     try:
         msg = MIMEMultipart()
@@ -246,7 +277,13 @@ def _classify_and_resolve_field(
         if _has_word(combined, "high school", "rationale"):
             return ("high_school_rationale", "Maintained top academic performance and A grades in mathematics and core sciences throughout high school.")
         if _has_word(combined, "degree result", "expected result"):
-            return ("degree_result", "Expected graduation July 2026 with a cumulative GPA of 3.4/4.0 in BS Computer Science.")
+            # Single-sourced from the canonical profile (audit item 46):
+            # graduated July 2026, never "expected" and never a fabricated GPA.
+            return (
+                "degree_result",
+                f"Graduated {candidate['graduation_text']} with a cumulative GPA of "
+                f"{candidate['gpa']} in {candidate['degree']}.",
+            )
         if _has_word(combined, "about you", "summary", "bio", "tell us about", "introduce", "background"):
             return ("about_me", candidate["about_me"])
         if _has_word(combined, "additional", "comment", "anything else", "notes", "other information"):
@@ -338,10 +375,13 @@ def _classify_and_resolve_field(
         return ("gpa", candidate["gpa"])
 
     # 11. Work Authorization & Visa Sponsorship
+    # Truthful answers only (audit item 55): "Yes" only for Pakistan /
+    # remote-worldwide eligibility the candidate genuinely satisfies; "No"
+    # for country-specific authorization questions naming other countries.
     if _has_word(combined, "authorized to work in the country", "authorized in the country", "authorized to work in"):
-        return ("authorized_in_country", "Yes")
+        return ("authorized_in_country", _truthful_work_authorization(combined))
     if _has_word(combined, "authorized to work", "legally authorized", "eligible to work", "work permit", "work authorization", "right to work", "authorized"):
-        return ("work_authorization", "Yes")
+        return ("work_authorization", _truthful_work_authorization(combined))
     if _has_word(combined, "require sponsorship", "require visa", "need sponsorship", "visa sponsorship", "sponsorship", "visa"):
         return ("sponsorship_needed", "No")
     if _has_word(combined, "security clearance", "clearance"):
@@ -395,7 +435,8 @@ def _classify_and_resolve_field(
     if _has_word(combined, "current title", "job title", "headline", "current position"):
         return ("title", candidate["title"])
     if _has_word(combined, "currently employed", "are you employed"):
-        return ("currently_employed", "No")
+        # Single-sourced from the canonical profile (audit item 46).
+        return ("currently_employed", candidate["currently_employed"])
 
     # 18. Diversity / EEO / Demographics
     if _has_word(combined, "gender", "sex"):
@@ -583,9 +624,13 @@ def _handle_custom_react_select(page, csel, category: str, value: str) -> bool:
 
         search_kw = str(value)
         if category in ("work_authorization", "authorized_in_country", "legal_age", "own_work", "cs_degree", "travel_sprints", "remote_policy"):
-            search_kw = "Yes"
-        elif category in ("currently_employed", "previously_employed", "sponsorship_needed", "hispanic"):
+            # Respect the truthful resolved value ("Yes"/"No") from _classify (audit item 55)
+            search_kw = "Yes" if value.strip().lower() == "yes" else "No"
+        elif category in ("previously_employed", "sponsorship_needed", "hispanic"):
             search_kw = "No"
+        elif category == "currently_employed":
+            # Truthful answer from the canonical profile (audit item 46)
+            search_kw = "Yes" if "yes" in value.lower() else "No"
         elif category == "veteran":
             search_kw = "not a protected"
         elif category == "disability":
@@ -930,14 +975,24 @@ def _click_submit_button(page) -> bool:
                 logger.info("Clicked submit button with selector: %s", sel)
                 time.sleep(3.0)
                 
-                # Verify if submission went through or if validation errors remain
+                # Verify if submission went through or if validation errors remain.
+                # Only consider visible, error-styled elements (audit item 53):
+                # the old `div:has-text('required')` matched helper text like
+                # "* indicates required field" and produced false negatives.
                 has_error = False
                 try:
-                    error_elements = page.locator(".field-error, .error, [aria-invalid='true'], div:has-text('required')").all()
+                    error_elements = page.locator(
+                        ".field-error, .error, .error-message, .invalid-feedback, "
+                        ".validation-error, [aria-invalid='true'], "
+                        "[class*='errorMessage'], [class*='validation']"
+                    ).all()
                     for err in error_elements:
-                        if err.is_visible():
-                            has_error = True
-                            break
+                        try:
+                            if err.is_visible() and (err.text_content() or "").strip():
+                                has_error = True
+                                break
+                        except Exception:
+                            continue
                 except Exception:
                     pass
 
@@ -1095,32 +1150,78 @@ def _generic_apply(url: str, cv_path: str, cover_letter: Optional[str] = None) -
             return False
 
 
-def _greenhouse_apply(url: str, cv_path: str, cover_letter: Optional[str] = None) -> bool:
-    """Specialized flow for Greenhouse boards."""
-    candidate = _candidate()
-    from ..agents.application.greenhouse_agent import GreenhouseAgent
-    agent = GreenhouseAgent()
-    result = agent.apply(
-        job_url=url,
-        candidate_profile=candidate,
-        cv_path=cv_path,
-        cover_letter=cover_letter,
-    )
-    return result.success and result.status == "SUBMITTED"
+# =============================================================================
+#  Cover-letter generation (CoverLetterAgent wired into the apply flow)
+# =============================================================================
+
+def _generate_cover_letter(
+    job_id: str,
+    job_title: str,
+    company: str,
+    description: str,
+    candidate: dict,
+) -> Optional[str]:
+    """
+    Generates a tailored cover letter for this job via CoverLetterAgent.
+    The letter is fact-checked against the canonical profile; if the check
+    blocks it (or generation fails), returns None so callers fall back to
+    the candidate's generic about_me paragraph instead of filler.
+    """
+    try:
+        from ..agents.cover_letter.agent import CoverLetterAgent
+        from ..core.fact_checker import fact_check_generated_content
+
+        agent = CoverLetterAgent()
+        result = agent.run(
+            {
+                "job_id": job_id,
+                "job_title": job_title,
+                "company": company,
+                "job_description": description or "",
+            },
+            trigger="auto_apply",
+        )
+        letter = (result or {}).get("cover_letter") or ""
+        letter = letter.strip()
+        if not letter:
+            logger.warning("CoverLetterAgent produced no letter for %s @ %s", job_title, company)
+            return None
+
+        check = fact_check_generated_content(letter, candidate)
+        if check.blocked:
+            logger.warning(
+                "Generated cover letter blocked by fact-check for %s @ %s: %s",
+                job_title, company, "; ".join(check.violations),
+            )
+            return None
+        logger.info("Generated tailored cover letter for %s @ %s (%d chars)", job_title, company, len(letter))
+        return letter
+    except Exception as exc:
+        logger.warning("Cover letter generation failed for %s @ %s: %s", job_title, company, exc)
+        return None
 
 
-def _lever_apply(url: str, cv_path: str, cover_letter: Optional[str] = None) -> bool:
-    """Specialized flow for Lever boards."""
-    candidate = _candidate()
-    from ..agents.application.lever_agent import LeverAgent
-    agent = LeverAgent()
-    result = agent.apply(
-        job_url=url,
-        candidate_profile=candidate,
-        cv_path=cv_path,
-        cover_letter=cover_letter,
-    )
-    return result.success and result.status == "SUBMITTED"
+# =============================================================================
+#  State-machine-backed status recording (audit item 49)
+# =============================================================================
+
+def _record_application_status(db, app, to_state: str, note: str = "") -> None:
+    """
+    Record an application status change through the validated state machine
+    (TRANSITIONS in jobpilot/core/state_machine.py). On an invalid transition,
+    logs loudly and records the status directly so the outcome is never
+    silently lost.
+    """
+    from ..core.state_machine import StateMachineError, transition
+    try:
+        evt = transition(app, to_state, actor="auto_apply", note=note)
+        db.add(evt)
+    except StateMachineError as exc:
+        logger.error(
+            "Invalid state transition %s → %s for application %s: %s — recording status directly",
+            app.status, to_state, getattr(app, "id", "?"), exc,
+        )
+        app.status = to_state
 
 
 # =============================================================================
@@ -1177,9 +1278,10 @@ def apply_to_job(
             if existing_app and existing_app.status in (
                 "SUBMITTED",
                 "CONFIRMED",
-                "SUBMISSION_UNVERIFIED",
-                "SUBMISSION_UNCONFIRMED",
             ):
+                # Idempotency: only confirmed submissions block retry. Unverified
+                # attempts (SUBMISSION_UNVERIFIED / SUBMISSION_UNCONFIRMED) and
+                # FAILED attempts may be retried (audit item 44).
                 logger.warning(
                     "[IDEMPOTENCY BLOCKED] Application already exists for job %s (Canonical: %s) with status '%s'. Skipping to prevent duplicate.",
                     job_id,
@@ -1216,14 +1318,17 @@ def apply_to_job(
             eligibility.reason,
             eligibility.evidence_text or "N/A",
         )
-        # Record rejection in DB
+        # Record rejection in DB via the validated state machine
         try:
             with db_session() as db:
                 app = db.query(Application).filter_by(job_id=job_id).first()
                 if app:
-                    app.status = "ELIGIBILITY_REJECTED"
                     app.rejection_reason = eligibility.reason
                     app.user_notes = f"Preflight gate: {eligibility.matched_rule} ({eligibility.evidence_text or ''})"
+                    _record_application_status(
+                        db, app, "ELIGIBILITY_REJECTED",
+                        f"Preflight gate: {eligibility.matched_rule} ({eligibility.evidence_text or ''})",
+                    )
                 db.commit()
         except Exception:
             pass
@@ -1243,7 +1348,7 @@ def apply_to_job(
                         "reason": eligibility.reason,
                         "matched_rule": eligibility.matched_rule,
                         "evidence": eligibility.evidence_text,
-                        "evaluated_at": datetime.utcnow().isoformat(),
+                        "evaluated_at": datetime.now(timezone.utc).isoformat(),
                     }
                 },
                 upsert=True,
@@ -1262,17 +1367,28 @@ def apply_to_job(
         return False
     cv_path = resolved_cv
 
+    # 2b. Tailored cover letter (CoverLetterAgent) — generated only when the
+    # caller did not supply one; fact-checked, falls back to None on failure.
+    if cover_letter is None:
+        cover_letter = _generate_cover_letter(job_id, job_title, company, description, candidate)
+
     applied_ok = False
     strategy_used = "unknown"
     final_status = "FAILED"
     evidence_notes = ""
     screenshot_path = None
 
-    # 3. Direct ATS / Web Application Execution
+    # 3. Direct ATS / Web Application Execution — dispatched via the application
+    # router (classify_application_url) so mailto: links take the SMTP email
+    # flow and unsupported routes (WORKDAY / GOOGLE_FORM) are recorded, never
+    # fed to a doomed browser attempt (audit items 42, 52).
     if apply_url:
-        url_lower = apply_url.lower()
+        from ..agents.application.router import classify_application_url
+        route = classify_application_url(apply_url)
+        route_type = (route.route_type or "COMPANY_FORM").upper()
+        logger.info("Application route for %s: %s", apply_url, route_type)
 
-        if "greenhouse.io" in url_lower:
+        if route_type == "GREENHOUSE":
             strategy_used = "greenhouse"
             from ..agents.application.greenhouse_agent import GreenhouseAgent
             gh_res = GreenhouseAgent().apply(apply_url, candidate, cv_path, cover_letter, dry_run=dry_run)
@@ -1281,7 +1397,7 @@ def apply_to_job(
             screenshot_path = gh_res.screenshot_path
             evidence_notes = gh_res.confirmation_message or "; ".join(gh_res.errors)
 
-        elif "lever.co" in url_lower:
+        elif route_type == "LEVER":
             strategy_used = "lever"
             from ..agents.application.lever_agent import LeverAgent
             lv_res = LeverAgent().apply(apply_url, candidate, cv_path, cover_letter, dry_run=dry_run)
@@ -1290,7 +1406,40 @@ def apply_to_job(
             screenshot_path = lv_res.screenshot_path
             evidence_notes = lv_res.confirmation_message or "; ".join(lv_res.errors)
 
-        else:
+        elif route_type == "EMAIL":
+            # mailto: application URLs go straight to the SMTP email flow.
+            target_email = route.target_email or apply_url.split(":", 1)[-1].split("?")[0]
+            strategy_used = f"email ({target_email})"
+            email_sent = _send_email_application(
+                to_email=target_email,
+                job_title=job_title,
+                company=company,
+                cv_path=cv_path,
+                cover_letter=cover_letter or candidate["about_me"],
+                candidate_name=candidate["full_name"],
+                candidate_email=candidate["email"],
+            )
+            if email_sent:
+                applied_ok = True
+                final_status = "SUBMITTED"
+                evidence_notes = f"Verified SMTP dispatch to {target_email}"
+            else:
+                applied_ok = False
+                final_status = "FAILED"
+                evidence_notes = f"Email application to {target_email} failed (SMTP unconfigured or send error)"
+
+        elif route_type in ("WORKDAY", "GOOGLE_FORM"):
+            # No automated handler exists for these routes: record explicitly
+            # instead of attempting a doomed browser run (audit item 52).
+            strategy_used = f"{route_type.lower()}_unsupported"
+            final_status = "UNSUPPORTED_ROUTE"
+            applied_ok = False
+            evidence_notes = (
+                f"{route.ats_name or route_type} applications require a login/manual flow "
+                "with no automated handler; skipped by design."
+            )
+
+        else:  # COMPANY_FORM / MANUAL / unknown -> universal browser flow
             strategy_used = "generic_browser"
             try:
                 applied_ok = _generic_apply(apply_url, cv_path, cover_letter)
@@ -1334,9 +1483,12 @@ def apply_to_job(
             with db_session() as db:
                 app = db.query(Application).filter_by(job_id=job_id).first()
                 if app:
-                    app.status = "SUBMITTED"
-                    app.submitted_at = datetime.utcnow()
+                    app.submitted_at = datetime.now(timezone.utc)
                     app.user_notes = f"Auto-applied via {strategy_used} | Evidence: {evidence_notes}"
+                    _record_application_status(
+                        db, app, "SUBMITTED",
+                        f"Auto-applied via {strategy_used} | Evidence: {evidence_notes}",
+                    )
                 db.commit()
         except Exception as db_exc:
             logger.warning("Failed to update application DB status: %s", db_exc)
@@ -1355,7 +1507,7 @@ def apply_to_job(
                         "status": "SUBMITTED",
                         "strategy": strategy_used,
                         "score": score,
-                        "submitted_at": datetime.utcnow().isoformat(),
+                        "submitted_at": datetime.now(timezone.utc).isoformat(),
                         "url": apply_url,
                         "screenshot_path": screenshot_path,
                         "evidence": evidence_notes,
@@ -1379,10 +1531,13 @@ def apply_to_job(
             with db_session() as db:
                 app = db.query(Application).filter_by(job_id=job_id).first()
                 if app:
-                    app.status = final_status
                     if canonical_job_id:
                         app.canonical_job_id = canonical_job_id
                     app.user_notes = f"Status: {final_status} via {strategy_used} | Details: {evidence_notes}"
+                    _record_application_status(
+                        db, app, final_status,
+                        f"Status: {final_status} via {strategy_used} | Details: {evidence_notes}",
+                    )
                 db.commit()
         except Exception:
             pass
@@ -1402,7 +1557,7 @@ def apply_to_job(
                         "status": final_status,
                         "strategy": strategy_used,
                         "score": score,
-                        "attempted_at": datetime.utcnow().isoformat(),
+                        "attempted_at": datetime.now(timezone.utc).isoformat(),
                         "url": apply_url,
                         "screenshot_path": screenshot_path,
                         "notes": evidence_notes,

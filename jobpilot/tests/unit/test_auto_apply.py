@@ -33,7 +33,9 @@ class TestCandidateProfile:
         assert c["work_authorization"] == "Yes"
         assert c["sponsorship_needed"] == "No"
         assert c["visa_needed"] == "No"
-        assert c["currently_employed"] == "No"
+        # Audit item 46: canonical profile is AI Engineer at Brandlya Group (Jul 2026–present)
+        assert c["currently_employed"] == "Yes"
+        assert c["current_company"] == "Brandlya Group"
         assert "Immediately" in c["notice_period"]
 
     def test_candidate_education_and_skills(self):
@@ -102,7 +104,8 @@ class TestFieldClassificationAndResolution:
     def test_salary_and_compensation_fields(self):
         cat, val = _classify_and_resolve_field("input", "text", "salary_expectation", "salary", "$", "Desired Salary / Compensation", "", self.candidate)
         assert cat == "desired_salary"
-        assert "$60,000" in val
+        # Audit item 46: ground truth is $10–40/hr (canonical desired_salary "$20 - $40 per hour")
+        assert "$20 - $40 per hour" in val
 
         cat, val = _classify_and_resolve_field("input", "text", "hourly_pay", "rate", "$/hr", "Desired hourly rate", "", self.candidate)
         assert cat == "salary_hourly"

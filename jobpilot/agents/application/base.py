@@ -67,8 +67,8 @@ class BaseApplicationAgent(ABC):
                     if any(k in frame_url for k in ["turnstile", "hcaptcha", "recaptcha/api2/anchor"]):
                         return "CAPTCHA_DETECTED"
                 return None
-            except Exception:
-                pass
+            except Exception as exc:
+                logger.debug("Safety-trigger scan on live page failed: %s", exc)
 
         # Fallback to scanning HTML text if page object not provided
         import re

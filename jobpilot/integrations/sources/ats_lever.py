@@ -23,10 +23,12 @@ class LeverATSAdapter(JobSourceAdapter):
     rate_limit_delay = 1.0
 
     TARGET_COMPANIES = [
-        "palantir", "netflix", "shopify", "coursera", "docker",
-        "airtable", "dbtlabs", "n8n", "replit", "supabase",
-        "postman", "synthesia", "modal", "resend", "railway",
-        "convex", "prisma", "cal", "clerk", "fly"
+        # Live-verified 2026-09-27 (HTTP 200 with jobs). Dead boards removed:
+        # netflix, shopify, coursera, docker, airtable, dbtlabs, n8n, replit,
+        # supabase, postman, synthesia, modal, resend, railway, convex,
+        # prisma, cal, clerk (all 404; most moved to Ashby — see
+        # integrations/sources/ashby.py).
+        "palantir", "fly",
     ]
 
     def fetch_company_jobs(self, company_name: str) -> List[RawJob]:
@@ -34,8 +36,14 @@ class LeverATSAdapter(JobSourceAdapter):
         jobs: List[RawJob] = []
 
         try:
-            res = requests.get(url, timeout=5)
+            res = requests.get(url, timeout=15)
             if res.status_code != 200:
+                # Loud failure — a dead/renamed board must never fail silently.
+                logger.error(
+                    "[Lever ATS] Board '%s' returned HTTP %d — "
+                    "token may be dead; remove it from TARGET_COMPANIES",
+                    company_name, res.status_code,
+                )
                 return []
 
             data = res.json()
@@ -67,7 +75,8 @@ class LeverATSAdapter(JobSourceAdapter):
                     ))
             logger.info("[Lever ATS] Fetched %d structured jobs from '%s'", len(jobs), company_name)
         except Exception as exc:
-            logger.warning("[Lever ATS] Error fetching board '%s': %s", company_name, exc)
+            logger.error("[Lever ATS] Error fetching board '%s': %s", company_name, exc)
+            raise
 
         return jobs
 
@@ -79,6 +88,6 @@ class LeverATSAdapter(JobSourceAdapter):
             for f in concurrent.futures.as_completed(futures):
                 try:
                     all_jobs.extend(f.result())
-                except Exception:
-                    pass
+                except Exception as exc:
+                    logger.error("[Lever ATS] Board fetch raised: %s", exc)
         return all_jobs

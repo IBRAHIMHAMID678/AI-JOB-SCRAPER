@@ -161,8 +161,8 @@ class LeverAgent(BaseApplicationAgent):
             try:
                 cookie_btn.click()
                 time.sleep(0.5)
-            except Exception:
-                pass
+            except Exception as exc:
+                logger.warning("[LeverAgent] Failed dismissing cookie banner: %s", exc)
 
     def _click_apply_button(self, page) -> None:
         apply_btn = page.locator(
@@ -172,8 +172,8 @@ class LeverAgent(BaseApplicationAgent):
             try:
                 apply_btn.click()
                 time.sleep(1.5)
-            except Exception:
-                pass
+            except Exception as exc:
+                logger.warning("[LeverAgent] Failed clicking apply button: %s", exc)
 
     def _check_unfilled_visible_fields(self, page) -> bool:
         """Checks if any visible input or select elements remain empty."""
@@ -182,8 +182,8 @@ class LeverAgent(BaseApplicationAgent):
             for inp in empty_inputs:
                 if inp.is_visible() and not inp.input_value():
                     return True
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("[LeverAgent] Empty-field check failed: %s", exc)
         return False
 
     def _handle_multistep_navigation(self, page, candidate: Dict[str, Any], cv_path: str, cover_letter: Optional[str]) -> None:
@@ -198,7 +198,8 @@ class LeverAgent(BaseApplicationAgent):
                     next_btn.click()
                     time.sleep(1.5)
                     _fill_all_form_fields(page, candidate, cv_path, cover_letter)
-                except Exception:
+                except Exception as exc:
+                    logger.warning("[LeverAgent] Multi-step navigation/fill failed: %s", exc)
                     break
             else:
                 break
@@ -219,6 +220,6 @@ class LeverAgent(BaseApplicationAgent):
                     btn.click()
                     logger.info("[LeverAgent] Clicked Lever submit button: %s", sel)
                     return True
-            except Exception:
-                pass
+            except Exception as exc:
+                logger.warning("[LeverAgent] Failed clicking submit selector '%s': %s", sel, exc)
         return False

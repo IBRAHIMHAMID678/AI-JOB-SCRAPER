@@ -39,8 +39,9 @@ _INDIA_KEYWORDS = [
 ]
 
 # Safe result cap per request to avoid deep pagination (bot trigger)
-_LINKEDIN_RESULTS_PER_TERM = 8
-_INDEED_RESULTS_PER_TERM = 10
+# User rule: LinkedIn freshness <= 5 days (120h); keep caps modest but usable.
+_LINKEDIN_RESULTS_PER_TERM = 15
+_INDEED_RESULTS_PER_TERM = 15
 
 # Circuit breaker: track blocked sites within one run
 _blocked_sites: Set[str] = set()
@@ -89,7 +90,7 @@ class JobSpyAdapter(JobSourceAdapter):
                         search_term=term,
                         location="Worldwide",
                         results_wanted=_LINKEDIN_RESULTS_PER_TERM,
-                        hours_old=24,
+                        hours_old=120,  # user rule: LinkedIn freshness <= 5 days
                         is_remote=True,
                     )
                     jobs = self._df_to_raw(df, "JobSpy-LinkedIn")
@@ -115,7 +116,7 @@ class JobSpyAdapter(JobSourceAdapter):
                     search_term=term,
                     location=location,
                     results_wanted=_INDEED_RESULTS_PER_TERM,
-                    hours_old=24,
+                    hours_old=120,  # user rule: LinkedIn freshness <= 5 days
                     is_remote=True,
                 )
                 jobs = self._df_to_raw(df, label)

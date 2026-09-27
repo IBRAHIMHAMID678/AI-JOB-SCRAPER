@@ -1,7 +1,7 @@
 """Analytics endpoints — user-scoped."""
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import func
@@ -16,7 +16,7 @@ router = APIRouter(tags=["analytics"])
 
 @router.get("/analytics/summary")
 def analytics_summary(db: Session = Depends(get_db), user=Depends(get_current_user)):
-    today = datetime.utcnow().date().isoformat()
+    today = datetime.now(timezone.utc).date().isoformat()
 
     total_jobs = db.query(JobMatch).filter(JobMatch.user_id == user.id).count()
     matched = db.query(JobMatch).filter(
@@ -48,7 +48,7 @@ def analytics_summary(db: Session = Depends(get_db), user=Depends(get_current_us
 
     new_today = db.query(JobMatch).filter(
         JobMatch.user_id == user.id,
-        func.date(JobMatch.matched_at) == datetime.utcnow().date(),
+        func.date(JobMatch.matched_at) == datetime.now(timezone.utc).date(),
     ).count()
 
     return {
@@ -98,7 +98,7 @@ def source_performance(db: Session = Depends(get_db)):
 
 @router.get("/analytics/application-timeline")
 def application_timeline(db: Session = Depends(get_db), user=Depends(get_current_user), days: int = 30):
-    since = datetime.utcnow() - timedelta(days=days)
+    since = datetime.now(timezone.utc) - timedelta(days=days)
     rows = db.query(
         func.date(Application.created_at),
         func.count(Application.id),

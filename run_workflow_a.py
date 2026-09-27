@@ -17,7 +17,7 @@ from jobpilot.core.eligibility import evaluate_job_eligibility
 from jobpilot.core.database import SessionLocal, db_session
 from jobpilot.core.models import Job, Application, User, UploadedCV
 from jobpilot.core.security import hash_url
-from jobpilot.services.auto_apply import apply_to_job
+from jobpilot.services.auto_apply import apply_to_job, can_apply, _generate_cover_letter
 from jobpilot.integrations.sources.ats_greenhouse import GreenhouseATSAdapter
 from jobpilot.integrations.sources.ats_lever import LeverATSAdapter
 
@@ -129,6 +129,16 @@ def run_workflow_a(target_count: int = 100):
 
         # Execute application pipeline
         try:
+            # Daily-limit / tier gate (audit item 56)
+            if not can_apply(85, user_id):
+                print("    [DAILY LIMIT] Daily apply limit reached for this score tier — stopping run.")
+                break
+
+            # Tailored cover letter for this job (audit item 45)
+            job_cover_letter = _generate_cover_letter(
+                str(job_db_id), rj.title, rj.company, rj.description or "", candidate
+            )
+
             # We attempt application via apply_to_job
             # Note: dry_run=False executes real form navigation and submission verification
             is_submitted = apply_to_job(
@@ -140,6 +150,7 @@ def run_workflow_a(target_count: int = 100):
                 score=85,
                 description=rj.description or "",
                 cv_path=resume_path,
+                cover_letter=job_cover_letter,
                 user_id=user_id,
                 dry_run=False,
             )

@@ -23,6 +23,23 @@ class ApproveRequest(BaseModel):
 class StatusUpdateRequest(BaseModel):
     status: str
     note: Optional[str] = None
+    # Required when status is SUBMITTED or CONFIRMED: proof the submission
+    # actually happened (confirmation URL, screenshot path, reference ID).
+    # Manual "submitted"/"confirmed" markings without evidence are rejected
+    # (audit item 49) — fake success reporting is never allowed.
+    evidence: Optional[str] = None
+
+
+def _require_evidence_for_terminal_success(status: str, evidence: Optional[str]) -> None:
+    if status.upper() in ("SUBMITTED", "CONFIRMED") and not (evidence or "").strip():
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"Cannot mark application '{status.upper()}' without attached evidence "
+                "(confirmation URL, screenshot path, or reference ID). The auto-apply "
+                "pipeline records evidence automatically; manual overrides must too."
+            ),
+        )
 
 
 @router.get("/applications")
@@ -114,14 +131,18 @@ def reject_application(app_id: str, db: Session = Depends(get_db), user=Depends(
 
 
 @router.post("/applications/{app_id}/submit")
-def mark_submitted(app_id: str, db: Session = Depends(get_db), user=Depends(get_current_user)):
-    from datetime import datetime
+def mark_submitted(app_id: str, req: StatusUpdateRequest, db: Session = Depends(get_db), user=Depends(get_current_user)):
+    from datetime import datetime, timezone
     app = db.query(Application).filter(Application.id == app_id, Application.user_id == user.id).first()
     if not app:
         raise HTTPException(status_code=404, detail="Application not found")
+    _require_evidence_for_terminal_success("SUBMITTED", req.evidence)
     try:
-        evt = transition(app, "SUBMITTED", actor="user", note="Manually submitted")
-        app.submitted_at = datetime.utcnow()
+        evt = transition(
+            app, "SUBMITTED", actor="user",
+            note=f"Manually marked submitted with evidence: {req.evidence}. {req.note or ''}".strip(),
+        )
+        app.submitted_at = datetime.now(timezone.utc)
         db.add(evt)
         db.commit()
         return {"status": "submitted"}
@@ -134,8 +155,12 @@ def update_status(app_id: str, req: StatusUpdateRequest, db: Session = Depends(g
     app = db.query(Application).filter(Application.id == app_id, Application.user_id == user.id).first()
     if not app:
         raise HTTPException(status_code=404, detail="Application not found")
+    _require_evidence_for_terminal_success(req.status, req.evidence)
     try:
-        evt = transition(app, req.status.upper(), actor="user", note=req.note)
+        note = req.note or ""
+        if req.evidence and req.status.upper() in ("SUBMITTED", "CONFIRMED"):
+            note = f"Evidence: {req.evidence}. {note}".strip()
+        evt = transition(app, req.status.upper(), actor="user", note=note or None)
         db.add(evt)
         db.commit()
         return {"status": req.status.upper()}

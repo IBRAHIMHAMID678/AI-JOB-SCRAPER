@@ -38,7 +38,7 @@ class RoleInfo(BaseModel):
     employment_type: str = "full_time"  # full_time, part_time, contract, internship
     seniority: str = "junior"           # junior, mid, senior, lead, staff
     experience_required_min: float = 0.0
-    experience_required_max: float = 2.0
+    experience_required_max: float = 3.0  # item 36: approved range is 1-3 years
     skills: List[str] = Field(default_factory=list)
     responsibilities: List[str] = Field(default_factory=list)
 

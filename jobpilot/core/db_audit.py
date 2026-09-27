@@ -10,7 +10,7 @@ Fulfills Section 38 and Section 50 of AUTO_APPLY_HARDENING_MASTER_PROMPT:
 from __future__ import annotations
 
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Any
 from jobpilot.core.config import settings
 from jobpilot.core.logging import get_logger
@@ -31,7 +31,7 @@ def audit_and_reconcile_databases(dry_run: bool = True) -> Dict[str, Any]:
         "legacy_unverified_migrated": 0,
         "confirmed_submitted": 0,
         "audit_passed": False,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
     # 1. Inspect & Reconcile SQLite

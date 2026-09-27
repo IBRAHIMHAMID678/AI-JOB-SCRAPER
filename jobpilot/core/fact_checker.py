@@ -44,8 +44,13 @@ def fact_check_generated_content(
         except ValueError:
             pass
 
-    # 2. Skill Evidence Check
-    candidate_skills = set(s.lower() for s in candidate_profile.get("skills", []))
+    # 2. Skill Evidence Check — skills may be a comma-separated string (audit item 54)
+    skills_raw = candidate_profile.get("skills", "")
+    if isinstance(skills_raw, str):
+        skills_list = [s.strip().lower() for s in skills_raw.split(",") if s.strip()]
+    else:
+        skills_list = [str(s).strip().lower() for s in skills_raw]
+    candidate_skills = set(skills_list)
     claims_check = ["kubernetes", "c++", "ruby", "golang", "java", "scala"]
     for tech in claims_check:
         if tech in text_lower and tech not in candidate_skills:

@@ -1,11 +1,72 @@
-python-jobspy
-requests
-groq
-pandas
-python-dotenv
-pydantic
-fastapi
-uvicorn
-sse-starlette
-aiofiles
-pymongo
+# Root requirements for AI-JOB-SCRAPER (legacy entry points):
+# main.py, server.py, production_batch_run.py, evaluator.py,
+# harvest_linkedin_posts.py, discover_*.py, capture_focused_form.py, etc.
+#
+# This file is the union of the old root requirements.txt and
+# jobpilot/requirements.txt (which is kept unchanged as the service-level
+# file used by the Dockerfile). Version floors follow jobpilot/requirements.txt.
+# Import-coverage of every third-party import in the repo is verified by
+# /tmp/check_import_coverage.py.
+
+# ── Core web framework ─────────────────────────────────────────────────────────
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+sse-starlette>=2.1.0
+python-multipart>=0.0.9
+
+# ── Config & env ──────────────────────────────────────────────────────────────
+pydantic>=2.7.0
+pydantic-settings>=2.3.0
+python-dotenv>=1.0.1
+
+# ── Database ──────────────────────────────────────────────────────────────────
+sqlalchemy>=2.0.30
+alembic>=1.13.0
+psycopg2-binary>=2.9.9
+pymongo>=4.0.0
+
+# ── AI / LLM ──────────────────────────────────────────────────────────────────
+groq>=0.9.0
+requests>=2.32.0
+
+# ── Job scraping ──────────────────────────────────────────────────────────────
+# On Python 3.14 Windows: pip install pandas python-jobspy --only-binary=:all:
+python-jobspy>=1.1.67
+pandas>=2.2.0
+
+# ── Scheduling ────────────────────────────────────────────────────────────────
+APScheduler>=3.10.0
+
+# ── Document export ───────────────────────────────────────────────────────────
+python-docx>=1.1.0
+
+# ── HTTP ──────────────────────────────────────────────────────────────────────
+httpx>=0.27.0
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+pytest>=8.2.0
+pytest-asyncio>=0.23.0
+
+# ── Auth & crypto ─────────────────────────────────────────────────────────────
+bcrypt>=4.1.0
+cryptography>=42.0.0
+
+# ── Utilities ─────────────────────────────────────────────────────────────────
+aiofiles>=23.2.1
+
+# ── CV Parsing (optional — falls back to plain text if not installed) ─────────
+# PyMuPDF may fail on Python 3.14. Install separately if needed:
+# pip install PyMuPDF --only-binary=:all:
+# PyMuPDF>=1.24.0
+
+# ── HTML scraping (Rozee.pk) ──────────────────────────────────────────────────
+beautifulsoup4>=4.12.0
+
+# ── Telegram notifications ────────────────────────────────────────────────────
+# (uses httpx — already listed above)
+
+# ── Browser automation ────────────────────────────────────────────────────────
+playwright>=1.44.0
+
+# ── Serverless adapters (netlify/functions) ───────────────────────────────────
+mangum>=0.17.0

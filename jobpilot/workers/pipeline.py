@@ -21,7 +21,7 @@ from __future__ import annotations
 import concurrent.futures
 import threading
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
 from ..core.config import settings
@@ -59,7 +59,7 @@ def run_pipeline(trigger: str = "manual", user_id: Optional[str] = None) -> dict
         _is_running = True
         _source_stats = {}
 
-    started_at = datetime.utcnow()
+    started_at = datetime.now(timezone.utc)
     bus.emit(EventType.PIPELINE_STARTED, {"trigger": trigger})
     summary = {"matched": 0, "pending": 0, "skipped": 0, "errors": 0, "applied": 0}
 
@@ -100,6 +100,35 @@ def run_pipeline(trigger: str = "manual", user_id: Optional[str] = None) -> dict
         print(f"[JOBPILOT] Normalized: {len(normalized)} jobs", flush=True)
         sse_log(f"[JOBPILOT] Normalized: {len(normalized)} jobs")
 
+        # ── Phase 2b: Eligibility precheck (items 21/24) ────────────────────────
+        # Filter ineligible jobs (senior, 4+ yrs, US-only, non-tech) BEFORE the
+        # global dedup, so bad postings never consume a dedup slot or pollute
+        # the 30-day dedup history. The per-user gate in _analyze_match_and_persist
+        # still runs afterwards; this stage fails open on checker errors.
+        print(f"[JOBPILOT] Phase 2b: Eligibility precheck on {len(normalized)} jobs...", flush=True)
+        sse_log("[JOBPILOT] Phase 2b: Eligibility precheck...")
+        from ..core.eligibility import evaluate_job_eligibility
+        _eligible_jobs = []
+        for job in normalized:
+            try:
+                _elig = evaluate_job_eligibility(
+                    job_id=job.canonical_job_id or job.url_hash or job.title,
+                    title=job.title,
+                    company=job.company,
+                    description=job.description or "",
+                    location=job.location,
+                )
+                if _elig.is_eligible:
+                    _eligible_jobs.append(job)
+                else:
+                    summary["skipped"] += 1
+            except Exception as exc:
+                logger.warning("Eligibility precheck failed for '%s': %s", job.title, exc)
+                _eligible_jobs.append(job)
+        normalized = _eligible_jobs
+        print(f"[JOBPILOT] Eligible after precheck: {len(normalized)} jobs", flush=True)
+        sse_log(f"[JOBPILOT] Eligible after precheck: {len(normalized)} jobs")
+
         # ── Phase 3: Deduplication ───────────────────────────────────────────
         print(f"[JOBPILOT] Phase 3: Deduplicating {len(normalized)} jobs...", flush=True)
         sse_log("[JOBPILOT] Phase 3: Deduplicating...")
@@ -125,7 +154,7 @@ def run_pipeline(trigger: str = "manual", user_id: Optional[str] = None) -> dict
         summary["errors"] += 1
     finally:
         _is_running = False
-        duration = (datetime.utcnow() - started_at).total_seconds()
+        duration = (datetime.now(timezone.utc) - started_at).total_seconds()
         bus.emit(EventType.PIPELINE_COMPLETED, {"summary": summary, "duration": duration})
         sse_log(
             f"[JOBPILOT] Pipeline complete in {duration:.1f}s — "
@@ -161,6 +190,7 @@ def _fetch_all_sources() -> List[RawJob]:
     from ..integrations.sources.scrapfly_adapter import ScrapflyAdapter
     from ..integrations.sources.ats_greenhouse import GreenhouseATSAdapter
     from ..integrations.sources.ats_lever import LeverATSAdapter
+    from ..integrations.sources.ashby import AshbyATSAdapter
     from ..integrations.sources.jobicy import JobicyAdapter
     from ..integrations.sources.workingnomads import WorkingNomadsAdapter
 
@@ -176,9 +206,14 @@ def _fetch_all_sources() -> List[RawJob]:
         ("NodeDesk", NodeDeskAdapter()),
         ("GreenhouseATS", GreenhouseATSAdapter()),
         ("LeverATS", LeverATSAdapter()),
+        ("AshbyATS", AshbyATSAdapter()),
         ("Rozee", RozeeAdapter()),
         ("Scrapfly", ScrapflyAdapter()),
     ]
+
+    # LinkedInPostsAdapter is intentionally NOT registered: its fetch() is a
+    # stub that always returns [] — counting it would mislead source stats
+    # (see integrations/sources/linkedin_posts.py).
 
     # JobSpy (LinkedIn/Indeed) is optional — requires pandas + python-jobspy
     try:
@@ -246,8 +281,8 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict, user_id
         "technologies": cv_skills,
         "preferred_roles": cv_roles,
         "seniority_preference": ["junior", "entry", "mid"],
-        "min_hourly_usd": 15,
-        "max_hourly_usd": 60,
+        "min_hourly_usd": 10,
+        "max_hourly_usd": 40,
         "years_experience": cv_exp_years,
         "career_level": "junior",
     }
@@ -277,6 +312,21 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict, user_id
                 if user_location not in loc_lower:
                     sse_log(f"[SKIP] On-site job not in user's city ({user_location}): {title}")
                     return "skipped"
+
+            # Item 21: ground-truth eligibility gate (seniority, experience,
+            # geography, tech relevance) — catches "Remote, US"/"Remote - US"
+            # and other restrictions the local heuristics miss.
+            from ..core.eligibility import evaluate_job_eligibility
+            elig = evaluate_job_eligibility(
+                job_id=job.canonical_job_id or job.url_hash,
+                title=title,
+                company=company,
+                description=job.description or "",
+                location=job.location,
+            )
+            if not elig.is_eligible:
+                sse_log(f"[SKIP] {elig.decision}: {title} at {company} ({elig.reason})")
+                return "skipped"
 
             senior_kw = ["senior", "lead", "staff", "principal", "director", "vp ", "head of", "architect", "sr."]
             if any(k in title_lower for k in senior_kw):
@@ -435,6 +485,17 @@ def _analyze_match_and_persist(jobs: List[NormalizedJob], summary: dict, user_id
 
         except Exception as exc:
             logger.warning("Error processing job '%s': %s", job.title, exc)
+            # Item 34: dead-letter record instead of a bare log line
+            try:
+                from ..core.dead_letter import write_dead_letter
+                write_dead_letter(
+                    job.canonical_job_id or job.url_hash,
+                    stage="pipeline:process_job",
+                    error=exc,
+                    extra={"title": job.title, "company": job.company, "source": job.source_name},
+                )
+            except Exception:
+                pass
             return None
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=settings.QUEUE_MAX_WORKERS) as ex:

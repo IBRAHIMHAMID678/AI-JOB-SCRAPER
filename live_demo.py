@@ -1,15 +1,17 @@
 import os
 import sys
 import time
+from pathlib import Path
 
-sys.path.insert(0, r"d:\Job Scraper")
+REPO_ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(REPO_ROOT))
 
 from playwright.sync_api import sync_playwright
 from jobpilot.services.auto_apply import _candidate, _fill_all_form_fields
 
 job_url = "https://boards.greenhouse.io/figma/jobs/6158162004?gh_jid=6158162004"
 candidate = _candidate()
-cv_path = r"d:\Job Scraper\jobpilot\uploads\cvs\Ibrahim_Hamid_Resume.pdf"
+cv_path = REPO_ROOT / "jobpilot" / "uploads" / "cvs" / "Ibrahim_Hamid_Resume.pdf"
 
 print("=" * 60)
 print("  LAUNCHING LIVE VISIBLE BROWSER FOR AUTO-APPLY DEMO")

@@ -4,11 +4,17 @@ Integrates scraper, application engine, and email service
 """
 
 import asyncio
+import hashlib
 import logging
 from datetime import datetime
 from typing import Dict, List, Optional
 from application_engine import JobApplicationEngine, ApplicationConfig
 from email_service import EmailService
+
+try:
+    from jobpilot.services.auto_apply import apply_to_job as real_apply_to_job
+except ImportError:  # pragma: no cover - only when jobpilot package is unavailable
+    real_apply_to_job = None
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -62,9 +68,46 @@ class JobApplicationOrchestrator:
                     logger.warning("Daily application limit reached. Stopping application pipeline.")
                     break
                 
-                # Apply to job
+                # Apply to job via the REAL evidence-based pipeline
+                # (jobpilot.services.auto_apply). A job counts as "submitted"
+                # ONLY when affirmative browser/SMTP evidence confirms it —
+                # never simulated (audit item 41).
                 logger.info(f"Applying to {job.get('title', 'Unknown')} at {job.get('company', 'Unknown')}...")
-                application_result = await self.application_engine.apply_to_job(job)
+                if real_apply_to_job is None:
+                    logger.error("Real auto-apply pipeline unavailable; marking failed (no fake success).")
+                    application_result = {
+                        "url": job.get("url"),
+                        "title": job.get("title"),
+                        "company": job.get("company"),
+                        "source": job.get("source"),
+                        "applied_at": datetime.now(),
+                        "status": "failed",
+                        "reason": "auto_apply pipeline unavailable",
+                    }
+                else:
+                    job_url = job.get("url") or ""
+                    legacy_job_id = "legacy_" + hashlib.sha256(job_url.encode()).hexdigest()[:16]
+                    submitted = await asyncio.to_thread(
+                        real_apply_to_job,
+                        job_id=legacy_job_id,
+                        job_title=job.get("title", "Unknown"),
+                        company=job.get("company", "Unknown"),
+                        source=job.get("source", ""),
+                        apply_url=job_url or None,
+                        score=int(job.get("match_score", 0) or 0),
+                        description=job.get("description", ""),
+                        cv_path=self.resume_path,
+                        dry_run=False,
+                    )
+                    application_result = {
+                        "url": job_url,
+                        "title": job.get("title"),
+                        "company": job.get("company"),
+                        "source": job.get("source"),
+                        "applied_at": datetime.now(),
+                        # Honest: True only when the pipeline verified real submission evidence.
+                        "status": "submitted" if submitted else "failed",
+                    }
                 
                 self.application_results.append(application_result)
                 application_count += 1

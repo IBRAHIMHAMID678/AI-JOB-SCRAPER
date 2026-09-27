@@ -3,6 +3,34 @@ import xml.etree.ElementTree as ET
 import re
 from log_manager import log
 
+def _repair_xml(content):
+    """Best-effort repair for feeds with unescaped '&' (e.g. nodesk.co/index.xml)."""
+    text = content.decode("utf-8", errors="replace")
+    text = re.sub(r"&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9a-fA-F]+;)", "&amp;", text)
+    return text.encode("utf-8")
+
+
+def _split_title_company(raw_title):
+    """
+    Split an RSS item title into (title, company).
+    Real Python.org format is "Title, Company" (e.g. 'Django Developer,
+    The Developer Society'). Do NOT swap on " - " — titles like
+    "Senior Backend Engineer - Remote" are not "Company - Title".
+    """
+    title = (raw_title or "").strip()
+    company = "Remote Tech Employer"
+    if ", " in title:
+        # "Title, Company" — split on the LAST comma so titles containing
+        # commas (e.g. "Engineer, Backend, Acme") keep working.
+        title_part, company_part = title.rsplit(", ", 1)
+        if title_part.strip() and company_part.strip():
+            title, company = title_part.strip(), company_part.strip()
+    elif " at " in title:
+        parts = title.split(" at ", 1)
+        title, company = parts[0].strip(), parts[1].strip() or company
+    return title, company
+
+
 def get_nodesk_python_jobs():
     """
     Fetches remote jobs from Python.org Jobs RSS and NoDesk RSS feeds.
@@ -20,7 +48,13 @@ def get_nodesk_python_jobs():
         try:
             response = requests.get(src["url"], timeout=12)
             if response.status_code == 200:
-                root = ET.fromstring(response.content)
+                try:
+                    root = ET.fromstring(response.content)
+                except ET.ParseError:
+                    # Fallback for malformed feeds (e.g. nodesk.co/index.xml
+                    # has unescaped '&'); repair and retry before giving up.
+                    log(f"  -> Strict XML parse failed for {src['name']}; trying repaired parse")
+                    root = ET.fromstring(_repair_xml(response.content))
                 items = root.findall("./channel/item")
                 
                 for item in items:
@@ -32,16 +66,7 @@ def get_nodesk_python_jobs():
                     job_url = link_elem.text if link_elem is not None else ""
                     raw_desc = desc_elem.text if desc_elem is not None else ""
                     
-                    company = "Remote Tech Employer"
-                    title = raw_title
-                    if " at " in raw_title:
-                        parts = raw_title.split(" at ", 1)
-                        title = parts[0].strip()
-                        company = parts[1].strip()
-                    elif " - " in raw_title:
-                        parts = raw_title.split(" - ", 1)
-                        company = parts[0].strip()
-                        title = parts[1].strip()
+                    title, company = _split_title_company(raw_title)
                         
                     title_lower = title.lower()
                     tech_keywords = ["ai", "python", "full stack", "react", "next", "node", "software", "developer", "engineer", "frontend", "backend", "web", "fastapi", "django"]

@@ -4,8 +4,8 @@ Hardened LinkedIn Job Posts Harvester & Qualification Engine.
 Enforces:
 1. True Freshness Validation:
    - Extracts relative time tokens (e.g., '10h', '2d', '1w', '1mo', '2y') or explicit timestamps.
-   - Evaluates Freshness: FRESH (<= 14 days), AGING (15 - 30 days), STALE (> 30 days).
-   - Hard-rejects STALE posts from entering the QUALIFIED output.
+   - Evaluates Freshness: FRESH (<= 5 days), AGING (6-14 days), STALE (> 14 days) — LinkedIn rule.
+   - Hard-rejects non-FRESH posts from entering the QUALIFIED output.
 2. Canonical Candidate & Role Qualification:
    - Uses jobpilot.core.eligibility to run strict checks:
      * Candidate Profile Relevance (Tech/AI/Software/Web only; rejects sales, HR, marketing, civil, etc.)
@@ -106,7 +106,10 @@ def get_linkedin_snowflake_datetime(url: str) -> Optional[datetime]:
 def evaluate_freshness(age_token: str, post_url: str = "") -> Tuple[str, str, str]:
     """
     Evaluates freshness status, reason, and posted_at date.
-    Statuses: FRESH (<= 14 days), AGING (15 - 30 days), STALE (> 30 days).
+    Item 32/36: LinkedIn ground-truth rule is FRESH (<= 5 days), AGING (6-14 days),
+    STALE (> 14 days). Unit checks are ordered hours -> days -> weeks -> months ->
+    years with word-boundary unit patterns — the old `if "y" in token` branch ran
+    first and "y" in "2 days" is True, so "2 days"/"daily" were all misclassified.
     Uses LinkedIn activity snowflake timestamp as authoritative evidence when available!
     """
     today = datetime.utcnow()
@@ -116,9 +119,9 @@ def evaluate_freshness(age_token: str, post_url: str = "") -> Tuple[str, str, st
     if dt:
         delta_days = (today - dt).days
         posted_at = dt.strftime("%Y-%m-%d")
-        if delta_days <= 14:
+        if delta_days <= 5:
             return "FRESH", f"Verified post date {posted_at} ({delta_days} days old)", posted_at
-        elif delta_days <= 30:
+        elif delta_days <= 14:
             return "AGING", f"Post date {posted_at} ({delta_days} days old)", posted_at
         else:
             return "STALE", f"Post date {posted_at} exceeds 14 days ({delta_days} days old)", posted_at
@@ -128,45 +131,44 @@ def evaluate_freshness(age_token: str, post_url: str = "") -> Tuple[str, str, st
     if not token:
         return "UNKNOWN", "No timestamp evidence available", today.strftime("%Y-%m-%d")
 
-    # Years
-    if "y" in token or "year" in token:
-        num = "".join(filter(str.isdigit, token))
-        yrs = int(num) if num else 1
-        est = today - timedelta(days=365 * yrs)
-        return "STALE", f"Post is {yrs} year(s) old ({token})", est.strftime("%Y-%m-%d")
+    def _num(default: int = 1) -> int:
+        digits = "".join(filter(str.isdigit, token))
+        return int(digits) if digits else default
+
+    # Hours / Minutes / Seconds  → FRESH (under 24h)
+    if re.search(r"\b\d+\s*(?:hours?|hrs?|minutes?|mins?|seconds?|secs?)\b", token) or re.search(r"\b\d+\s*h\b", token):
+        return "FRESH", f"Post is under 24 hours old ({token})", today.strftime("%Y-%m-%d")
+
+    # Days
+    if re.search(r"\b\d*\s*(?:d|day|days)\b", token) or "daily" in token:
+        d = _num()
+        est = today - timedelta(days=d)
+        if d <= 5:
+            return "FRESH", f"Post is {d} day(s) old ({token})", est.strftime("%Y-%m-%d")
+        elif d <= 14:
+            return "AGING", f"Post is {d} days old ({token})", est.strftime("%Y-%m-%d")
+        else:
+            return "STALE", f"Post is {d} days old ({token})", est.strftime("%Y-%m-%d")
+
+    # Weeks
+    if re.search(r"\b\d*\s*(?:w|week|weeks)\b", token):
+        w = _num()
+        est = today - timedelta(days=7 * w)
+        if w <= 1:
+            return "AGING", f"Post is {w} week(s) old ({token})", est.strftime("%Y-%m-%d")
+        return "STALE", f"Post is {w} weeks old ({token})", est.strftime("%Y-%m-%d")
 
     # Months
-    if "mo" in token or "month" in token:
-        num = "".join(filter(str.isdigit, token))
-        mos = int(num) if num else 1
+    if re.search(r"\b\d*\s*(?:mo|month|months)\b", token):
+        mos = _num()
         est = today - timedelta(days=30 * mos)
         return "STALE", f"Post is {mos} month(s) old ({token})", est.strftime("%Y-%m-%d")
 
-    # Weeks
-    if "w" in token or "week" in token:
-        num = "".join(filter(str.isdigit, token))
-        w = int(num) if num else 1
-        est = today - timedelta(days=7 * w)
-        if w > 2:
-            return "STALE", f"Post is {w} weeks old ({token})", est.strftime("%Y-%m-%d")
-        elif w == 2:
-            return "AGING", f"Post is 2 weeks old ({token})", est.strftime("%Y-%m-%d")
-        else:
-            return "FRESH", f"Post is {w} week(s) old ({token})", est.strftime("%Y-%m-%d")
-
-    # Days
-    if "d" in token or "day" in token:
-        num = "".join(filter(str.isdigit, token))
-        d = int(num) if num else 1
-        est = today - timedelta(days=d)
-        if d <= 14:
-            return "FRESH", f"Post is {d} day(s) old ({token})", est.strftime("%Y-%m-%d")
-        else:
-            return "AGING", f"Post is {d} day(s) old ({token})", est.strftime("%Y-%m-%d")
-
-    # Hours / Minutes / Seconds
-    if any(unit in token for unit in ["h", "m", "s", "hour", "minute"]):
-        return "FRESH", f"Post is under 24 hours old ({token})", today.strftime("%Y-%m-%d")
+    # Years — checked LAST, with a word-boundary unit so "days" never matches
+    if re.search(r"\b\d*\s*(?:y|year|years)\b", token):
+        yrs = _num()
+        est = today - timedelta(days=365 * yrs)
+        return "STALE", f"Post is {yrs} year(s) old ({token})", est.strftime("%Y-%m-%d")
 
     return "UNKNOWN", f"Unrecognized time token ({token})", today.strftime("%Y-%m-%d")
 
@@ -351,11 +353,25 @@ def extract_linkedin_post(page, post_url: str) -> Optional[Dict[str, str]]:
         company = f"Team of {post_author}"
 
     # 7. Work Arrangement & Location
+    # Item 16: detect WFH variants — "WFH"/"work from home"/"remote work" must not
+    # default to Onsite (which geo-rejects the post).
+    _WFH_VARIANTS = ["wfh", "work from home", "work-from-home", "remote work"]
     work_arrangement = "Onsite"
-    if "remote" in lower_body:
+    if "remote" in lower_body or any(v in lower_body for v in _WFH_VARIANTS):
         work_arrangement = "Remote"
     elif "hybrid" in lower_body:
         work_arrangement = "Hybrid"
+
+    # Item 33: capture the RAW remote-scope text ("Remote - LATAM", "Remote (India)")
+    # BEFORE normalizing location to "Worldwide Remote", and pass it to eligibility
+    # so qualifiers are not lost.
+    raw_remote_scope = ""
+    _scope_match = re.search(r"\bremote\s*[-–:]\s*([A-Za-z][A-Za-z\s,\-–()]{1,50})", body_text)
+    _paren_match = re.search(r"\bremote\s*\(\s*([A-Za-z][A-Za-z\s,]{1,40})\s*\)", body_text)
+    if _scope_match:
+        raw_remote_scope = _scope_match.group(0).strip()
+    elif _paren_match:
+        raw_remote_scope = _paren_match.group(0).strip()
 
     location = ""
     country = ""
@@ -409,12 +425,14 @@ def extract_linkedin_post(page, post_url: str) -> Optional[Dict[str, str]]:
     matched_techs = extract_matched_technologies(body_text)
 
     # 11. Run Full Eligibility Gatekeeper
+    # Item 33: pass the RAW remote-scope text ("Remote - LATAM"/"Remote (India)")
+    # to eligibility instead of the normalized "Worldwide Remote".
     elig_decision = evaluate_job_eligibility(
         job_id=post_url,
         title=job_title,
         company=company,
         description=body_text,
-        location=location,
+        location=raw_remote_scope or location,
     )
 
     # 12. Classify Final Status (Only FRESH, actionable jobs qualify)
@@ -589,7 +607,7 @@ def process_and_export_linkedin_posts(
     print(f"Total Posts Evaluated:      {stats['total_evaluated']}")
     print(f"Genuinely Qualified Fresh:  {stats['qualified']} (Saved to {output_csv_path})")
     print(f"Borderline (No direct URL): {stats['borderline']}")
-    print(f"Rejected Stale (> 14 days): {stats['rejected_stale']}")
+    print(f"Rejected Not-Fresh (> 5 days): {stats['rejected_stale']}")
     print(f"Rejected Seniority:         {stats['rejected_seniority']}")
     print(f"Rejected Experience (>3y):  {stats['rejected_experience']}")
     print(f"Rejected Non-Tech / Field:  {stats['rejected_non_tech']}")

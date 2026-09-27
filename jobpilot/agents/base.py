@@ -13,7 +13,7 @@ import time
 import traceback
 import uuid
 from abc import ABC, abstractmethod
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, Generic, List, Optional, TypeVar
 
 from ..core.config import settings
@@ -60,7 +60,7 @@ class BaseAgent(ABC, Generic[InputT, OutputT]):
         """
         cid = new_correlation_id()
         self._run_id = str(uuid.uuid4())
-        started_at = datetime.utcnow()
+        started_at = datetime.now(timezone.utc)
         attempt = 0
 
         self.logger.info("[%s] Starting (run=%s trigger=%s)", self.name, self._run_id, trigger)
@@ -69,7 +69,7 @@ class BaseAgent(ABC, Generic[InputT, OutputT]):
         while attempt <= self.max_retries:
             try:
                 result = self._execute(input_data)
-                duration = (datetime.utcnow() - started_at).total_seconds()
+                duration = (datetime.now(timezone.utc) - started_at).total_seconds()
                 self.logger.info("[%s] Completed in %.2fs", self.name, duration)
                 self._record_run_end(success=True, duration=duration)
                 return result
@@ -79,6 +79,7 @@ class BaseAgent(ABC, Generic[InputT, OutputT]):
                     self.logger.error("[%s] Failed (non-retryable): %s", self.name, exc)
                     self._record_run_end(success=False, error=str(exc))
                     bus.emit(EventType.AGENT_FAILED, {"agent": self.name, "error": str(exc), "run_id": self._run_id})
+                    self._dead_letter(input_data, exc)
                     return None
                 attempt += 1
                 delay = self.retry_delay * (2 ** (attempt - 1))
@@ -90,9 +91,29 @@ class BaseAgent(ABC, Generic[InputT, OutputT]):
                 self.logger.error("[%s] Unexpected error: %s\n%s", self.name, exc, tb)
                 self._record_run_end(success=False, error=str(exc))
                 bus.emit(EventType.AGENT_FAILED, {"agent": self.name, "error": str(exc), "run_id": self._run_id})
+                self._dead_letter(input_data, exc)
                 return None
 
         return None
+
+    def _dead_letter(self, input_data: Any, exc: Exception) -> None:
+        """Item 34: durable dead-letter record for a failed agent run."""
+        try:
+            from ..core.dead_letter import write_dead_letter
+            job_id = self._run_id
+            for attr in ("source_job_id", "canonical_job_id", "id"):
+                v = getattr(input_data, attr, None)
+                if v:
+                    job_id = str(v)
+                    break
+            if job_id == self._run_id and isinstance(input_data, dict):
+                for k in ("source_job_id", "canonical_job_id", "id", "url"):
+                    if input_data.get(k):
+                        job_id = str(input_data[k])[:120]
+                        break
+            write_dead_letter(job_id, stage=f"agent:{self.name}", error=exc)
+        except Exception:
+            pass
 
     @abstractmethod
     def _execute(self, input_data: InputT) -> OutputT:
@@ -110,7 +131,7 @@ class BaseAgent(ABC, Generic[InputT, OutputT]):
                     status=AgentStatus.RUNNING.value,
                     trigger=trigger,
                     input_summary=str(input_data)[:500],
-                    started_at=datetime.utcnow(),
+                    started_at=datetime.now(timezone.utc),
                 )
                 db.add(run)
         except Exception as exc:
@@ -123,7 +144,7 @@ class BaseAgent(ABC, Generic[InputT, OutputT]):
                 run = db.query(AgentRun).filter(AgentRun.id == self._run_id).first()
                 if run:
                     run.status = AgentStatus.COMPLETED.value if success else AgentStatus.FAILED.value
-                    run.completed_at = datetime.utcnow()
+                    run.completed_at = datetime.now(timezone.utc)
                     run.duration_seconds = duration
                     if error:
                         run.error_message = error[:1000]

@@ -1,5 +1,4 @@
 import requests
-import config
 from log_manager import log
 
 def get_remotive_jobs():
@@ -16,9 +15,6 @@ def get_remotive_jobs():
         if response.status_code == 200:
             data = response.json()
             jobs = data.get("jobs", [])
-            
-            # Filter based on search keywords
-            search_terms_lower = [t.lower() for t in config.SEARCH_TERMS]
             
             for job_data in jobs:
                 title = str(job_data.get("title", ""))

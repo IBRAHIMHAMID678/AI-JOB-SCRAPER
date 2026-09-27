@@ -19,12 +19,14 @@ class WeWorkRemotelyAdapter(JobSourceAdapter):
 
     def fetch(self) -> List[RawJob]:
         jobs: List[RawJob] = []
+        failed_feeds = 0
         for feed_url in _FEEDS:
             try:
                 resp = requests.get(feed_url, timeout=self.timeout, headers={"User-Agent": "JOBPILOT/1.0"})
                 resp.raise_for_status()
                 root = ET.fromstring(resp.content)
-                for item in root.findall(".//item")[:20]:
+                # RSS feeds are single-page: take every item, not just [:20].
+                for item in root.findall(".//item"):
                     title_el = item.find("title")
                     link_el = item.find("link")
                     desc_el = item.find("description")
@@ -39,18 +41,18 @@ class WeWorkRemotelyAdapter(JobSourceAdapter):
                     url = (link_el.text or "").strip()
                     if not url:
                         continue
-                    try:
-                        jobs.append(RawJob(
-                            title=title,
-                            company=company,
-                            location=region_el.text if region_el is not None else "Worldwide",
-                            description=desc_el.text if desc_el is not None else None,
-                            application_url=url,
-                            source="WeWorkRemotely",
-                            remote_type="remote",
-                        ))
-                    except Exception:
-                        pass
+                    jobs.append(RawJob(
+                        title=title,
+                        company=company,
+                        location=region_el.text if region_el is not None else "Worldwide",
+                        description=desc_el.text if desc_el is not None else None,
+                        application_url=url,
+                        source="WeWorkRemotely",
+                        remote_type="remote",
+                    ))
             except Exception as exc:
-                self.logger.warning("WWR feed error: %s", exc)
+                failed_feeds += 1
+                self.logger.error("WWR feed error (%s): %s", feed_url, exc)
+        if not jobs and failed_feeds == len(_FEEDS):
+            raise RuntimeError(f"WeWorkRemotely: all {len(_FEEDS)} feeds failed")
         return jobs

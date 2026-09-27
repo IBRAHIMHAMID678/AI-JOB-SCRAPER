@@ -72,17 +72,18 @@ class LLMProvider(ABC):
             system_prompt
             + "\n\nIMPORTANT: Respond ONLY with valid JSON matching the required schema. No markdown. No explanation."
         )
-        for attempt in range(1, 3):
+        # Item 38: 3 attempts before falling back to rule-based (was 2)
+        for attempt in range(1, 4):
             try:
                 raw = self.complete(full_system, user_prompt, temperature=temperature)
                 parsed = _extract_json(raw)
                 return schema.model_validate(parsed)
             except Exception as exc:
-                if attempt == 1:
-                    logger.warning("[LLM:%s] JSON parse failed, retrying with correction: %s", self.provider_name, exc)
+                if attempt < 3:
+                    logger.warning("[LLM:%s] JSON parse failed (attempt %d/3), retrying with correction: %s", self.provider_name, attempt, exc)
                     user_prompt = user_prompt + "\n\nYour previous response was not valid JSON. Please respond with ONLY valid JSON."
                 else:
-                    logger.error("[LLM:%s] JSON validation failed after correction: %s", self.provider_name, exc)
+                    logger.error("[LLM:%s] JSON validation failed after 3 attempts: %s", self.provider_name, exc)
                     return None
         return None
 

@@ -1,13 +1,15 @@
 import os
 import sys
 import time
+from pathlib import Path
 
-sys.path.insert(0, r"d:\Job Scraper")
+REPO_ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(REPO_ROOT))
 
 from playwright.sync_api import sync_playwright
 
 job_url = "https://boards.greenhouse.io/figma/jobs/6158162004?gh_jid=6158162004"
-cv_path = r"d:\Job Scraper\jobpilot\uploads\cvs\Ibrahim_Hamid_Resume.pdf"
+cv_path = REPO_ROOT / "jobpilot" / "uploads" / "cvs" / "Ibrahim_Hamid_Resume.pdf"
 
 print("=" * 65)
 print("   JOBPILOT LIVE AUTO-APPLICATION DEMO")
@@ -90,7 +92,9 @@ with sync_playwright() as p:
         time.sleep(1.2)
 
     # Take screenshot proof
-    shot_path = r"d:\Job Scraper\jobpilot\screenshots\live_demo_figma.png"
+    screenshot_dir = REPO_ROOT / "jobpilot" / "screenshots"
+    screenshot_dir.mkdir(parents=True, exist_ok=True)
+    shot_path = str(screenshot_dir / "live_demo_figma.png")
     page.screenshot(path=shot_path)
     print(f"Captured live screenshot proof: {shot_path}")
 

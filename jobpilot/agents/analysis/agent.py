@@ -15,6 +15,7 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 from ...core.config import settings
+from ...core.eligibility import check_seniority
 from ...core.schemas import JobAnalysisResult, NormalizedJob
 from ...core.security import detect_prompt_injection, sanitize_for_prompt
 from ...integrations.llm.base import get_provider
@@ -35,6 +36,7 @@ def _load_prompt(name: str) -> str:
 
 # ── Rule-based helpers ────────────────────────────────────────────────────────
 
+# Item 21: bare-US patterns — "Remote, US" / "Remote - US" / "US only"
 _US_RESTRICTION_PATTERNS = [
     r"\bus(-only|only)\b",
     r"\busa(-only|only)\b",
@@ -42,13 +44,27 @@ _US_RESTRICTION_PATTERNS = [
     r"\b(must\s+reside|authorized\s+to\s+work)\s+in\s+the\s+us\b",
     r"\b(north\s+america\s+only|us/canada\s+only)\b",
     r"\bwork\s+authorization\s+in\s+the\s+(us|usa|united\s+states)\b",
+    r"\bremote[\s,\-–(]*us\b",
+    r"\bremote[\s,\-–(]*usa\b",
+    r"\b(us|usa)\s+only\b",
 ]
 _US_COMPILED = [re.compile(p, re.IGNORECASE) for p in _US_RESTRICTION_PATTERNS]
 
+# Item 22: US state abbreviations. Tokens that are ALSO ISO 3166-1 country codes
+# (CA=Canada, DE=Germany, IN=India, PA=Panama, MD=Moldova, AL=Albania, AR=Argentina,
+#  CO=Colombia, GA=Gabon, ID=Indonesia, IL=Israel, KY=Cayman Islands, LA=Laos,
+#  ME=Montenegro, MO=Macao, MS=Montserrat, MT=Malta, NE=Niger, SC=Seychelles,
+#  SD=Sudan, TN=Tunisia, VA=Vatican) require corroborating US context —
+# otherwise "Toronto, CA" / "Berlin, DE" / "Mumbai, IN" are false positives.
 _US_STATES = re.compile(
     r"\b(al|ak|az|ar|ca|co|ct|de|fl|ga|hi|id|il|in|ia|ks|ky|la|me|md|ma|mi|mn|ms|mo|mt|ne|nv|nh|nj|nm|ny|nc|nd|oh|ok|or|pa|ri|sc|sd|tn|tx|ut|vt|va|wa|wv|wi|wy)\b",
     re.IGNORECASE,
 )
+_US_STATE_ISO_COLLISIONS = frozenset({
+    "al", "ar", "ca", "co", "de", "ga", "id", "il", "in", "ky", "la",
+    "md", "me", "mo", "ms", "mt", "ne", "pa", "sc", "sd", "tn", "va",
+})
+_US_CONTEXT_HINTS = ["usa", "u.s.", "united states", "america"]
 
 _WORLDWIDE_KEYWORDS = [
     "worldwide", "anywhere", "pakistan", "global remote",
@@ -56,7 +72,7 @@ _WORLDWIDE_KEYWORDS = [
 ]
 
 _SENIOR_KEYWORDS = ["senior", "lead", "staff", "principal", "director", "vp ", "head of", "architect", "manager", "sr.", "sr ", " iii", " iv"]
-_JUNIOR_KEYWORDS = ["junior", "entry level", "entry-level", "0-2 years", "graduate", "associate", "intern", "new grad"]
+_JUNIOR_KEYWORDS = ["junior", "entry level", "entry-level", "1-3 years", "1-3 yrs", "0-3 years", "1-2 years", "up to 3 years", "graduate", "associate", "intern", "new grad"]
 
 _TECH_SKILLS = [
     "python", "fastapi", "react", "next.js", "nextjs", "node", "node.js", "nodejs",
@@ -67,12 +83,15 @@ _TECH_SKILLS = [
 ]
 
 
+# Item 37: word-boundary match — "isb"/"pindi" as raw substrings false-positive
+# on words like "Brisbane".
 _ISLAMABAD_KEYWORDS = ["islamabad", "rawalpindi", "pindi", "isb"]
+_ISLAMABAD_PATTERNS = [re.compile(r"\b" + re.escape(k) + r"\b") for k in _ISLAMABAD_KEYWORDS]
 
 
 def _is_local_pk(location: str, description: str) -> bool:
     text = (location + " " + description).lower()
-    return any(k in text for k in _ISLAMABAD_KEYWORDS)
+    return any(p.search(text) for p in _ISLAMABAD_PATTERNS)
 
 
 def _is_us_only(location: str, description: str) -> bool:
@@ -82,7 +101,14 @@ def _is_us_only(location: str, description: str) -> bool:
     for pat in _US_COMPILED:
         if pat.search(text):
             return True
-    if _US_STATES.search(location) and "remote" not in location.lower():
+    state_match = _US_STATES.search(location)
+    if state_match and "remote" not in location.lower():
+        token = state_match.group(1).lower()
+        if token in _US_STATE_ISO_COLLISIONS:
+            # Item 22: token is also an ISO country code ("Toronto, CA", "Berlin, DE",
+            # "Mumbai, IN", "in" = English word) — require corroborating US context.
+            if not any(hint in text for hint in _US_CONTEXT_HINTS):
+                return False
         return True
     return False
 
@@ -93,10 +119,18 @@ def _extract_skills(text: str) -> List[str]:
 
 
 def _extract_seniority(title: str, description: str) -> str:
-    text = (title + " " + description[:500]).lower()
-    if any(k in text for k in _SENIOR_KEYWORDS):
+    # Item 20: whole-word match on the TITLE ONLY, via eligibility.check_seniority().
+    # Raw substring matching flagged "Junior AI Engineer" at a "leading AI startup"
+    # as senior ("lead" in "leading"). Roman-numeral levels ("Engineer III") are
+    # additionally caught since check_seniority() doesn't cover them.
+    senior_ok, _reason, _evidence = check_seniority(title or "", description or "")
+    if not senior_ok:
         return "senior"
-    if any(k in text for k in _JUNIOR_KEYWORDS):
+    title_lower = (title or "").lower()
+    if re.search(r"\b(iii|iv|v)\b", title_lower):
+        return "senior"
+    text = (title_lower + " " + (description or "")[:500].lower())
+    if any(re.search(r"\b" + re.escape(k) + r"\b", text) for k in _JUNIOR_KEYWORDS):
         return "junior"
     return "mid"
 
@@ -106,6 +140,9 @@ def _extract_experience(text: str) -> tuple[Optional[int], Optional[int]]:
         r"(\d+)\s*[-–to]+\s*(\d+)\s*(?:years?|yrs?)\s*(?:of\s+)?(?:experience|exp)",
         r"(\d+)\+\s*(?:years?|yrs?)\s*(?:of\s+)?(?:experience|exp)",
         r"(?:minimum|min|at\s+least)\s*(\d+)\s*(?:years?|yrs?)",
+        # Item 27: allow intervening words between "years" and "experience",
+        # e.g. "5 years of hands-on experience building APIs".
+        r"(\d+)\s*(?:years?|yrs?)\s+of\s+[\w\s-]{0,30}?(?:experience|exp)",
     ]
     for p in patterns:
         m = re.search(p, text, re.IGNORECASE)

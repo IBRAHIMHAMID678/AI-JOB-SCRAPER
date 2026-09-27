@@ -1,5 +1,6 @@
 import os
 import json
+import hashlib
 import asyncio
 import threading
 import concurrent.futures
@@ -106,17 +107,19 @@ def run_pipeline():
                 
     log(f"[SYSTEM] Total raw jobs collected across all sources: {len(scraped_batches)}")
     
-    # Deduplicate by URL and Title/Company fingerprint
+    # Deduplicate by URL (or title+company hash fallback when the URL is empty — item 39)
+    # and Title/Company fingerprint
     unique_jobs = {}
     for job in scraped_batches:
         url = job.get("url", "").strip()
         fingerprint = f"{job.get('title','').strip().lower()}:{job.get('company','').strip().lower()}"
-        if url and url not in unique_jobs and fingerprint not in unique_jobs:
-            unique_jobs[url] = job
+        key = url if url else "nou:" + hashlib.md5(fingerprint.encode("utf-8")).hexdigest()
+        if key not in unique_jobs and fingerprint not in unique_jobs:
+            unique_jobs[key] = job
             unique_jobs[fingerprint] = job
 
     # Filter out fingerprint keys to leave list of unique job dicts
-    jobs_list = [j for k, j in unique_jobs.items() if k.startswith("http") or k.startswith("https")]
+    jobs_list = [j for k, j in unique_jobs.items() if k.startswith("http") or k.startswith("https") or k.startswith("nou:")]
     log(f"[SYSTEM] Total unique jobs after deduplication: {len(jobs_list)}")
 
     # Load existing URLs in MongoDB / memory to prevent duplicate evaluation and re-scraping

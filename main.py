@@ -1,7 +1,7 @@
 import pandas as pd
 from scrapers.jobspy_scraper import get_jobspy_jobs
 from scrapers.himalayas_scraper import get_himalayas_jobs
-from evaluator import evaluate_job
+from evaluator import evaluate_job_single as evaluate_job  # item 35: evaluate_job does not exist; evaluate_job_single updates the job dict in place and returns job/None
 
 def main():
     print("Starting Remote Job Scraper & AI Matcher...")

@@ -59,6 +59,11 @@ class Settings(BaseSettings):
         "AI Full Stack Developer",
         "Python AI Developer",
         "LLM Engineer",
+        "ML Engineer",
+        "RAG",
+        "Python Developer",
+        "Backend Developer",
+        "Node.js",
         "Full Stack Developer",
         "Software Engineer",
         "React Developer",
@@ -168,13 +173,18 @@ class Settings(BaseSettings):
         return v
 
     def get_score_label(self, score: int) -> str:
+        # Item 35: SCORE_AUTO_APPROVE=40 must not map to LOW_PRIORITY
         if score >= self.SCORE_HIGH_PRIORITY:
             return "HIGH_PRIORITY"
         if score >= self.SCORE_GOOD_MATCH:
             return "GOOD_MATCH"
         if score >= self.SCORE_POSSIBLE_MATCH:
             return "POSSIBLE_MATCH"
-        return "LOW_PRIORITY"
+        if score >= self.SCORE_AUTO_APPROVE:
+            return "APPROVED"
+        if score >= self.SCORE_MIN_THRESHOLD:
+            return "LOW_PRIORITY"
+        return "REJECTED"
 
 
 @lru_cache(maxsize=1)

@@ -4,12 +4,13 @@ from log_manager import log
 def fetch_workingnomads_jobs(count_limit=30):
     """
     Fetches remote jobs from Working Nomads API.
-    API endpoint: https://www.workingnomads.com/api/v1/jobs/
+    API endpoint: https://www.workingnomads.com/api/exposed_jobs/
+    (the old /api/v1/jobs/ endpoint returns HTTP 404).
     """
     jobs = []
     log("  -> Fetching Working Nomads API...")
     try:
-        url = "https://www.workingnomads.com/api/v1/jobs/"
+        url = "https://www.workingnomads.com/api/exposed_jobs/"
         resp = requests.get(url, timeout=12)
         if resp.status_code == 200:
             raw_jobs = resp.json()

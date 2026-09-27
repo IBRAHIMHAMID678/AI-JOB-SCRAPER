@@ -15,7 +15,7 @@ def scrape_single_term(term):
             search_term=term,
             location="Remote",
             results_wanted=config.RESULTS_PER_TERM,
-            hours_old=72,
+            hours_old=120,  # user rule: LinkedIn freshness <= 5 days
             is_remote=True
         )
         if jobs_df is not None and not jobs_df.empty:
@@ -42,7 +42,7 @@ def scrape_single_term(term):
             search_term=term,
             location="Islamabad, Pakistan",
             results_wanted=config.RESULTS_PER_TERM,
-            hours_old=72
+            hours_old=120  # user rule: LinkedIn freshness <= 5 days
         )
         if jobs_df is not None and not jobs_df.empty:
             for _, row in jobs_df.iterrows():

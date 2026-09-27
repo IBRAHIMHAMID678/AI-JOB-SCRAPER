@@ -23,6 +23,10 @@ def get_cache_filepath():
     cache_name = getattr(config, 'EVAL_CACHE_FILE', 'eval_cache.json')
     return os.path.join(BASE_DIR, cache_name)
 
+# Item 31: code version baked into the cache key so eval_cache.json can never
+# re-emit scores computed by older (buggy) filter logic.
+_EVAL_CODE_VERSION = "2"
+
 def load_eval_cache():
     global EVAL_CACHE
     cache_file = get_cache_filepath()
@@ -72,7 +76,10 @@ def get_job_hash(job):
     url = str(job.get('url', '')).strip()
     title = str(job.get('title', '')).strip()
     company = str(job.get('company', '')).strip()
-    raw = f"{url}:{title}:{company}"
+    # Item 31: include a description content hash so description edits
+    # (added US-only restriction, removed pay) invalidate the cache entry.
+    desc_hash = hashlib.md5(str(job.get('description', ''))[:2000].encode('utf-8')).hexdigest()[:16]
+    raw = f"v{_EVAL_CODE_VERSION}:{url}:{title}:{company}:{desc_hash}"
     return hashlib.md5(raw.encode('utf-8')).hexdigest()
 
 load_eval_cache()
@@ -98,23 +105,37 @@ def is_us_only_restricted(job):
         r'\b(us|usa)\s+(citizens?|citizenship|residents?|residency|based\s+only)\b',
         r'\b(must\s+reside\s+in\s+the\s+us|must\s+be\s+located\s+in\s+the\s+us|authorized\s+to\s+work\s+in\s+the\s+us)\b',
         r'\b(us\s+work\s+authorization|us\s+citizenship\s+required)\b',
-        r'\b(north\s+america\s+only|us/canada\s+only)\b'
+        r'\b(north\s+america\s+only|us/canada\s+only)\b',
+        # Item 21 parity: bare-US remote scopes ("Remote, US" / "Remote - US")
+        r'\bremote[\s,\-–(]*us\b',
+        r'\bremote[\s,\-–(]*usa\b',
+        r'\b(us|usa)\s+only\b',
     ]
     
     for pattern in us_restriction_patterns:
         if re.search(pattern, loc) or re.search(pattern, desc):
             return True
             
-    state_match = re.search(r'\b(al|ak|az|ar|ca|co|ct|de|fl|ga|hi|id|il|in|ia|ks|ky|la|me|md|ma|mi|mn|ms|mo|mt|ne|nv|nh|nj|nm|ny|nc|nd|oh|ok|or|pa|ri|sc|sd|tn|tx|ut|vt|va|wa|wv|wi|wy)\b', loc)
+    state_match = re.search(r'\b(al|ak|az|ar|ca|co|ct|de|fl|ga|hi|id|il|ia|ks|ky|la|me|md|ma|mi|mn|ms|mo|mt|ne|nv|nh|nj|nm|ny|nc|nd|oh|ok|or|pa|ri|sc|sd|tn|tx|ut|vt|va|wa|wv|wi|wy)\b', loc)
     if state_match and "remote" not in loc and "worldwide" not in loc:
-        return True
+        token = state_match.group(1).lower()
+        # Item 22: "in" is the English word ("Developer in Dubai") and ca/de/pa/in/md/al/ar/...
+        # are ISO country codes ("Toronto, CA", "Berlin, DE", "Mumbai, IN") — require
+        # corroborating US context before treating as a US state.
+        _iso_collisions = {"al", "ar", "ca", "co", "de", "ga", "id", "il", "in", "ky", "la",
+                           "md", "me", "mo", "ms", "mt", "ne", "pa", "sc", "sd", "tn", "va"}
+        _us_hints = ("usa", "u.s.", "united states", "america")
+        if token in _iso_collisions and not any(h in loc or h in desc for h in _us_hints):
+            pass  # ambiguous — not treated as US-only
+        else:
+            return True
         
     return False
 
 def evaluate_job_local(job):
     """
     Upgraded Smart Local Evaluator running deterministically with weighted CV skill scoring,
-    UK & Worldwide Remote location verification, 2-skill minimum gate, and 60% threshold.
+    UK & Worldwide Remote location verification, 2-skill minimum gate, and 40% auto-approve threshold.
     """
     try:
         title = str(job.get('title', '')).lower()
@@ -137,10 +158,17 @@ def evaluate_job_local(job):
             }
 
         # 2. Title Fit Scoring (Max 40 points)
-        if any(term in title for term in ["ai engineer", "ai developer", "ai full stack", "llm engineer", "rag engineer"]):
+        # Item 25: AI title variants — "ML Engineer" etc. must score like "AI Engineer"
+        if any(term in title for term in [
+            "ai engineer", "ai developer", "ai full stack", "llm engineer", "rag engineer",
+            "ml engineer", "machine learning engineer", "generative ai engineer", "genai",
+            "ai/ml engineer", "nlp engineer", "prompt engineer",
+        ]):
             score += 40
             match_reasons.append("Primary Title Fit (AI / LLM)")
-        elif any(term in title for term in ["full stack", "python developer", "fastapi", "backend"]):
+        elif any(term in title for term in [
+            "full stack", "python developer", "fastapi", "django developer", "backend",
+        ]):
             score += 35
             match_reasons.append("Core Stack Developer Fit")
         elif any(term in title for term in ["software engineer", "developer", "react", "web", "node"]):
@@ -183,7 +211,8 @@ def evaluate_job_local(job):
             match_reasons.append("Capped: Fewer than 2 core skills matched")
 
         # 4. Experience Fit
-        junior_keywords = ['junior', 'entry level', '0-2 years', 'graduate', 'associate', 'intern', 'entry']
+        # Item 40: approved range is 1-3 years (was stale "0-2 years")
+        junior_keywords = ['junior', 'entry level', '1-3 years', '1-3 yrs', '0-3 years', 'graduate', 'associate', 'intern', 'entry']
         is_junior_friendly = False
         if any(kw in full_text for kw in junior_keywords):
             is_junior_friendly = True
@@ -194,13 +223,27 @@ def evaluate_job_local(job):
             score += 10
             
         # 5. Pay Rate Detection (USD / GBP)
-        usd_hourly_match = re.search(r'[\$\£]\d{2,3}(?:\.\d{2})?\s*(?:-\s*[\$\£]\d{2,3}(?:\.\d{2})?)?\s*(?:/\s*hr|\s*per hour|\s*/\s*hour|\s*hourly|\s*/\s*h\b)', desc, re.IGNORECASE)
+        # Item 28: enforce the $10-40/hr ground-truth band; detect PKR/month.
+        usd_hourly_match = re.search(r'[\$\£]\s*(\d{2,3}(?:\.\d{2})?)\s*(?:-\s*[\$\£]\s*(\d{2,3}(?:\.\d{2})?))?\s*(?:/\s*hr|\s*per hour|\s*/\s*hour|\s*hourly|\s*/\s*h\b)', desc, re.IGNORECASE)
         usd_salary_match = re.search(r'[\$\£]\d{2,3}[kK](?:\s*-\s*[\$\£]\d{2,3}[kK])?', desc) or re.search(r'[\$\£]\d{2,3},\d{3}', desc)
-        
+        pkr_month_match = re.search(r'(?:pkr|rs\.?|₨)\s*\d[\d,]*(?:\s*(?:-|to|–)\s*(?:pkr|rs\.?)?\s*\d[\d,]*)?\s*(?:/\s*mo|per\s+month|monthly)', desc, re.IGNORECASE)
+
         estimated_pay = "Not Disclosed"
         if usd_hourly_match:
-            estimated_pay = usd_hourly_match.group(0) + " Hourly"
-            score += 10
+            estimated_pay = usd_hourly_match.group(0).strip() + " Hourly"
+            try:
+                rate = float(usd_hourly_match.group(1))
+            except (ValueError, TypeError):
+                rate = 0
+            if 10 <= rate <= 40:
+                score += 10
+                match_reasons.append(f"Pay in $10-40/hr band: {estimated_pay}")
+            else:
+                score += 2
+                match_reasons.append(f"Pay outside $10-40/hr band: {estimated_pay} (no full pay points)")
+        elif pkr_month_match:
+            estimated_pay = pkr_month_match.group(0).strip() + " PKR/month"
+            score += 4
             match_reasons.append(f"Pay: {estimated_pay}")
         elif usd_salary_match:
             estimated_pay = usd_salary_match.group(0) + " Salary"
@@ -226,6 +269,16 @@ def evaluate_job_local(job):
             "match_reason": f"[Strict Match] {reason}"
         }
     except Exception as e:
+        # Item 34: dead-letter record instead of silently returning score 0
+        try:
+            _write_dead_letter(
+                str(job.get('url') or job.get('title') or 'unknown'),
+                stage="evaluator:evaluate_job_local",
+                error=e,
+                extra={"title": job.get('title'), "company": job.get('company')},
+            )
+        except Exception:
+            pass
         log(f"Error in local evaluation: {e}")
         return {
             "match_score": 0,
@@ -235,20 +288,74 @@ def evaluate_job_local(job):
             "match_reason": f"Evaluation error: {e}"
         }
 
+
+def _write_dead_letter(job_id, stage, error, extra=None):
+    """Item 34: durable dead-letter record (evaluator.py is standalone; no jobpilot import)."""
+    try:
+        record = {
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
+            "job_id": str(job_id or "unknown"),
+            "stage": stage,
+            "error": str(error)[:2000],
+        }
+        if extra:
+            record["extra"] = extra
+        with open(os.path.join(BASE_DIR, "dead_letter.jsonl"), "a", encoding="utf-8") as f:
+            f.write(json.dumps(record) + "\n")
+    except Exception:
+        pass
+
 def evaluate_job_single(job):
     """
-    Fast evaluation engine with strict 60% threshold, pre-filtering, and deduplication.
+    Fast evaluation engine with strict 40% auto-approve threshold, pre-filtering,
+    and deduplication. Pre-filters ALWAYS run before the cache lookup (item 31):
+    a cache hit must never bypass senior/non-tech/US/experience filters.
     """
-    AUTO_APPROVE_THRESHOLD = 60
+    # Item 35: sync to 40 per ground-truth auto-approve (was 60)
+    AUTO_APPROVE_THRESHOLD = 40
     title = str(job.get('title', ''))
     company = str(job.get('company', ''))
     desc = clean_html_text(job.get('description', ''))
     loc = str(job.get('location', 'Remote'))
     source = str(job.get('source', 'Unknown'))
-    
-    # 1. Check Disk Cache
+
     job_hash = get_job_hash(job)
     job["job_hash"] = job_hash
+
+    # 1. Senior / Non-tech / US-restriction / Experience Pre-Filtering (before cache)
+    title_lower = title.lower()
+    senior_keywords = ['senior', 'lead', 'staff', 'principal', 'director', 'vp', 'head', 'architect', 'manager', 'sr.', 'sr ', 'iii', 'iv', 'v']
+    for kw in senior_keywords:
+        if re.search(r'\b' + re.escape(kw) + r'\b', title_lower):
+            log(f"  -> Skipping senior role: {title} at {company}")
+            return None
+
+    tech_keywords = ["ai", "python", "react", "next", "node", "software", "developer", "engineer", "programmer", "frontend", "backend", "web", "data", "tech", "fastapi", "django", "flask"]
+    if not any(kw in title_lower for kw in tech_keywords):
+        log(f"  -> Skipping non-tech role: {title} at {company}")
+        return None
+
+    if is_us_only_restricted(job):
+        log(f"  -> Skipping US-restricted remote job: {title} at {company} (Location: {loc})")
+        return None
+
+    # Item 27: upper-bound experience exclusion — reject 4+ year roles per the 1-3 rule.
+    # Allows intervening words: "5 years of hands-on experience building APIs".
+    _exp_upper = None
+    for _pat in (
+        r"(\d+)\s*(?:years?|yrs?)\s+of\s+[\w\s-]{0,30}?(?:experience|exp)",
+        r"(\d+)\s*[-–+]\s*(?:\d+\s*)?(?:years?|yrs?)",
+        r"(?:minimum|min|at\s+least|requires?|requirement|seeking)\s*(\d+)\s*(?:years?|yrs?)",
+    ):
+        _m = re.search(_pat, desc, re.IGNORECASE)
+        if _m:
+            _exp_upper = int(_m.group(1))
+            break
+    if _exp_upper is not None and _exp_upper >= 4:
+        log(f"  -> Skipping role requiring {_exp_upper} years (exceeds 1-3 yr range): {title} at {company}")
+        return None
+
+    # 2. Check Disk Cache (pre-filters already applied; key includes content hash + code version)
     with cache_lock:
         if job_hash in EVAL_CACHE:
             cached_res = EVAL_CACHE[job_hash]
@@ -259,23 +366,6 @@ def evaluate_job_single(job):
                 log(f"  -> Matched Job (Cache): {title} ({job['match_score']}%) at {company}")
                 emit_job(job)
             return job
-
-    # 2. Senior / Non-tech Pre-Filtering
-    title_lower = title.lower()
-    senior_keywords = ['senior', 'lead', 'staff', 'principal', 'director', 'vp', 'head', 'architect', 'manager', 'sr.', 'sr ', 'iii', 'iv', 'v']
-    for kw in senior_keywords:
-        if re.search(r'\b' + re.escape(kw) + r'\b', title_lower):
-            log(f"  -> Skipping senior role: {title} at {company}")
-            return None
-            
-    tech_keywords = ["ai", "python", "react", "next", "node", "software", "developer", "engineer", "programmer", "frontend", "backend", "web", "data", "tech", "fastapi", "django", "flask"]
-    if not any(kw in title_lower for kw in tech_keywords):
-        log(f"  -> Skipping non-tech role: {title} at {company}")
-        return None
-        
-    if is_us_only_restricted(job):
-        log(f"  -> Skipping US-restricted remote job: {title} at {company} (Location: {loc})")
-        return None
 
     # 3. High-Speed Smart Evaluator
     eval_result = evaluate_job_local(job)
