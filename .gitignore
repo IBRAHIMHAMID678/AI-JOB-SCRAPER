@@ -76,6 +76,7 @@ jobpilot/screenshots/
 
 .vercel
 .env*
+!.env.example
 scratch/
 *.backup
 jobpilot.db.backup
