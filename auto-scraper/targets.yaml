@@ -1,0 +1,22 @@
+# Any website or portal goes here — one entry per line.
+# The scraper auto-detects the site type:
+#   - ATS career boards (Greenhouse, Lever, Ashby, SmartRecruiters, Recruitee)
+#     are pulled via the board's public JSON API — just paste the careers URL.
+#   - Ordinary pages fall back to schema.org JobPosting extraction.
+# For listing pages that link out to individual job pages, add kind: list
+# with a link_re regex matching the detail-page links.
+targets:
+  # --- Local (Pakistan) portals ---
+  - url: https://www.mustakbil.com/jobs/pakistan/islamabad
+    kind: list
+    link_re: /jobs/job/\d+
+    max_items: 20
+  - url: https://www.mustakbil.com/jobs/pakistan/rawalpindi
+    kind: list
+    link_re: /jobs/job/\d+
+    max_items: 20
+
+  # --- International: company ATS boards (AI / software startups) ---
+  - url: https://job-boards.greenhouse.io/gleanwork
+  - url: https://boards.greenhouse.io/zencoder
+  - url: https://boards.greenhouse.io/cycles
