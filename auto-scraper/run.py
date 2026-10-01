@@ -69,7 +69,10 @@ def load_applied() -> set[str]:
     try:
         with open(APPLIED_PATH) as f:
             data = json.load(f)
-        return {f"{a['company']}|{a['title']}".lower() for a in data}
+        return {
+            f"{a.get('company', '')}|{a.get('title') or a.get('role', '')}".lower()
+            for a in data
+        }
     except FileNotFoundError:
         return set()
 
