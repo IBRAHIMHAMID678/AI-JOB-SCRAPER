@@ -1,0 +1,647 @@
+[
+ {
+  "score": 12.0,
+  "score_notes": [
+   "AI Engineer title",
+   "4 stack hits",
+   "1d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "experience 2-2 yrs ok",
+   "posted 1d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-154246",
+   "title": "Software Engineer, Agentic AI",
+   "company": "Invisible Technologies",
+   "description": "About Invisible Invisible Technologies makes AI work. Our end-to-end AI platform structures messy data, automates digital workflows, deploys agentic solutions, measures outcomes, and integrates human expertise where it matters most. Our platform cleans, labels, and structures company data so it is ready for AI. It adapts models to each business and adds human expertise when needed, the same approach we have used to improve models for more than 80% of the world\u2019s top AI companies, including Microsoft, AWS, and Cohere. Our successes span industries, from supply chain automation for Swiss Gear to AI-enabled naval simulations with SAIC, and validating NBA draft picks for the Charlotte Hornets. Profitable for more than half a decade, Invisible reached $134M in revenue and ranked as the number two fastest growing AI company on the 2024 Inc. 5000. In September 2025, we raised $100M in growth capital to accelerate our mission of making AI actually work in the enterprise and to advance our platform technology. About The Role We are seeking a highly skilled and driven Software Engineer with a strong background in full-stack development, particularly in backend technologies and Agentic AI, to join our AI/ML team. In this role, you\u2019ll work at the intersection of engineering, data science, and real-world impact, partnering directly with clients and internal stakeholders to design and deploy ML-powered tools that solve meaningful problems. This role combines hands-on model development with robust backend engineering and infrastructure work. You\u2019ll help build scalable systems, support R&amp;D initiatives, and ensure rapid iteration and deployment of machine learning solutions in dynamic, production-ready environments. You will work embedded with our top clients and the client teams to conduct use case discovery with senior stakeholders directly, developing solutions that address complex client needs. What You\u2019ll Do As part of the Forward Deployed Engineering team, you\u2019ll contribute during a phase of rapid growth as we focus on scaling models and improving platform performance. You\u2019ll help build backend systems, support client-facing deployments, and enable smoother workflows for machine learning solutions. Develop and Maintain AI/ML Systems: Build robust, scalable backend systems that support machine learning operations and data processing pipelines. Cloud Operations and Management: Oversee and optimize cloud infrastructure to ensure efficient deployment and operation of ML models. Problem Solving: Independently explore and address complex problem spaces to improve system capabilities and performance without extensive guidance. Cross-Functional Collaboration: Work closely with ML engineers and data scientists to integrate advanced ML technologies, ensuring seamless operations across various platforms. Client Engagement: Collaborate directly with Invisible\u2019s clients, working embedded with client teams to support use case discovery, product development, and AI deployment. Innovation and R&amp;D: Actively participate in research and development of new tools that can enhance our AI capabilities and workflows. What We Need 2+ years of software engineering experience, with a strong focus on ML engineering and deploying machine learning models in production. Extensive experience in full-stack development, particularly in backend environments that support AI/ML workloads. Prior experience working directly with clients in use case discovery, product development, and leading client engagements. Technical Expertise: Strong proficiency in Python, with deep expertise in LLMs, AI Agents, and ML model development. Experience designing and deploying scalable ML systems, such as retrieval-augmented generation (RAG) pipelines and production-grade AI applications. Extensive experience with cloud platforms (AWS, GCP, Azure) and operational best practices for ML workloads. Familiarity with Kubernetes and other container management tools. Ability to write well-st\u2026",
+   "url": "https://jobicy.com/jobs/154246-software-engineer-agentic-ai",
+   "apply_url": "https://jobicy.com/jobs/154246-software-engineer-agentic-ai",
+   "apply_email": null,
+   "location": "Brazil",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-30T08:00:07+00:00",
+   "tags": [
+    "Software Engineering",
+    "Senior"
+   ]
+  }
+ },
+ {
+  "score": 9.0,
+  "score_notes": [
+   "Full-stack title",
+   "1 stack hits",
+   "0d old",
+   "email apply"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-152220",
+   "title": "Full Stack Engineer (Enterprise)",
+   "company": "Roboflow",
+   "description": "Who We Are Our mission is to make the world programmable. Sight is one of the key ways we understand the world, and soon this will be true for the software we use, too. We\u2019re building the tools, community, and resources needed to make the world programmable with artificial intelligence. Roboflow simplifies building and using computer vision models. Today, over 1M+ developers, including those from half the Fortune 100, use Roboflow\u2019s machine learning open source and hosted tools. That includes counting cells to accelerate cancer research, improving construction site safety , digitizing floor plans , preserving coral reef populations , guiding drone flight , and much more . Roboflow is supported by great customers and investors, having raised over 63 million from Y Combinator, Google Ventures, Craft Ventures, Sam Altman, Lachy Groom, amongst other leading software investors. Roboflowers are passionate builders who value ownership, accountability, and a bias toward action. We're curious, hands-on with new tech, and prefer showing our work over talking about it. Many of us have a founder mindset and thrive in our high-autonomy environment. What You'll Do As a member of the Enterprise team, you'll be tasked with creating new features and making improvements anywhere in the Roboflow product. We're looking for technical generalists that aren\u2019t afraid to dive into a new stack or toolchain if the need arises (but JavaScript and Node.js make up the brunt of the existing codebase). You will also help support and make improvements to our enterprise Jetson inference pipeline, so a solid foundation in Linux is highly desirable. The Enterprise team forms close relationships with Enterprise customers to deeply understand their needs and advance their usage and success with Roboflow. You should expect to frequently be on-site with customers, doing factory tours, and building features needed to make prospective and current customers successful in Computer Vision with Roboflow. As a member of the Enterprise team, you will also partner closely with the Field Engineering team. Not only to understand and expand partnerships with customers, but to identify opportunities to make the Field Engineers more efficient in collecting visual data and delivering insights to customers based on that data. Most of the things we work on are parts of the core product (which is an end-to-end pipeline for building computer vision projects spanning from image ingestion to annotation to training and deployment) but from time to time we're also working on things like integrating marketing and sales tools, fighting fires, automating internal processes, and open source projects. You'll have a wide degree of freedom to advocate for which projects you think should be highest priority and will contribute to increasing engagement and success of enterprise customers. If you need a rigid list of tasks spelled out in a multi-month roadmap, this role probably won't be a good fit. The majority of our codebase is written in JavaScript, our machine learning and image processing pipeline is in Python. We run primarily on Firebase and GCS, with some machine learning infrastructure on AWS. We're increasingly using Docker (both internally and for customer facing products like our edge inference server). A lot of our code runs in the browser (including some Tensorflow JS) but we're also working on building APIs and client libraries in several languages. You certainly don't need to be experienced in all of these areas; but should be excited to learn new skill sets as you need them. We also hope you'll bring some new knowledge and experiences you can share to help level-up the rest of the team. Example Projects Adding video recording and analysis tools to the Roboflow SaaS application, so that Field Engineers can quickly and efficiently collect and understand customer data. Streamlining the setup of new devices or inspections in the Roboflow application. Adding a new workflow block to all\u2026",
+   "url": "https://jobicy.com/jobs/152220-full-stack-engineer-enterprise",
+   "apply_url": "https://jobicy.com/jobs/152220-full-stack-engineer-enterprise",
+   "apply_email": "operations@roboflow.com",
+   "location": "USA",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T04:00:18+00:00",
+   "tags": [
+    "Software Engineering",
+    "Senior"
+   ]
+  }
+ },
+ {
+  "score": 9.0,
+  "score_notes": [
+   "6 stack hits",
+   "1d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 1d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-154244",
+   "title": "Software Engineer New Grad, Machine Learning Platform - Quora",
+   "company": "Quora",
+   "description": "[ Quora is a privately held, \"remote-first\" company . This position can be performed remotely from anywhere in Canada or the United States. Please visit careers.quora.com/eligible-countries for details regarding employment eligibility by country.] About Quora : Quora\u2019s mission is to grow the world's collective intelligence. To do so, we have two platforms: Quora : a global knowledge sharing platform with millions of monthly unique visitors, bringing people together to share insights on various topics and providing a unique platform to learn and connect with others. Poe : a cloud workspace where millions of users run multiple AI agents on shared context and tools. One subscription, every frontier model, and the collaboration layer that makes them work together. Behind these products are passionate, collaborative, and high-performing global teams. We have a culture rooted in transparency, idea-sharing, and experimentation that allows us to celebrate success and grow together through meaningful work. Join us on this journey to create a positive impact and make a significant change in the world. This role will be working on our Quora product. About the Team and Role: Machine Learning is central to Quora's mission of growing the world's collective intelligence. We have 100+ Machine Learning models in production powering various product features. We use a variety of algorithms \u2014 everything from linear models to decision trees and deep neural networks. Our production models operate at a huge scale, serving hundreds of millions of people using Quora every month. Our team owns Quora's ML platform and ranking infrastructure across four areas: serving reliability, ML engineer enablement and developer velocity, business impact, and cost efficiency . We want to empower all ML engineers at Quora to be as impactful as they can be in solving different ML problems at scale. As a Software Engineer (New Grad) on this team, you'll work at the intersection of machine learning, distributed systems, and GPU serving performance \u2014 and your work will have an enormous impact on Quora's long-term success. No previous ML infrastructure experience is required for this role. You'll be joining a team of senior and staff engineers, learning this stack from the people who built it, with a dedicated mentor and strong technical guidance \u2014 and you'll be shipping to production in your first few weeks. Stack: Python, Go, C++, PyTorch, Kubernetes/EKS, NVIDIA Triton, Ray, AWS Excited to see our MLP team's amazing work in action? Check out some of the incredible projects they've completed below! \u2728 - https://quoraengineering.quora.com/Migrating-from-x86-to-AWS-Graviton-A-Journey-in-Cost-Optimization-and-Performance - https://aws.amazon.com/blogs/containers/quora-3x-faster-machine-learning-25-lower-costs-with-nvidia-triton-on-amazon-eks/ - https://quoraengineering.quora.com/Building-a-Service-Mesh-in-a-Hybrid-Environment - https://quoraengineering.quora.com/Building-Embedding-Search-at-Quora - https://quoraengineering.quora.com/Feature-Engineering-at-Quora-with-Alchemy Responsibilities: Help build and maintain the core infrastructure that powers Quora's ML platform, ensuring high availability, scalability, and performance Build and improve the distributed systems that serve our ML models in production, from Large Recommendation Models (LRMs) to Large Language Models (LLMs) Work on GPU model serving, optimizing latency, throughput, and cost to support larger and more capable models Contribute to platform initiatives such as PyTorch-first standardization and ML ecosystem modernization Improve ML developer velocity by building tooling that helps ML engineers develop, test, and deploy models more efficiently Modernize our feature store so ML engineers can get new features into production faster Participate in the team's on-call rotation, helping resolve production issues as you grow your knowledge and ownership of the platform Minimum Requirements: Availability for meetings\u2026",
+   "url": "https://jobicy.com/jobs/154244-software-engineer-new-grad-machine-learning-platform-quora",
+   "apply_url": "https://jobicy.com/jobs/154244-software-engineer-new-grad-machine-learning-platform-quora",
+   "apply_email": null,
+   "location": "Canada,  UK,  USA",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-30T08:00:11+00:00",
+   "tags": [
+    "Software Engineering",
+    "Senior"
+   ]
+  }
+ },
+ {
+  "score": 9.0,
+  "score_notes": [
+   "AI Engineer title",
+   "1 stack hits",
+   "1d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 1d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "wwr",
+   "id": "wwr-5152344091389248226",
+   "title": "Agentic AI Design Engineer (100 % remote) (m/f/d)",
+   "company": "EWOR",
+   "description": "Headquarters: Tallinn, Europe, Estonia URL: http://ewor.com EWOR is launching cutting-edge new initiatives, and we are looking for exceptional operators and builders to join our new department. We are backed and led by serial entrepreneurs, including Paul M\u00fcller (founder of Adjust, \u20ac1.2B exit) and Petter Made (founder of SumUp, \u20ac8B), who have built high-impact technology and category-defining ventures from the ground up. What We Offer Maximum ownership : Complete autonomy to architect systems, drive strategy, and build from 0 to 1 without corporate red tape. High-growth environment : Complete focus on achieving strong market validation and scalable traction as fast as possible. No PowerPoint presentations, no 7 layers of approval. Good ideas and fast execution are what matter. Elite team : Report directly to the department founder and collaborate with a world-class team of engineers, researchers, and commercial leaders. Competitive compensation &amp; upside : Attractive compensation with equity upside. Tasks You will lead and execute core 0-to-1 initiatives in cutting-edge domains such as Agentic AI. You will translate high-level strategic vision into concrete execution roadmaps, driving rapid implementation from prototype to production. You will architect scalable solutions and drive critical milestones to position the new department for rapid growth and potentially a spin-off to attract institutional backing. Requirements You are based in Europe or the Americas (or open to relocate/remote arrangements). You have a high-agency builder mindset, with proven domain expertise and the drive to take extreme end-to-end ownership. You have excellent verbal and written communication skills in English. Join us to build cutting-edge technology and category-defining initiatives from the ground up! To apply: https://weworkremotely.com/remote-jobs/ewor-agentic-ai-design-engineer-100-remote-m-f-d",
+   "url": "https://weworkremotely.com/remote-jobs/ewor-agentic-ai-design-engineer-100-remote-m-f-d",
+   "apply_url": "https://weworkremotely.com/remote-jobs/ewor-agentic-ai-design-engineer-100-remote-m-f-d",
+   "apply_email": null,
+   "location": "Remote",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-29T16:16:30+00:00",
+   "tags": []
+  }
+ },
+ {
+  "score": 8.0,
+  "score_notes": [
+   "3 stack hits",
+   "0d old",
+   "email apply"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-152223",
+   "title": "Implementation Engineer",
+   "company": "Roboflow",
+   "description": "Who We Are Our mission is to make the world programmable. Sight is one of the key ways we understand the world, and soon this will be true for the software we use, too. We\u2019re building the tools, community, and resources needed to make the world programmable with artificial intelligence. Roboflow simplifies building and using computer vision models. Today, over 1M+ developers, including those from half the Fortune 100, use Roboflow\u2019s machine learning open source and hosted tools. That includes counting cells to accelerate cancer research, improving construction site safety , digitizing floor plans , preserving coral reef populations , guiding drone flight , and much more . Roboflow is supported by great customers and investors, having raised over 63 million from Y Combinator, Google Ventures, Craft Ventures, Sam Altman, Lachy Groom, amongst other leading software investors. Roboflowers are passionate builders who value ownership, accountability, and a bias toward action. We're curious, hands-on with new tech, and prefer showing our work over talking about it. Many of us have a founder mindset and thrive in our high-autonomy environment. What You\u2019ll Do: We\u2019re hiring Implementation Engineers to partner closely with our sales and solutions architect team to drive new customer wins. You\u2019ll have an immense impact on shaping the future of not only this role, but our company. A large portion of the Roboflow sales process is technical, ensuring customers understand how to incorporate computer vision into their products. Building successful relationships with our customers -- many of whom are engineers -- as well as showcasing what the Roboflow product is capable of is a key component of the role, so you will leverage both your engineering background and user-facing mindset to be successful. Because our customers use computer vision in so many different industries (accelerating cancer research, improving manufacturing processes, enabling automated checkout, and so much more), your workday will always include an engaging variety of challenges. You\u2019ll be an integral part of making our customers successful, being responsible for the project management, deployment, and adoption of Roboflow\u2019s computer vision solutions within their products. This is a hands-on, technical role where you will work closely not only with our customers, but also with our engineering teams and product managers to ensure the successful deployment of our solutions. You will need to combine your expertise in computer vision, machine learning, and Python programming to design, implement, and optimize solutions that solve our customers\u2019 biggest pain points. We want our customers to be life long partners with Roboflow and ensure they are receiving the ROI they envisioned when they first signed on. If you think, \u201cI\u2019m an engineer that loves sharing my work with others,\u201d you\u2019d be in great company in this role. Role and Responsibilities Support and manage the project delivery of customized solutions to our customers Provide post-deployment support, including troubleshooting, debugging, and educating customers You will collaborate with Sales and Solutions Architect teams to ensure continuity across the customer journey Create technical content to demonstrate best practices (e.g. sample apps, documentation, videos, etc.) Work with sales and product to develop implementation strategies and build roadmaps for our customers Partner with customers to perform analysis on their image data to answer specific business questions and identify opportunities for improvement through computer vision Test and validate new product features with customer value creation in mind Contribute to a repository of reusable artifacts that can be used by customers to accelerate their Roboflow journey Work with the wider Roboflow team to improve processes, documentation and the overall customer experience Assist our product team with customer onboarding, support, adoption and engineering efforts Who You \u2026",
+   "url": "https://jobicy.com/jobs/152223-implementation-engineer-3",
+   "apply_url": "https://jobicy.com/jobs/152223-implementation-engineer-3",
+   "apply_email": "operations@roboflow.com",
+   "location": "USA",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T03:55:14+00:00",
+   "tags": [
+    "Technical Support",
+    "Any"
+   ]
+  }
+ },
+ {
+  "score": 7.0,
+  "score_notes": [
+   "Full-stack title",
+   "1 stack hits",
+   "1d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 1d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "wwr",
+   "id": "wwr-7307164176208124708",
+   "title": "Fullstack Web3 Engineer (Solidity / Rust / Typescript)",
+   "company": "bondex",
+   "description": "Headquarters: Remote - Americas, El Salvador URL: http://bondex.app We're recruiting a Web 3 Fullstack Developer (Solidity / Rust / Typescript) who is looking for a new challenge and ready to join an exciting new chapter to expand our clients product value proposition in the DeFi Web3 realm.&nbsp; &nbsp; The client is is revoluzionezing financial interoperability and the requirements for the role are:&nbsp; &nbsp; Minimum 4 years of professional experience in WEB development; preferably with Typescript Experience as Fullstack Web3 developer at least 2 years in the following programming languages: Web3: High level of Solidity (demonstrated experience) / Rust FRONTEND: Typescript / Javascript / React / NodeJS BACKEND: NodeJS; nice to have Golang &amp; Python FLUENT proficient English , passable and/or with strong accent will not do. Ability to work with clients. Desirable experience in Smart contracts and DeFi protocols (curve, uniswap, AAVE etc); &nbsp; 100% Remote but ONLY residents of countries with US time zones (EST-PST) &nbsp; As a Web 3 Full stack developer , you're main responsibilities will be:&nbsp; &nbsp; Participate in the entire software development lifecycle; Collaborate closely with developers and CTO to deliver high-quality software solutions; Troubleshoot and debug issues, providing timely resolutions; About the client:&nbsp; &nbsp; Remote first We prioritise an optimal work-life balance, ensuring ample time for relaxation and personal pursuits. Competitive salary according to experience and contributions Hiring process:&nbsp; &nbsp; Questionare application HR introduction call Technical interview + technical assesment Offer &nbsp; If you're an experience web3 full stack developer eager to make a meaningful contribution to a cutting-edge project in the DeFi space, we would love to hear from you! &nbsp; &nbsp; &nbsp; To apply: https://weworkremotely.com/remote-jobs/bondex-fullstack-web3-engineer-solidity-rust-typescript",
+   "url": "https://weworkremotely.com/remote-jobs/bondex-fullstack-web3-engineer-solidity-rust-typescript",
+   "apply_url": "https://weworkremotely.com/remote-jobs/bondex-fullstack-web3-engineer-solidity-rust-typescript",
+   "apply_email": null,
+   "location": "Remote",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-29T19:13:52+00:00",
+   "tags": []
+  }
+ },
+ {
+  "score": 6.0,
+  "score_notes": [
+   "1 stack hits",
+   "0d old",
+   "email apply"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-154346",
+   "title": "Software Engineer I, Agentic Platform EMEA (Poland, Remote, B2B)",
+   "company": "Samsara",
+   "description": "Who we are Samsara (NYSE: IOT) is the pioneer of the Connected Operations\u2122 Cloud, which is a platform that enables organizations that depend on physical operations to harness Internet of Things (IoT) data to develop actionable insights and improve their operations. At Samsara, we are helping improve the safety, efficiency and sustainability of the physical operations that power our global economy. Representing more than 40% of global GDP, these industries are the infrastructure of our planet, including agriculture, construction, field services, transportation, and manufacturing \u2014 and we are excited to help digitally transform their operations at scale. Working at Samsara means you\u2019ll help define the future of physical operations and be on a team that\u2019s shaping an exciting array of product solutions, including Video-Based Safety, Vehicle Telematics, Apps and Driver Workflows, and Equipment Monitoring. As part of a recently public company, you\u2019ll have the autonomy and support to make an impact as we build for the long term. About the role: We're building the next chapter: an agentic platform that understands operational context and takes action, with the ambition to make physical operations increasingly autonomous. External Platform EMEA owns critical capabilities behind that transition. Depending on the team, your work could include: Reporting and intelligence. Own the reporting engine and products that turn the complexity of a fleet into answers customers can act on. Enterprise administration. Build how customers configure and control Samsara at scale, from permissions and device metadata to AI-assisted onboarding. Developer and agent platform. Build APIs, event systems, integrations, and tools that give applications and AI agents access to operational data and actions. Business-critical infrastructure. Own billing, license assignment, and usage metering: systems central to how Samsara sells, delivers, and grows its products. The long-term opportunity is rooted in the physical world. Deployed hardware, data generated at the edge, and years of operational expertise form a foundation that's hard to replicate. As AI advances, it expands what we can build on that foundation. This is a place to develop deep engineering expertise while helping shape a platform with years of ambitious work ahead. AI is also central to how we build. We expect engineers to push tools like Codex, Claude Code, and Cursor throughout design, implementation, testing, and production investigations, taking on more ambitious work while owning the quality of what they ship. In this role, you will: Solve complex problems and own the success of your solutions as you architect, build, test, and deliver full-stack products. Communicate, collaborate, and develop with engineers, platform/infrastructure teams, product managers, designers, and support teams. Build upon skills and knowledge across a range of technologies, such as Go, GraphQL, Typescript, React, and MySQL. Previous experience with these technologies is not required. Own the operational health of production systems as we build for the future scale of an ever-growing library of media assets. Make an impact on our core architecture, roadmap, and the wider engineering community. Champion, role model, and embed Samsara\u2019s cultural principles (Focus on Customer Success, Build for the Long Term, Adopt a Growth Mindset, Be Inclusive, Win as a Team) as we scale globally and across new offices. Minimum requirements for the role: Strong fundamentals in programming, data structures, algorithms, and debugging, developed through a computer science degree or equivalent practical experience. Experience building working software through projects, internships, open-source contributions, or professional work. You can explain your code and the choices behind it. An AI-native approach to engineering : you already use coding agents and assistants to learn, build, test, and debug, and can critically evaluate their output. Evide\u2026",
+   "url": "https://jobicy.com/jobs/154346-software-engineer-i-agentic-platform-emea-poland-remote-b2b",
+   "apply_url": "https://jobicy.com/jobs/154346-software-engineer-i-agentic-platform-emea-poland-remote-b2b",
+   "apply_email": "accessibleinterviewing@samsara.com",
+   "location": "Poland",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T05:31:59+00:00",
+   "tags": [
+    "Software Engineering",
+    "Any"
+   ]
+  }
+ },
+ {
+  "score": 6.0,
+  "score_notes": [
+   "3 stack hits",
+   "0d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "experience 3-3 yrs ok",
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-154335",
+   "title": "Deployment Strategist - Brazil",
+   "company": "Elevenlabs",
+   "description": "About ElevenLabs ElevenLabs is an AI research and product company transforming how we interact with technology. We launched in January 2023 with the first human-like AI voice model. Today, we serve millions of users and thousands of businesses - from fast-growing startups to large enterprises like Deutsche Telekom and Meta. Our investors are some of the world's most prominent, including Andreessen Horowitz, ICONIQ Growth and Sequoia. We've raised $781M in funding and our last valuation was $11B - multiples of 11, always. We have expanded from voice into three main platforms: ElevenAgents enables businesses to deliver seamless and intelligent customer experiences, with the integrations, testing, monitoring, and reliability necessary to deploy voice and chat agents at scale. ElevenCreative empowers creators and marketers to generate and edit speech, music, image, and video across 70+ languages. ElevenAPI gives developers access to our leading AI audio foundational models. Everything we do is the result of the creativity and commitment of our team - builders doing the best work of their lives. We are researchers, engineers, and operators. IOI medalists and ex-founders. If you want to work hard and create lasting positive impact, we want to hear from you. How we work High-velocity: Rapid experimentation, lean autonomous teams, and minimal bureaucracy. Impact not job titles: We don\u2019t have job titles. Instead, it\u2019s about the impact you have. No task is above or beneath you. AI first: We use AI to move faster with higher-quality results. We do this across the whole company\u2014from engineering to growth to operations. Excellence everywhere: Everything we do should match the quality of our AI models. Global team: We prioritize your talent, not your location. What we offer Innovative culture: You\u2019ll be part of a generational opportunity to define the trajectory of AI, surrounded by a team pushing the boundaries of what\u2019s possible. Growth paths: Joining ElevenLabs means joining a dynamic team with countless opportunities to drive impact - beyond your immediate role and responsibilities. Learning &amp; development : ElevenLabs proactively supports professional development through an annual discretionary stipend. Social travel : We also provide an annual discretionary stipend to meet up with colleagues each year, however you choose. Annual company offsite: Each year, we bring the entire team together in a new location - past offsites have included Croatia and Italy. Co-working : If you\u2019re not located near one of our main hubs, we offer a monthly co-working stipend. About the role As a Deployment Strategist, you'll work as part of a driven and creative team of Forward Deployed Engineers, Go to Market professionals, Product Engineers and other Strategists to deploy ElevenAgents, our enterprise AI platform, against the challenging problems our customers face. Your mission is to synthesize disconnected streams of thought into a cohesive understanding of what the most important problem is, what the existing workflows are, what the product needs, what users are motivated by, and where the impact could be. No two days are the same, but as a Deployment Strategist you can expect to: Meet with strategic customers to deeply understand their AI transformation goals and locate their biggest pain points, particularly around customer-facing and operational workflows powered by AI agents. Own flagship deals end-to-end \u2014 from identifying the right use case to structuring commercial terms (including outcome-based pricing, license fees, and implementation arrangements) and driving them to close. Embed yourself deeply inside strategic customers: act as a trusted partner with a provisioned account, spend meaningful time onsite, and own delivery outcomes as if you were part of their team. Identify high-impact use cases through close engagement with customer problems and workflows, and collaborate with Forward Deployed Software Engineers to bring them to life. Guid\u2026",
+   "url": "https://jobicy.com/jobs/154335-deployment-strategist-brazil",
+   "apply_url": "https://jobicy.com/jobs/154335-deployment-strategist-brazil",
+   "apply_email": null,
+   "location": "Brazil",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T05:28:56+00:00",
+   "tags": [
+    "Sales",
+    "Director"
+   ]
+  }
+ },
+ {
+  "score": 6.0,
+  "score_notes": [
+   "1 stack hits",
+   "0d old",
+   "email apply"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "experience 2-2 yrs ok",
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-154317",
+   "title": "Educational Content Developer",
+   "company": "Karbon",
+   "description": "About Karbon Karbon is the global leader in AI-powered practice management software for accounting firms. We provide an award-winning cloud platform that helps tens of thousands of accounting professionals work more efficiently and collaboratively every day. With customers in 40 countries, we have grown into a globally distributed team across the US, Australia, New Zealand, Canada, the United Kingdom, and the Philippines. We are well-funded, ranked #1 on G2, growing rapidly, and have a people-first culture that is recognized with Great Place To Work\u00ae certification and on Fortune magazine's Best Small Workplaces\u2122 List. Karbon Academy is how we teach accounting firms around the world to get real value from Karbon, at a scale no team of humans could reach one customer at a time. It is our most important lever for customer onboarding, product adoption and long-term success, and we are rebuilding it around role-based learning paths designed for the people inside a firm: owners, operations leaders, accountants, bookkeepers and tax professionals. As an Educational Content Developer, you will design and develop the self-paced learning experiences that make up those paths, owning courses end to end \u2014 from learning needs and scenario design through storyboarding, build, quality review and publish. The scope goes beyond structured courses. You will also create time-of-need content that meets customers in the moment they are stuck \u2014 job aids, quick reference guides and in-product guidance \u2014 as well as go-to-market education that lands new features, supports release communications and drives adoption campaigns alongside our Product, Marketing and Customer Success teams. Some of what you build will be a six-module learning path; some of it will be a two-minute video shipped in a week. AI is genuinely embedded in how we work. Our production workflow runs on AI-assisted storyboarding and research, which means your time goes to the parts that need human judgement: understanding what a bookkeeper actually needs on a deadline day, designing a scenario that feels real, and knowing when a draft is wrong even when it reads well. You will also see the data on what you build \u2014 completion, feedback and product usage \u2014 and help decide what to change next. About the Role Learning experience design and development Analyze learning needs alongside the Education &amp; Enablement Manager and subject matter experts to define objectives and scope before development begins. Design and develop engaging, self-paced learning experiences across formats \u2014 e-learning courseware, video tutorials, interactive modules, microlearning, guided walkthroughs and job aids. Build scenario-based content around our customer personas and fictional firm universe, so learners practise on situations that mirror their real week rather than abstract feature tours. Create time-of-need performance support and go-to-market education \u2014 job aids, quick reference guides, in-product guidance, release and feature launch content \u2014 often on short timelines and in partnership with Product, Marketing and Customer Success. Develop assessments and knowledge checks that meaningfully measure comprehension and capability, not just completion. Apply adult learning principles, our learning objective matrix, the Karbon design map and Karbon brand guidelines to everything you produce, with accessibility considered throughout. Own the quality review of your own work, and take content from first draft to review-ready in one to two rounds. AI-assisted content production Use AI tools to accelerate storyboarding, scripting, research and asset creation, and critically review AI output for accuracy, tone and instructional soundness before it ships. Contribute to how our team uses AI \u2014 testing new tools and approaches, and documenting what works so the whole team gets faster. Product and industry fluency Build and maintain deep working knowledge of Karbon by using the product, our Help Centre and our internal kn\u2026",
+   "url": "https://jobicy.com/jobs/154317-educational-content-developer",
+   "apply_url": "https://jobicy.com/jobs/154317-educational-content-developer",
+   "apply_email": "people.support@karbonhq.com",
+   "location": "Philippines",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T04:40:03+00:00",
+   "tags": [
+    "Education & E-learning",
+    "Any"
+   ]
+  }
+ },
+ {
+  "score": 6.0,
+  "score_notes": [
+   "3 stack hits",
+   "1d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "experience 3-3 yrs ok",
+   "posted 1d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-154273",
+   "title": "Data Scientist II",
+   "company": "Signifyd",
+   "description": "At Signifyd , we help merchants confidently grow their businesses by building trusted relationships with their customers. Our advanced technology, combined with a team genuinely invested in our clients\u2019 success, creates frictionless shopping experiences, approving more good orders, protecting revenue, and keeping customers happy. Trusted by thousands of leading merchants across more than 100 countries, we securely process billions of transactions each year. Our people are the heart of everything we do, driving our mission forward with commitment, empathy, and creativity. Join us on our mission to empower confident, fraud-free commerce by helping online retailers provide superior customer experiences and eliminate fraud. Learn about our company values here ! The Applied Decision Science (ADS) team builds production ML models and risk management tools that are the core of Signifyd's product. We help businesses of all sizes minimize their fraud exposure and grow their sales. We improve the e-commerce shopping experience for everyone by reducing the friction experienced by good buyers and blocking fraudulent purchase attempts. ADS builds and manages the entire decision stack - from designing and deploying the ML models that assess the riskiness of a transaction, to building the tools the Risk team uses to manage and fight fraud. We seek to standardize and automate repetitive work so we can spend more time on experiments and high-leverage projects. We value collaboration and team ownership. Data scientists in Signifyd are true \u201cfull stack\u201d operators, requiring knowledge of how transaction information received via our API traverses its way through our system and into the models we are responsible for building. When you test a hypothesis at Signifyd, you\u2019re responsible for the end-to-end development, deployment, and evaluation process. This is a massive responsibility, and no one should feel like they're solving a hard problem alone. Together we help each other develop our skillsets through peer review of experiments and code, group paper study to deepen our machine learning and statistical understanding, and frequent knowledge-sharing through live demos, write-ups, and cross-team projects. All team members are expected and encouraged to weigh in as an external reviewer on a peer's idea or approach, regardless of level. A couple quick notes on the Signifyd culture: We\u2019re no stranger to remote work. Most of our workforce (ICs and leaders) are primarily remote. We tend to gather individual teams together once a year. There is no travel requirement for this role. We are heavy Slack users. We are heavy users of generative AI tools. We dislike token-maxxing, but enjoy the expansion of capabilities that have come with genAI. We ask that during the interview you don\u2019t use genAI, as we want to know what you know. Responsibilities: Partner with the Business Unit Lead and their merchant portfolio to identify gaps in decisioning performance and implement solutions, with guidance from senior team members. Utilize existing, or build net new production machine learning models that identify fraud, in collaboration with other data scientists and machine learning engineers. Identify and build automation that reduces repetitive manual work. Run experiments to identify optimal decisioning strategies, balancing complexity and performance. Communicate complex ideas to a variety of audiences, from Customer Success and Sales, to limited interactions with external customers. Write production and offline analytical code in Python. Work with distributed data pipelines in Spark/Databricks/GCP. Requirements: A degree in computer science or a comparable analytical field. 3+ years of post-undergrad work experience required. Strong verbal and written communication skills. Strong machine learning and statistical background. Write code and review others' in a shared codebase in Python. Practical SQL knowledge. Design experiments and collect data. Experience with dis\u2026",
+   "url": "https://jobicy.com/jobs/154273-data-scientist-ii",
+   "apply_url": "https://jobicy.com/jobs/154273-data-scientist-ii",
+   "apply_email": null,
+   "location": "UK",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-30T08:08:27+00:00",
+   "tags": [
+    "Data Science & Analytics",
+    "Senior"
+   ]
+  }
+ },
+ {
+  "score": 6.0,
+  "score_notes": [
+   "3 stack hits",
+   "0d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "wwr",
+   "id": "wwr-4136785863780222977",
+   "title": "Design Engineer",
+   "company": "Vercel",
+   "description": "Headquarters: Remote - United States About Vercel: Vercel is the agentic infrastructure company, freeing people and agents to ship what's next. For more than a decade we've helped builders move from idea to production with speed, security, and exceptional developer experience. Now we're scaling our products for both agents and people to ship and run software, built in the open and trusted by OpenAI, PayPal, Ramp, Supreme, and millions of developers worldwide. About the Role: AI Gateway gives developers one place to connect applications and agents to hundreds of models with one API key. It handles provider routing and fallbacks, unifies billing and observability, and lets teams manage spend and security controls across production AI workloads. Designing this well is a systems problem. A developer should be able to choose the right model, make and verify a first request, diagnose a failed request, and configure routing, budgets, credentials, and security controls without losing sight of the application they are trying to build. The right interface might be in the dashboard, on the public model catalog, in the CLI, in an API response, or in code. You will be the Design Engineer for AI Gateway, owning product design and frontend implementation across those surfaces. You will work with customers, a Product Manager, and engineers to understand the problem, explore solutions, build the production experience, ship it, and learn from what happens after launch. AI Gateway is live, the model ecosystem changes every week, and the team can move from an observed problem to production quickly. This is a rare chance to use your product judgment, design craft, and code to shape a developer product and ship the experience yourself. You will be the design owner embedded with a Product Manager and a dedicated engineering team. You will also have the Product Design team around you for critique, collaboration, and support. AI Gateway will be your main product area, with room to pursue design-led improvements across Vercel. You will report to the Design Team. If you\u2019re based within a pre-determined commuting distance of one of our offices (SF, NY, London, or Berlin), the role includes in-office anchor days on Monday, Tuesday, and Friday. If you're located beyond that distance, the role is fully remote. For location-specific details, please connect with our recruiting team. What You Will Do: Own product design and frontend implementation for meaningful parts of the journey from discovering a model to making a first successful request and operating AI in production. Design and build production experiences across the website, dashboard, CLI, and APIs, choosing the right medium for each problem. Make models, providers, credentials, routing, budgets, logs, performance, privacy, and governance understandable, then create patterns that extend across new providers, modalities, and workloads. Talk directly with customers and use product data to understand problems, define success, make tradeoffs, and improve what ships. Own quality after launch, including visual and interaction craft, accessibility, performance, resilience, instrumentation, and edge cases. Use coding agents to explore and implement ideas quickly, while testing, debugging, and taking responsibility for what ships. About You: Your work shows what you personally identified, designed, built, shipped, and learned after launch. You build production-quality web applications with React and TypeScript and can contribute confidently in a large, existing codebase. You bring strong visual and interaction craft and have made technical or data-rich products understandable without removing the control advanced users need. You can move between graphical interfaces, CLI workflows, API behavior, and implementation details, treating accessibility, performance, failure recovery, and instrumentation as part of the design. You use customer research and product data to make decisions, communicate your reasoning cl\u2026",
+   "url": "https://weworkremotely.com/remote-jobs/vercel-design-engineer",
+   "apply_url": "https://weworkremotely.com/remote-jobs/vercel-design-engineer",
+   "apply_email": null,
+   "location": "Remote",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T07:30:47+00:00",
+   "tags": []
+  }
+ },
+ {
+  "score": 6.0,
+  "score_notes": [
+   "Full-stack title",
+   "0 stack hits",
+   "1d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 1d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "wwr",
+   "id": "wwr-6997562586824341155",
+   "title": "SaaS Full-Stack Developer (100 % remote) (m/f/d)",
+   "company": "EWOR",
+   "description": "Headquarters: Odense Baneg\u00e5rd (Odense Letbane) Odense C, Europe, 5000 Denmark URL: http://ewor.com EWOR is launching cutting-edge new initiatives, and we are looking for exceptional operators and builders to join our new department. We are backed and led by serial entrepreneurs, including Paul M\u00fcller (founder of Adjust, \u20ac1.2B exit) and Petter Made (founder of SumUp, \u20ac8B), who have built high-impact technology and category-defining ventures from the ground up. What We Offer Maximum ownership : Complete autonomy to architect systems, drive strategy, and build from 0 to 1 without corporate red tape. High-growth environment : Complete focus on achieving strong market validation and scalable traction as fast as possible. No PowerPoint presentations, no 7 layers of approval. Good ideas and fast execution are what matter. Elite team : Report directly to the department founder and collaborate with a world-class team of engineers, researchers, and commercial leaders. Competitive compensation &amp; upside : Attractive compensation with equity upside. Tasks You will lead and execute core 0-to-1 initiatives in cutting-edge domains such as SaaS. You will translate high-level strategic vision into concrete execution roadmaps, driving rapid implementation from prototype to production. You will architect scalable solutions and drive critical milestones to position the new department for rapid growth and potentially a spin-off to attract institutional backing. Requirements You are based in Europe or the Americas (or open to relocate/remote arrangements). You have a high-agency builder mindset, with proven domain expertise and the drive to take extreme end-to-end ownership. You have excellent verbal and written communication skills in English. Join us to build cutting-edge technology and category-defining initiatives from the ground up! To apply: https://weworkremotely.com/remote-jobs/ewor-saas-full-stack-developer-100-remote-m-f-d",
+   "url": "https://weworkremotely.com/remote-jobs/ewor-saas-full-stack-developer-100-remote-m-f-d",
+   "apply_url": "https://weworkremotely.com/remote-jobs/ewor-saas-full-stack-developer-100-remote-m-f-d",
+   "apply_email": null,
+   "location": "Remote",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-29T19:07:41+00:00",
+   "tags": []
+  }
+ },
+ {
+  "score": 5.0,
+  "score_notes": [
+   "2 stack hits",
+   "0d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "experience 2-3 yrs ok",
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-152261",
+   "title": "Software Engineer, Content Platform",
+   "company": "Reddit",
+   "description": "Reddit is a community of communities. It\u2019s built on shared interests, passion, and trust, and is home to the most open and authentic conversations on the internet. Every day, Reddit users submit, vote, and comment on the topics they care most about. With 100,000+ active communities and approximately 130 million daily active unique visitors, Reddit is one of the internet\u2019s largest sources of information. For more information, visit www.redditinc.com . This role is remote friendly. Reddit has a flexible first workforce. Who We Are: The Infrastructure organization enables Reddit to deliver Reliability, Performance and Efficiency, with a single opinionated technology stack. The Content Platform team within Infrastructure additionally focuses on empowering product teams to build the best possible Content-related experiences, easily and reliably. This is a high-impact team that owns the Tier-0 services and core data models that power some of the most visible aspects of our product - viewing a feed, posting, commenting, upvoting - and we work closely with teams like Consumer, Ads, Feeds, Storage and Ranking. This team is also responsible for running and maintaining R2 \u2013 Reddit\u2019s monolith legacy stack that is pretty much in the critical path for every Critical User Journey at Reddit. We are looking to hire a Software Engineer to help us in this mission. This is a high impact role where your passion for building and maintaining high quality code, scaling Tier-0 infrastructure and building high-leverage platform services will enable our partner product teams to deliver tangible user value. What You\u2019ll Do: As a software engineer, you will work with teammates and partner teams to create and improve scalable, fault tolerant, self-serve systems that comprise the Content Platform at Reddit. You will also: Design, write, and deliver software (mostly in Go, sometimes in Python) to improve the availability, scalability, latency, and efficiency of Reddit\u2019s products Dive deep into the codebase of a suite of Go services owned by the team as well as one of Reddit\u2019s monolith Python legacy stack Be able to make system level improvements, enhancements and implement complex code modifications Develop judgment to identify and discuss gaps in our current platform; Help evolve it for next 2+ years of growth Work collaboratively with wide variety of cross-functional teams across Reddit; actively engage in soliciting customer feedback Collaborate with teammates to share on-call responsibilities and support monitoring/alerting to improve the reliability, scalability, latency, and efficiency of Reddit Continue improving your own technical abilities, acumen and soft skills Who You Might Be: 3+ years of software engineering experience in a production setting writing clean, maintainable, and well-tested code BS in Computer Science, a related field, or equivalent work experience Proficiency in one or more backend programming languages like Golang, Python, C++, Java Experience working with one or more databases like Cassandra, Postgres, Redis Experience with modern cloud-based infrastructure like Kubernetes, gRPC, AWS/GCP Strong communication skills and a desire to collaborate with cross-functional teams Prior experience with scaled, high rate platform services and API design is a plus Benefits: Comprehensive Healthcare Benefits and Income Replacement Programs 401k Match Family Planning Support Gender-Affirming Care Mental Health &amp; Coaching Benefits Flexible Vacation &amp; Reddit Global Days off Generous paid Parental Leave Paid Volunteer time off Pay Transparency: This job posting may span more than one career level. In addition to base salary, this job is eligible to receive equity in the form of restricted stock units, and depending on the position offered, it may also be eligible to receive a commission. Additionally, Reddit offers a wide range of benefits to U.S.-based employees, including medical, dental, and vision insurance, 401(k) program with employe\u2026",
+   "url": "https://jobicy.com/jobs/152261-software-engineer-content-platform",
+   "apply_url": "https://jobicy.com/jobs/152261-software-engineer-content-platform",
+   "apply_email": null,
+   "location": "USA",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T04:05:16+00:00",
+   "tags": [
+    "Software Engineering",
+    "Any"
+   ]
+  }
+ },
+ {
+  "score": 5.0,
+  "score_notes": [
+   "2 stack hits",
+   "0d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-152244",
+   "title": "Forward Deployed Engineer",
+   "company": "Axiom",
+   "description": "About Us Axiom is using zero-knowledge proofs to enable new types of verifiable and private software applications, starting with crypto and fintech. We are a small but incredibly strong team backed by the best investors in crypto . We\u2019re looking for exceptional people who are excited to work on challenging and impactful problems in a fast-paced environment. Our office is in NYC and working in person in NY is our strong preference, but we're open to remote candidates as well. We recently released OpenVM , a performant and modular zkVM framework built for customization and extensibility. OpenVM allows developers to verify the correct execution of arbitrary computer programs in a flexible and performant way. We are building ZK-enabled products using OpenVM and supporting teams building on OpenVM. The Role We are looking for a Forward Deployed Engineer to help customers maximize the value they get out of OpenVM and the Axiom Proving API. You'll design compelling product demos, execute pilots, and work closely with teams across crypto and fintech to integrate ZK into their products with OpenVM. Beyond the sales process, you will own technical customer relationships by customizing OpenVM for user needs and ensuring successful product impact. You will also help shape our product roadmap by deeply understanding and communicating customer needs. We are looking for someone with strong technical skills, the ability to work across the stack, and a product- and customer-first mindset. We also value the ability to make pragmatic design choices to solve customer problems while maintaining sustainable engineering practices. Who you are You have a strong track record of shipping full-stack products across frontend and backend using Python, Typescript, or comparable stacks. You are familiar with deploying applications using k8s and Terraform. You\u2019re a clear communicator and relationship-builder. You're comfortable discussing complex technical topics with customers in all roles and levels. You thrive in ambiguous environments and have a strong bias towards action. You have an extremely strong work ethic. Bonuses You have experience selling a product or doing customer-facing work. You have experience with cryptography or blockchain engineering. You are proficient in Rust, C/C++, Go, or a similar backend language. Why join us You\u2019ll be an early employee with ownership to make key technical/product decisions. You\u2019ll be working on groundbreaking tech that has the potential to be a key piece of infrastructure for the crypto industry and beyond. You\u2019ll receive a competitive salary with equity. You will work with and receive mentorship from an exceptional team. Our Team Our founders Yi Sun and Jonathan Wang met while studying math at Harvard and have been working on ZK since 2021. Together, they wrote some of the most performant ZK circuits for elliptic curve cryptography and Ethereum data reads before starting Axiom. Before Axiom, Yi was a professor at UChicago Statistics and did a math PhD at MIT. He was previously an advisor for Gauntlet and worked at an HFT startup from inception to profitable trading. Jonathan published number theory research in top math journals and did a math PhD at UChicago. The rest of our small but incredibly strong team includes alums of Applied Intuition, Coinbase, Color, Neon, Google, and Perplexity as well as math / CS PhDs and IMO / IPhO / Codeforces winners. We look forward to working with you!",
+   "url": "https://jobicy.com/jobs/152244-forward-deployed-engineer",
+   "apply_url": "https://jobicy.com/jobs/152244-forward-deployed-engineer",
+   "apply_email": null,
+   "location": "USA",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T04:05:06+00:00",
+   "tags": [
+    "Software Engineering",
+    "Any"
+   ]
+  }
+ },
+ {
+  "score": 5.0,
+  "score_notes": [
+   "2 stack hits",
+   "0d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "experience 3-3 yrs ok",
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-152173",
+   "title": "Professional Services Engineer",
+   "company": "BigID",
+   "description": "Who we are: BigID is an innovative tech startup that focuses on solutions for data security, compliance, privacy, and AI data management. We're leading the market in all things data: helping our customers reduce risk, drive business innovation, achieve compliance, build customer trust, make better decisions, and get more value from their data. We are building a global team passionate about innovation and next-gen technology. BigID has been recognized for: BigID named one of Forbes America's Best Startup Employers 2026 - ranked #15 overall and #1 in Security BigID named Hot Company in Artificial Intelligence and Machine Learning at the Global InfoSec Awards Citizens JMP Cyber 66 List of Hottest Privately Held Cybersecurity Companies CRN 100 list named BigID as one of the 20 Coolest Identity Access Management and Data Protection Companies (3 years running) DUNS 100 Best Tech Companies to Work for Top 3 Big Data and AI Vendors to Watch in the 2023 BigDATAwire Readers and Editors Choice Awards 2024 Inc. 5000 list for the 4th consecutive year! Shortlisted for the 2024 AI Awards in the category of Best Use of AI in Cybersecurity At BigID, our team is the foundation of our success. Join a people-centric culture that is fast-paced and rewarding: you\u2019ll have the opportunity to work with some of the most talented people in the industry who value innovation, diversity, integrity, and collaboration. About the Role: BigID's Services team is central to how our customers succeed \u2014 we own the setup, integration, and deployment of BigID's discovery tools for customers and implementation partners. As a Services Delivery Engineer, you'll be the technical backbone of that experience: translating customer requirements into working solutions, troubleshooting deployment issues at their root cause, and partnering with Engineering and Product to make every future rollout smoother than the last. Who we seek: BigID is growing quickly, and we are expanding our Services team and seeking a Professional Services Engineer in the EST time zone. The services team plays an important role in the successful setup, integration, and deployment of BigID's discovery tools for our customers and implementation partners. This position also works to identify the root cause of any deployment issues and works with the larger team to help resolve them to ensure the success of the customer. What you\u2019ll do: Partner directly with client stakeholders to understand technical requirements and align them to business objectives Plan and lead implementation engagements \u2014 deploying solution components and configuring the product to meet each client's specific environment Collaborate across internal teams and client organizations to ensure smooth rollout and successful integration of BigID solutions Deliver technical training tailored to the audience, from hands-on admins to executive stakeholders Identify root causes of deployment issues and drive them to resolution Work closely with Engineering and Product Management to document field issues, enhancement requests, and opportunities to improve the implementation process What you\u2019ll bring: 3+ years in a customer-facing technical role, ideally in product implementation or hands-on deployment within enterprise environments Solid troubleshooting and operational knowledge across some combination of: Compute, Storage, Networking, Databases, DevOps, Big Data/Analytics, Security, and Application Development Proven experience across the full solution lifecycle: problem identification, system architecture, hardware/software specification and design, implementation, testing, client training, and deployment A proactive mindset \u2014 you look around corners for both internal and customer challenges before they become blockers Hands-on experience with Docker and Kubernetes deployments Working knowledge of one or more databases: MongoDB, Microsoft SQL Server, Oracle Database, PostgreSQL, MySQL/MariaDB, or IBM DB2 Experience with a major cloud platform:\u2026",
+   "url": "https://jobicy.com/jobs/152173-professional-services-engineer",
+   "apply_url": "https://jobicy.com/jobs/152173-professional-services-engineer",
+   "apply_email": null,
+   "location": "USA",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T03:55:05+00:00",
+   "tags": [
+    "Technical Support",
+    "Director"
+   ]
+  }
+ },
+ {
+  "score": 4.0,
+  "score_notes": [
+   "1 stack hits",
+   "14d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 14d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "remoteok",
+   "id": "rok-1137400",
+   "title": "Golang Kubernetes Engineer",
+   "company": "Arango",
+   "description": "Remote - Arango delivers a unified, natively multimodel contextual data platform that powers AI agents, assistants, and applications with the unified, current, and trusted business context needed to reason, decide, and act at scale.The Arango Contextual Data Platform connects...<br/><br/>Please mention the word **FESTIVE** and tag RMTcyLjE4Mi4yMDIuMTk4 when applying to show you read the job post completely (#RMTcyLjE4Mi4yMDIuMTk4). This is a beta feature to avoid spam applicants. Companies can search these words to find applicants that read this and see they're human.",
+   "url": "https://remoteOK.com/remote-jobs/remote-golang-kubernetes-engineer-arango-1137400",
+   "apply_url": "https://remoteOK.com/remote-jobs/remote-golang-kubernetes-engineer-arango-1137400",
+   "apply_email": null,
+   "location": "Remote",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-16T19:00:02+00:00",
+   "tags": [
+    "golang",
+    "golang",
+    "engineer"
+   ]
+  }
+ },
+ {
+  "score": 4.0,
+  "score_notes": [
+   "1 stack hits",
+   "0d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-152240",
+   "title": "Distributed Systems Engineer",
+   "company": "Axiom",
+   "description": "About Us Axiom is using zero-knowledge proofs to enable new types of verifiable and private software applications, starting with crypto and fintech. We are a small but incredibly strong team backed by the best investors in crypto . We\u2019re looking for exceptional people who are excited to work on challenging and impactful problems in a fast-paced environment. Our office is in NYC and working in person in NY is our strong preference, but we're open to remote candidates as well. We recently released OpenVM , a performant and modular zkVM framework built for customization and extensibility. OpenVM allows developers to verify the correct execution of arbitrary computer programs in a flexible and performant way. We are building ZK-enabled products using OpenVM and supporting teams building on OpenVM. The Role We are looking for a distributed systems engineer to join a startup using zero-knowledge proofs to scale smart contract applications. You will be responsible for building Rust-based rollup nodes and sequencers to deliver zero-knowledge proof based products on-chain. Your work will require designing secure and efficient systems and making design choices to enable rapid development without sacrificing security. We are looking for someone with strong engineering design skills, a security mindset, and the ability to design and implement blockchain protocols. We also value the ability to make pragmatic technology choices which empower our small team. Who you are You are fluent in Rust, C++, or a similarly performant backend language. We work primarily in Rust. You have experience deploying and monitoring high uptime applications to production in the cloud using orchestration and containerization (Docker, Terraform, Kubernetes). You have experience working within a large production codebase. You are extremely detail oriented and have a security mindset. You\u2019re a clear communicator and value collaboration. You have a bias towards action and extremely strong work ethic. Bonuses You have experience working with blockchain nodes like Geth, Reth, or similar. You have experience with low-level details of Ethereum. You have experience working in an adversarial or security critical environment. Why work with us You\u2019ll be working on groundbreaking tech that has the potential to be a key piece of infrastructure for the crypto industry You\u2019ll receive a competitive salary with equity You will work with and receive mentorship from an exceptional team Our Team Our founders Yi Sun and Jonathan Wang met while studying math at Harvard and have been working on ZK since 2021. Together, they wrote some of the most performant ZK circuits for elliptic curve cryptography and Ethereum data reads before starting Axiom. Before Axiom, Yi was a professor at UChicago Statistics and did a math PhD at MIT. He was previously an advisor for Gauntlet and worked at an HFT startup from inception to profitable trading. Jonathan published number theory research in top math journals and did a math PhD at UChicago. The rest of our small but incredibly strong team includes alums of Applied Intuition, Coinbase, Color, Neon, Google, and Perplexity as well as math / CS PhDs and IMO / IPhO / Codeforces winners. We look forward to working with you!",
+   "url": "https://jobicy.com/jobs/152240-distributed-systems-engineer-2",
+   "apply_url": "https://jobicy.com/jobs/152240-distributed-systems-engineer-2",
+   "apply_email": null,
+   "location": "USA",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T04:05:05+00:00",
+   "tags": [
+    "Software Engineering",
+    "Any"
+   ]
+  }
+ },
+ {
+  "score": 4.0,
+  "score_notes": [
+   "1 stack hits",
+   "0d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-152237",
+   "title": "ZK Proof Engineer",
+   "company": "Axiom",
+   "description": "About Us Axiom is using zero-knowledge proofs to enable new types of verifiable and private software applications, starting with crypto and fintech. We are a small but incredibly strong team backed by the best investors in crypto . We\u2019re looking for exceptional people who are excited to work on challenging and impactful problems in a fast-paced environment. Our office is in NYC and working in person in NY is our strong preference, but we're open to remote candidates as well. We recently released OpenVM , a performant and modular zkVM framework built for customization and extensibility. OpenVM allows developers to verify the correct execution of arbitrary computer programs in a flexible and performant way. We are building ZK-enabled products using OpenVM and supporting teams building on OpenVM. The Role We are looking for a ZK Proof Engineer who will implement and optimize cutting-edge cryptographic code for zero-knowledge proof generation. You will be responsible for building systems to interface between low-level computer systems like the RISC-V ISA, compiler frameworks like LLVM, and database backends and connecting them with cutting-edge zero-knowledge proof systems. The role will involve both optimizing ZK provers and implementing novel ZK circuits. Your work will require making design choices to enable rapid development of secure and efficient systems. We are looking for someone with strong engineering design skills, the ability to work across the stack, and a security mindset. We also value the ability to make pragmatic technology choices which empower our small team without adding too much overhead. Who you are You have a strong background in math/cryptography, or strong problem-solving skills and interest in zero-knowledge proofs. You have proficiency in Rust, C/C++, or a similarly performant backend language. We work primarily in Rust. You are extremely detail oriented and have a security mindset. You\u2019ve worked on challenging software projects and have an eye for performance. You\u2019re a clear communicator and value collaboration. You have a strong bias towards action. You have an extremely strong work ethic. Bonuses You have experience with compiler frameworks like LLVM or MLIR. You've worked with aspects of low level computer architecture like RISC-V or programmed FGPAs or other custom hardware. You have experience with database backends, including experience with query planning or low level query engines. You've done research in mathematics, theoretical computer science, or theoretical physics. You have experience with low-level details of Ethereum We welcome diverse backgrounds. Some non-traditional profiles that may be a good fit include high-frequency trading, math/physics/CS academia, and hardware engineering. Why join us You\u2019ll be one of the earliest employees with ownership to make key technical/product decisions. You\u2019ll be working on groundbreaking tech that has the potential to be a key piece of infrastructure for the crypto industry. You\u2019ll receive a competitive salary with equity. You will work with and receive mentorship from an exceptional team. Our Team Our founders Yi Sun and Jonathan Wang met while studying math at Harvard and have been working on ZK since 2021. Together, they wrote some of the most performant ZK circuits for elliptic curve cryptography and Ethereum data reads before starting Axiom. Before Axiom, Yi was a professor at UChicago Statistics and did a math PhD at MIT. He was previously an advisor for Gauntlet and worked at an HFT startup from inception to profitable trading. Jonathan published number theory research in top math journals and did a math PhD at UChicago. The rest of our small but incredibly strong team includes alums of Applied Intuition, Coinbase, Color, Neon, Google, and Perplexity as well as math / CS PhDs and IMO / IPhO / Codeforces winners. We look forward to working with you!",
+   "url": "https://jobicy.com/jobs/152237-zk-proof-engineer",
+   "apply_url": "https://jobicy.com/jobs/152237-zk-proof-engineer",
+   "apply_email": null,
+   "location": "USA",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T04:05:03+00:00",
+   "tags": [
+    "Software Engineering",
+    "Any"
+   ]
+  }
+ },
+ {
+  "score": 4.0,
+  "score_notes": [
+   "1 stack hits",
+   "0d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-148936",
+   "title": "Customer Engineer - Auckland",
+   "company": "NCR Voyix",
+   "description": "About NCR VOYIX NCR Voyix Corporation (NYSE: VYX) is a global platform-powered leader in unified commerce for shopping and dining. Combining a flexible, intelligent platform with end-to-end payments capabilities and services developed through its deep industry experience, NCR Voyix empowers retailers and restaurants to accelerate new possibilities for their operations, experiences and business outcomes. NCR Voyix is headquartered in Atlanta, Georgia, and serves customers in more than 35 countries worldwide. Position: Customer Engineer Location: Auckland, New Zealand Working time: Shifts, Full time Hours of Work per week: Forty (40) hours Annual Salary: NZD 70,000 KEY DUTIES AND RESPONSIBILITIES TASKS Installation, maintenance, and repairs on equipment within an assigned territory to ensure continuity of customer operations and high levels of customer satisfaction. May be requested to work outside of the assigned area as determined by projects, to cover for colleagues, and at times of demand peaks. Ownership of customer problems or incidents until the situation has been resolved to the customer's satisfaction and or in compliance with agreed upon Service Level Agreements (SLA). Diagnose, repair, and replace components on any equipment supported by NCR Voyix including but not limited to Point of Sale, Self-service checkout, servers and other back office equipment, handheld terminals, and associated peripherals. Installation of new, or to upgrade existing equipment, in line with the Statement of Work (SOW). Assisting in site preparation, including installation of cable, staging of equipment, and testing of equipment; may also perform required modular swaps and unit replacements. Subject to required training and certification which may be required to work at height e.g., ladders, MEWP, and or use handheld power tools Field Service Technician responds to all customer concerns or problems by resolving them or by escalating them to the proper associate, team member, territory manager, or the Control Tower. Build working relationships with customers and develop informal communication channels with customer account at the local level Represents NCR Voyix in a manner that reflects positively on the image and reputation of the company. Performs periodic preventative maintenance on assigned products; Diagnoses problems, makes repairs, and replaces components or modules. Responsible for all NCR Voyix assets that will be used in the delivery of customer services (i.e. tools, software, vehicles, documentation, and intellectual property), or as assigned by management Maintain an appropriate parts inventory as well as parts record keeping. Accurate and prompt reporting of calls and activity, as well as other reporting as required; Tracking and reporting all expenses incurred in the delivery of services, including telephone, private automobile, and/or public transportation. Capturing detailed customer asset information and other data required to complete any invoicing or billing activities. May be dispatched daily on a call-by-call basis or may establish his/her own daily schedule on the basis of automated reports to meet SLA May require prolonged travel, carrying and lifting parts of varying weights (up to 50 lbs. or 25 kg); May require bending/squatting, walking/standing/sitting for prolonged periods; Participate in the Shift Pattern for the operating area \u2013 this may include weekend and evening working as determined by the Customer Coverage and SLA requirements. May be asked to participate in a night shift where 24 x 7 customer support is needed, additional allowance may payable, as per country guidelines; May include occasional Night working to support deployment projects Work to achieve the Key Performance Indicators established on a routine basis in order to ensure high levels of customer satisfaction, superior quality outcomes, awareness and maintenance of cost and safe operations as highest priority. MANDATORY REQUIREMENTS High School Di\u2026",
+   "url": "https://jobicy.com/jobs/148936-customer-engineer-auckland",
+   "apply_url": "https://jobicy.com/jobs/148936-customer-engineer-auckland",
+   "apply_email": null,
+   "location": "New Zealand",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T03:50:22+00:00",
+   "tags": [
+    "Technical Support",
+    "Entry-Level, Junior"
+   ]
+  }
+ },
+ {
+  "score": 4.0,
+  "score_notes": [
+   "1 stack hits",
+   "0d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "experience 3-3 yrs ok",
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-152142",
+   "title": "Partner Solutions Engineer, Southern Europe",
+   "company": "Cribl",
+   "description": "Join the company that\u2019s building the telemetry infrastructure for the AI era. At Cribl , we partner with IT and Security teams at many of the world\u2019s biggest enterprises, including half of the Fortune 100, to bridge the gap between AI ambition and infrastructure reality. As the AI Platform for Telemetry, we give customers the choice, control, and flexibility to manage and analyze telemetry for both humans and agents, so they can build what\u2019s next. We\u2019re one of the fastest\u2011growing private companies and a leading player in a massive, fast\u2011moving market. With a global workforce, we\u2019re remote\u2011first and grounded in a simple idea: software is a people business. Cribl is the place where curious, collaborative people can do their best work, grow fast, and bring their full selves to the herd. Location: France Why You'll Love This Role As the Partner Solutions Engineer, Southern Europe, you\u2019ll be the technical face of Cribl for our strategic partners across Southern Europe, enabling partner presales and consultants to run high-quality discoveries, PoVs, and deployments themselves. You will also have the opportunity to own and run pre-sales engagements within the commercial territory. You\u2019ll own partner-facing enablement programs and ongoing technical communities. You\u2019ll collaborate closely with Cribl sales, partner managers, and distributors to build repeatable patterns that our partners can take to market at scale. You will help partners and customers understand the value of Cribl during the sales process, provide demonstrations and be the technical authority throughout the engagement to ensure the business benefits Cribl provides are understood. As An Active Member Of Our Team, You Will\u2026 Train and coach Partners value pillars, use cases and business cases Provide architecture expertise Drive adoption of Cribl University tracks, NFR environments and online resources Drive deal confidence, velocity, and account activities by aligning Cribl and partner sales activities Increase partner co-sell contribution Monitor and maintain partner status and contribution We are a remote-first company and work happens across many time-zones - you may be required to occasionally perform duties outside your standard working hours If You\u2019ve Got It - We Want It Experience working with Channel Partners - experience of partner engagement, enablement and training. 3+yrs in Sales Engineering, Professional Services, or Consulting, working with cloud and SaaS based technology. Experience with Logs, Metrics, IT Operations, and/or Security, ideally in observability, SIEM, or data platform contexts. Hands-on experience designing and delivering technical enablement (trainings, bootcamps, workshops, or office hours) for partner or customer technical audiences. Strong storytelling and presales skills\u2014you can translate complex data architectures into simple, value-driven narratives and coach others to do the same. Run high-impact discovery with technical and business stakeholders to understand current tooling, data flows, constraints, and success criteria. Experience with proof-of-value or proof-of-concept projects, including defining success criteria, evaluation plans, and clear executive summaries. Represent Cribl in the partner community via events, webinars, and user groups as needed. Experience working with multiple operating systems (proficiency with Linux is desired). Working knowledge of JavaScript and Regex, or similar scripting and data-manipulation skills. Ability to travel up to 40% to customers, partners, and event locations as needed. Some international travel is also required. Knowledge of MEDDPICC, Command of the Message or any solution selling methodology, advantageous. Cloud Platform certifications advantageous. Fluent French and English is required, both written and spoken. Bonus Points -Italian, Spanish and Portuguese language proficiency is a plus You are based in France #LI-GV1 #LI-Remote The salary for this role is dependent on country of employ\u2026",
+   "url": "https://jobicy.com/jobs/152142-partner-solutions-engineer-southern-europe",
+   "apply_url": "https://jobicy.com/jobs/152142-partner-solutions-engineer-southern-europe",
+   "apply_email": null,
+   "location": "France",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T03:45:09+00:00",
+   "tags": [
+    "Sales",
+    "Director"
+   ]
+  }
+ }
+]
