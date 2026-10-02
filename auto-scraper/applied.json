@@ -85,7 +85,11 @@
  },
  {
   "company": "H.H Tech Solutions",
-  "title": "AI Developer"
+  "title": "AI Developer",
+  "channel": "email to hhtechsolution01@gmail.com",
+  "date": "2026-10-01",
+  "resume": "ai_engineer_llm one-pager",
+  "note": "Islamabad in person; part-time/full-time. Applied on his explicit order; bare pre-existing entry had no date/channel (no prior sent email found)."
  },
  {
   "company": "Sage-Teck",
@@ -1346,5 +1350,21 @@
   "date": "2026-10-01",
   "resume": "chatbot_developer one-pager",
   "note": "Hybrid Islamabad/Rawalpindi; offered pay PKR 50,000/mo vs his 100k target \u2014 applied on his explicit order"
+ },
+ {
+  "company": "Super",
+  "title": "Agentic Engineer (Voice AI)",
+  "channel": "Wellfound in-app (logged-in session, ibrahim66hamid@gmail.com)",
+  "date": "2026-10-01",
+  "resume": "Wellfound profile; no upload required",
+  "note": "Remote (hires worldwide); $60k-$80k + 0.15-0.25% equity. Form had 1 question (What interests you about working for this company?) answered verbatim from approved draft. Optional 15-min AI interview offered post-submit, not started."
+ },
+ {
+  "company": "Linked Matrix",
+  "title": "Python & Django Developer",
+  "channel": "email to careers@linkedmatrix.com (from ibrahimhamid.2600@gmail.com)",
+  "date": "2026-10-02",
+  "resume": "rozee_backend one-pager as 'Ibrahim Hamid.pdf'",
+  "note": "Up to 1 yr exp; skills: Python, Django, REST APIs, SQL, Git, scraping. Gmail thread 1a0fbfb8bca13746."
  }
 ]

@@ -1,0 +1,213 @@
+[
+ {
+  "score": 7.0,
+  "score_notes": [
+   "Full-stack title",
+   "0 stack hits",
+   "remote, PK eligible"
+  ],
+  "verdict": "pass",
+  "reasons": [
+   "posted 30d ago",
+   "remote, Pakistan eligible",
+   "route: career page / apply link"
+  ],
+  "job": {
+   "source": "generic",
+   "id": "gen-8934796554234026975",
+   "title": "Full-Stack Laravel Engineer - Canadian Fintech (Remote / Work From Home)",
+   "company": "Digital Cash Cowboy Inc",
+   "description": "Job Description : Role: Build and maintain fintech software for digital lending workflows, financial integrations, and dependable operations. Responsibilities: Develop and maintain Laravel/PHP features, REST APIs, authenticated webhooks, queues, and scheduled jobs. Protect MySQL data and implement secure validation, authentication, RBAC, audit logging, and secrets handling. Test, debug, and release software safely using unit, feature, and integration testing. Troubleshoot Linux/Nginx environments and support reliable deployments. Work remotely from Pakistan on a long-term basis. Schedule and compensation: Full-time night-shift work aligned with Monday-Friday, 9am-5pm Vancouver time, requiring evening/night work in Pakistan. Alternative hours and proportional compensation may be discussed. Salary is PKR 80,000-180,000. Performance-based incentives may be available, with details agreed in writing. Assessment and progression: Shortlisted candidates complete a 30-minute supervised coding assessment using synthetic data only, with no production access or real client work. After demonstrating technical ability, sound judgment, and reliable delivery, the successful person may help build and lead a future technical team; progression is not guaranteed. Job Specification : Required: PHP and Laravel MySQL design, indexes, transactions, and safe migrations REST APIs, authenticated webhooks, queues, and scheduled jobs JavaScript, HTML, and CSS Git branches, pull requests, and code review Unit, feature, and integration testing Linux/Nginx troubleshooting and safe deployments Secure validation, authentication, RBAC, audit logging, and secrets handling Clear English, teamwork, reliable attendance, stable internet, and backup power Useful extras: Redis, Docker, CI/CD, DigitalOcean/Cloudways, Vue, React, Livewire, WordPress, and payment or banking integrations. Job Rewards and Benefits : Leaves",
+   "url": "https://www.mustakbil.com/jobs/job/1434430",
+   "apply_url": "https://www.mustakbil.com/jobs/job/1434430",
+   "apply_email": null,
+   "location": "",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-08-28T22:47:37+00:00",
+   "tags": []
+  }
+ },
+ {
+  "score": 5.0,
+  "score_notes": [
+   "2 stack hits",
+   "0d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "experience 1-1 yrs ok",
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "wwr",
+   "id": "wwr-1866239739155101348",
+   "title": "Software Engineer - Developer Experience",
+   "company": "Dremio",
+   "description": "Headquarters: Portugal - Remote Be Part of Building the Future Dremio is the unified lakehouse platform for self-service analytics and AI, serving hundreds of global enterprises, including Maersk, Amazon, Regeneron, NetApp, and S&amp;P Global. Customers rely on Dremio for cloud, hybrid, and on-prem lakehouses to power their data mesh, data warehouse migration, data virtualization, and unified data access use cases. Based on open source technologies, including Apache Iceberg and Apache Arrow, Dremio provides an open lakehouse architecture enabling the fastest time to insight and platform flexibility at a fraction of the cost.&nbsp; Learn more at&nbsp; www.dremio.com. About the role In this role you will get opportunities to implement and maintain CI/CD systems and developer productivity solutions. You will be responsible for both regularly scheduled work as well as on-demand break-fix work to support Dremio\u2019s CI/CD system, identifying areas of improvement, and implementing changes to increase efficiency and effectiveness of those systems. Bring your industry experience to improve the efficiency and scale of Dremio\u2019s infrastructure via innovation on tooling and methodologies. You should have empathy for developers and a passion for engineering productivity.&nbsp; &nbsp; What you\u2019ll be doing Solve problems for fellow Dremio engineers by: Leveraging and contributing to playbooks to implement solutions to unblock them Identifying short term workarounds and documenting them Automating processes where manual processes exist. Working on infrastructure across all major clouds (AWS, GCP, Azure). Managing access to key infrastructure. Build and maintain CI/CD pipelines and associated systems to increase organizational efficiency. Automate local development workflows. Analyze performance bottlenecks, root cause issues, file defects, follow up with developers, and document resolutions. Clear focus on keeping our development branches \u2018green\u2019.&nbsp; Release engineering - automating processes to push software to delivery endpoints. Report out on the status, reliability and robustness of our CI/CD systems. Actively participate in code reviews.&nbsp; What we\u2019re looking for B.S. or M.S in Computer Science or in a related technical field 1+ years of experience on large scale distributed systems Comfortable navigating the fast moving, unstructured nature of a hyper-growth startup. Demonstrable Knowledge and Experience with at least one cloud platform (AWS, Azure, GCP) Basic understanding of cloud networking and cloud architecture. Proficiency in any of Java/C++/Python/Go Knowledge of Maven or similar build environments Hands on experience in pipeline automation using CI/CD tools like Jenkins&nbsp; Experience in Infrastructure as Code Experience with Terraform, BASH, Docker, Jenkins, and Kubernetes Ability to write technical reports, effectively summarizing key data Passion for learning and then delivering solutions using latest technologies Strong Affinity for collaboration and teamwork &nbsp; Bonus points if you have Working knowledge in data lakes and data warehousing Proficient with SQL What we value&nbsp; At Dremio, we hold ourselves to high standards when it comes to People, Thinking, and Action. Our Gnarlies (that's what we call our employees) communicate with clarity, drive accountability, and are respectful towards each other. We confront brutal facts and focus on results while operating with a sense of urgency and building a \"flywheel\". People who like to jump in and drive momentum will thrive in our #GnarlyLife. Dremio is an equal opportunity employer supporting workforce diversity. We do not discriminate on the basis of race, religion, color, national origin, gender identity, sexual orientation, age, marital status, protected veteran status, disability status, or any other unlawful factor. Dremio is committed to providing any necessary accommodations for individuals with disabilities within our application and interview process. To requ\u2026",
+   "url": "https://weworkremotely.com/remote-jobs/dremio-software-engineer-developer-experience",
+   "apply_url": "https://weworkremotely.com/remote-jobs/dremio-software-engineer-developer-experience",
+   "apply_email": null,
+   "location": "Remote",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-28T07:31:05+00:00",
+   "tags": []
+  }
+ },
+ {
+  "score": 4.0,
+  "score_notes": [
+   "1 stack hits",
+   "11d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 11d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "remoteok",
+   "id": "rok-1137400",
+   "title": "Golang Kubernetes Engineer",
+   "company": "Arango",
+   "description": "Remote - Arango delivers a unified, natively multimodel contextual data platform that powers AI agents, assistants, and applications with the unified, current, and trusted business context needed to reason, decide, and act at scale.The Arango Contextual Data Platform connects...<br/><br/>Please mention the word **FESTIVE** and tag RMmEwNDo0ZTQxOjQ6Mzk0MTo6MjM1OjM5NDE= when applying to show you read the job post completely (#RMmEwNDo0ZTQxOjQ6Mzk0MTo6MjM1OjM5NDE=). This is a beta feature to avoid spam applicants. Companies can search these words to find applicants that read this and see they're human.",
+   "url": "https://remoteOK.com/remote-jobs/remote-golang-kubernetes-engineer-arango-1137400",
+   "apply_url": "https://remoteOK.com/remote-jobs/remote-golang-kubernetes-engineer-arango-1137400",
+   "apply_email": null,
+   "location": "Remote",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-16T19:00:02+00:00",
+   "tags": [
+    "golang",
+    "golang",
+    "engineer"
+   ]
+  }
+ },
+ {
+  "score": 4.0,
+  "score_notes": [
+   "1 stack hits",
+   "0d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "wwr",
+   "id": "wwr-2977442995370387179",
+   "title": "Developer Engagement Representative - Philippines (Part-Time Contract)",
+   "company": "Roblox",
+   "description": "Headquarters: Remote Every day, tens of millions of people come to Roblox to explore, create, play, learn, and connect with friends in 3D immersive digital experiences\u2013 all created by our global community of developers and creators.&nbsp; At Roblox, we\u2019re building the tools and platform that empower our community to bring any experience that they can imagine to life. Our vision is to reimagine the way people come together, from anywhere in the world, and on any device. We\u2019re on a mission to connect a billion people with optimism and civility, and looking for amazing talent to help us get there.&nbsp; A career at Roblox means you\u2019ll be working to shape the future of human interaction, solving unique technical challenges at scale, and helping to create safer, more civil shared experiences for everyone. The Developer Relations team at Roblox is looking for new team members for our ever-growing International Developer Engagement Team. We're looking for someone who is passionate about Roblox and growing the local creator community in their region. You Are: Fluent in both English and Tagalog Physically located in the Philippines&nbsp; You Will: Develop an understanding of Roblox moderation rules and guidelines Identify and engage with potential partners within the developer community to build and maintain a strong partnership pipeline Plan and execute online and offline community events, workshops, and initiatives that inspire and connect developers across regions. Manage programs from initial concept through successful completion, setting clear goals, tracking milestones, and measuring outcomes. Support translation and localization efforts to ensure programs, communications, and resources are accessible and culturally relevant to global audiences. Follow established team processes while identifying opportunities to refine and improve workflows. You Have: Great understanding of Roblox and the Roblox community Good standing regarding Roblox moderation history Excellent speaking and writing skills in both English and one of the applied languages Excellent communication and relationship-building abilities, both online and offline A proactive and adaptable mindset with a passion for supporting and growing a global developer ecosystem. Ability to work cross-functionally and manage multiple priorities in a fast-paced environment with a team-first mentality Believe that helping the community is crucial to the success of the company A desire to help empower and encourage our developer community Knowledge and understanding of community processes, methodologies and best practices Experience with gaming communities, game jams, or virtual/hybrid event planning is a plus Early career / fresh grad preferred Roles that are based in an office are onsite Tuesday, Wednesday, and Thursday, with optional presence on Monday and Friday (unless otherwise noted). Roblox provides equal employment opportunities to all employees and applicants for employment and prohibits discrimination and harassment of any type without regard to race, color, religion, age, sex, national origin, disability status, genetics, protected veteran status, sexual orientation, gender identity or expression, or any other characteristic protected by federal, state or local laws. Roblox also provides reasonable accommodations to candidates with qualifying disabilities or religious beliefs during the recruiting process. For US based roles only, please note the Company may not be able to employ candidates for this role who have United States work authorization related to certain U.S. visa categories, or support future H-1B sponsorship at this time. To apply: https://weworkremotely.com/remote-jobs/roblox-developer-engagement-representative-philippines-part-time-contract",
+   "url": "https://weworkremotely.com/remote-jobs/roblox-developer-engagement-representative-philippines-part-time-contract",
+   "apply_url": "https://weworkremotely.com/remote-jobs/roblox-developer-engagement-representative-philippines-part-time-contract",
+   "apply_email": null,
+   "location": "Remote",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-28T07:31:13+00:00",
+   "tags": []
+  }
+ },
+ {
+  "score": 4.0,
+  "score_notes": [
+   "1 stack hits",
+   "0d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "wwr",
+   "id": "wwr-951882064021007247",
+   "title": "Developer Engagement Representative - Malaysia  (Part-Time Contract)",
+   "company": "Roblox",
+   "description": "Headquarters: Remote Every day, tens of millions of people come to Roblox to explore, create, play, learn, and connect with friends in 3D immersive digital experiences\u2013 all created by our global community of developers and creators.&nbsp; At Roblox, we\u2019re building the tools and platform that empower our community to bring any experience that they can imagine to life. Our vision is to reimagine the way people come together, from anywhere in the world, and on any device. We\u2019re on a mission to connect a billion people with optimism and civility, and looking for amazing talent to help us get there.&nbsp; A career at Roblox means you\u2019ll be working to shape the future of human interaction, solving unique technical challenges at scale, and helping to create safer, more civil shared experiences for everyone. The Developer Relations team at Roblox is looking for new team members for our ever-growing International Developer Engagement Team. We're looking for someone who is passionate about Roblox and growing the local creator community in their region. You Will: Develop an understanding of Roblox moderation rules and guidelines Identify and engage with potential partners within the developer community to build and maintain a strong partnership pipeline Plan and execute online and offline community events, workshops, and initiatives that inspire and connect developers across regions. Manage programs from initial concept through successful completion, setting clear goals, tracking milestones, and measuring outcomes. Support translation and localization efforts to ensure programs, communications, and resources are accessible and culturally relevant to global audiences. Follow established team processes while identifying opportunities to refine and improve workflows. You Have: Great understanding of Roblox and the Roblox community Good standing regarding Roblox moderation history Excellent speaking and writing skills in both English and one of the applied languages Excellent communication and relationship-building abilities, both online and offline A proactive and adaptable mindset with a passion for supporting and growing a global developer ecosystem. Ability to work cross-functionally and manage multiple priorities in a fast-paced environment with a team-first mentality Believe that helping the community is crucial to the success of the company A desire to help empower and encourage our developer community Knowledge and understanding of community processes, methodologies and best practices Experience with gaming communities, game jams, or virtual/hybrid event planning is a plus Early career / fresh grad preferred&nbsp; You Are: Fluent in both English and Malay Physically located in the Malaysia Early career / recent grad (preferred) Roles that are based in an office are onsite Tuesday, Wednesday, and Thursday, with optional presence on Monday and Friday (unless otherwise noted). Roblox provides equal employment opportunities to all employees and applicants for employment and prohibits discrimination and harassment of any type without regard to race, color, religion, age, sex, national origin, disability status, genetics, protected veteran status, sexual orientation, gender identity or expression, or any other characteristic protected by federal, state or local laws. Roblox also provides reasonable accommodations to candidates with qualifying disabilities or religious beliefs during the recruiting process. For US based roles only, please note the Company may not be able to employ candidates for this role who have United States work authorization related to certain U.S. visa categories, or support future H-1B sponsorship at this time. To apply: https://weworkremotely.com/remote-jobs/roblox-developer-engagement-representative-malaysia-part-time-contract",
+   "url": "https://weworkremotely.com/remote-jobs/roblox-developer-engagement-representative-malaysia-part-time-contract",
+   "apply_url": "https://weworkremotely.com/remote-jobs/roblox-developer-engagement-representative-malaysia-part-time-contract",
+   "apply_email": null,
+   "location": "Remote",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-28T07:31:05+00:00",
+   "tags": []
+  }
+ },
+ {
+  "score": 4.0,
+  "score_notes": [
+   "1 stack hits",
+   "14d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "experience 3-3 yrs ok",
+   "posted 14d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "wwr",
+   "id": "wwr-6673031226367956198",
+   "title": "Backend Engineer, IAM",
+   "company": "Reddit",
+   "description": "Headquarters: Remote - United States Reddit is a community of communities. It\u2019s built on shared interests, passion, and trust, and is home to the most open and authentic conversations on the internet. Every day, Reddit users submit, vote, and comment on the topics they care most about. With 100,000+ active communities and approximately 130 million daily active unique visitors, Reddit is one of the internet\u2019s largest sources of information. For more information, visit www.redditinc.com . This is a remote-friendly role. Reddit has a flexible first workforce. The Identity and Access Management team develops and maintains a set of mission critical, highly performant, and highly scalable systems that manage user identity, authentication, and authorization for all of our millions of daily users and backend services. Some of our present and future challenges include: Building systems around consumer IAM to meet the needs of Reddit\u2019s engineering organization and millions of daily users. Design, build and ship backend services powering experiences for one of the most visited sites in the world. Work with product management, security, client engineering, and backend teams to define and implement Reddit\u2019s IAM vision and roadmap. In your day-to-day, you will: Steer: Work with the team to select, scope, and execute on high leverage projects that align with Reddit\u2019s goals. Build: Execute on a strategy and create a more performant, more scalable, higher quality architecture around IAM. XFN Collaboration: Work together with a variety of cross functional teams across Reddit Engineering. Evolve: Learn and improve your own technical and non-technical abilities. Who you might be: 3+ years of experience designing and developing distributed backend systems&nbsp; IAM backend experience in either authorization or authentication domain Proficiency in one or more general purpose programming languages (preferably Go). Capability with essential cloud infrastructure (Kubernetes, CI/CD, AWS, GCP). High empathy and excellent communication skills to collaborate across the organization. Benefits: Comprehensive Healthcare Benefits and Income Replacement Programs 401k with Employer Match Global Benefit programs that fit your lifestyle, from workspace to professional development to caregiving support Family Planning Support Gender-Affirming Care Mental Health &amp; Coaching Benefits Flexible Vacation &amp; Paid Volunteer Time Off Generous Paid Parental Leave&nbsp; &nbsp; &nbsp; Pay Transparency: This job posting may span more than one career level. In addition to base salary, this job is eligible to receive equity in the form of restricted stock units, and depending on the position offered, it may also be eligible to receive a commission. Additionally, Reddit offers a wide range of benefits to U.S.-based employees, including medical, dental, and vision insurance, 401(k) program with employer match, generous time off for vacation, and parental leave. To learn more, please visit https://www.redditinc.com/careers/ . To provide greater transparency to candidates, we share base salary ranges for all US-based job postings regardless of state. We set standard base pay ranges for all roles based on function, level, and country location, benchmarked against similar stage growth companies. Final offer amounts are determined by multiple factors including, skills, depth of work experience and relevant licenses/credentials, and may vary from the amounts listed below. The base salary range for this position is: $164,200 \u2014 $229,900 USD In select roles and locations, the interviews will be recorded, transcribed and summarized by artificial intelligence (AI). You will have the opportunity to opt out of recording, transcription and summarization prior to any scheduled interviews. During the interview, we will collect the following categories of personal information: Identifiers, Professional and Employment-Related Information, Sensory Information (audio/video recording), and any \u2026",
+   "url": "https://weworkremotely.com/remote-jobs/reddit-backend-engineer-iam",
+   "apply_url": "https://weworkremotely.com/remote-jobs/reddit-backend-engineer-iam",
+   "apply_email": null,
+   "location": "Remote",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-14T07:31:07+00:00",
+   "tags": []
+  }
+ },
+ {
+  "score": 3.0,
+  "score_notes": [
+   "0 stack hits",
+   "11d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 11d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "wwr",
+   "id": "wwr-3182545831588978923",
+   "title": "Java Developer",
+   "company": "Twikey",
+   "description": "Headquarters: Ghent - Belgium URL: https://www.twikey.com Are you a driven back-end developer who doesn't wait for instructions, but is already thinking two steps ahead? Who experiments with new technologies and smart solutions alongside the job? Then we want to talk to you. Straight forward but clear: Twikey isn't looking for someone to just execute. We're looking for someone who thinks, does and keeps going when the going gets tough. Because fintech is evolving at breakneck speed. That calls for real ownership and for someone who can dive deep on the technical side to keep innovating and improving our platform. You get plenty in return, such as the freedom and responsibility to deliver your own projects. Thanks in part to our organisational structure, you can shape your ideas in the short term and see the results of your hard work quickly. Driven by your passion for building scalable, performant and secure back-end systems, you continuously raise the bar for your own skills and for our product. As a member of our development team you work closely with our CTO, 3 fellow developers and 2 testers on the core of our software application. A small, strong team in which you take on a role with real impact on the future of our product. You focus on&nbsp; developing and improving the back-end &nbsp;of our platform, optimising the architecture and data processing while keeping the security and stability of our system in mind. This lets you put your technical skills to full use and come up with innovative solutions. With your expertise you'll&nbsp; make valuable suggestions and streamline processes &nbsp;for all our stakeholders, so we can work more efficiently and achieve better results. You provide&nbsp; technical support on integration projects &nbsp;with software houses, banks and large companies, solving complex technical problems. That gives you the chance to work on challenging projects and to get in touch with a wide range of technologies and industries. Once you know our product inside out, there are plenty of challenging projects for you to help build. What are we looking for in you? You are&nbsp; driven, curious and enterprising. &nbsp;Not only in your job, but outside of it too. You have a&nbsp; pro-active attitude &nbsp;and are always a few steps ahead: you spot opportunities, grab them and get to work. Technical challenges? You take them on, not because you have to, but because you want to&nbsp; learn . You're a&nbsp; self-starter &nbsp;and quickly get to grips with new technologies, languages or frameworks. You understand that a good product is never \"finished\". You draw energy from that&nbsp; mix of creating and fine-tuning . You think along, question things and keep building new solutions. You have experience using AI tools to build integrations. You're&nbsp; actively exploring how AI can contribute &nbsp;to smarter user experiences and more efficient software development. Experience with data analytics is an asset. You therefore attach&nbsp; a lot of importance to the security, stability and reliability &nbsp;of a system and know what it takes to get there. You work in a structured, meticulous way and write code that is clean, reusable and easy to test. You have demonstrable experience with&nbsp; Java, Go and the Spring framework . Experience with API integrations, web services, Linux or other relevant areas is a plus. You have&nbsp; a deep understanding of databases. &nbsp;You don't just know how to use them, you know how they work. You have an opinion on structured, high-quality code, architecture and back-end technologies. You have a very good command of&nbsp; English , for smooth collaboration with all colleagues and stakeholders. Dutch is an asset. You are based in a time zone within&nbsp; one hour of CET , so your working day overlaps with the team's for the daily stand-ups and close day-to-day collaboration. You can work independently and enjoy a small team where switching gears quickly, collaboration and knowl\u2026",
+   "url": "https://weworkremotely.com/remote-jobs/twikey-java-developer",
+   "apply_url": "https://weworkremotely.com/remote-jobs/twikey-java-developer",
+   "apply_email": null,
+   "location": "Remote",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-17T10:51:23+00:00",
+   "tags": []
+  }
+ }
+]

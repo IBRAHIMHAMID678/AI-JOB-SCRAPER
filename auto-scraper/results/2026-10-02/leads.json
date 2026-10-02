@@ -1,0 +1,656 @@
+[
+ {
+  "score": 11.0,
+  "score_notes": [
+   "AI Engineer title",
+   "3 stack hits",
+   "0d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "himalayas",
+   "id": "hi-https://himalayas.app/companies/ampeers-energy-gmbh/jobs/fullstack-ai-engineer-m-w-d",
+   "title": "FullStack / AI Engineer (m/w/d)",
+   "company": "Ampeers Energy GmbH",
+   "description": "<h3>deine aufgaben</h3><p></p><ul>\n<li>\n<strong>End-to-End FullStack-Delivery.</strong> Du baust Features von Postgres bis UI selbst. Python f\u00fcr Services und Simulation, TypeScript/React f\u00fcr unsere Web-Apps, GraphQL/REST dazwischen.</li>\n<li>\n<strong>AI-Engineering.</strong> Du formst mit, wie wir mit AI Software bauen \u2014 Skills, Hooks, Sub-Agents, Eval-Pipelines in unserem Setup. Claude Code ist unser Standard-Werkzeug.</li>\n<li>\n<strong>Plattform-Architektur.</strong> Du gestaltest die Architektur end-to-end \u00fcber unsere gesamte Plattform mit \u2014 Frontend wie Backend, ein Team, ein gemeinsamer Task-Pool, keine Produkt-Silos.</li>\n<li>\n<strong>Du x CTO.</strong> Direkter Draht f\u00fcr Architektur-Roadmap, Stack-Entscheidungen und AI-Strategie. Diskussionspartner auf Augenh\u00f6he.</li>\n<li>\n<strong>Frischer Wind.</strong> Du bringst neue Patterns rein, deckst Blindspots auf und hinterfragst Bestehendes \u2013 respektierst gleichzeitig, warum es so geworden ist, wie es ist.</li>\n</ul><p></p><h3>dein profil</h3><p></p><ul>\n<li>\n<strong>5+ Jahre FullStack-Erfahrung</strong> auf Senior- bis Principal-Niveau in produktiven Web-Anwendungen / SaaS-Platformen.</li>\n<li>Du bewegst dich als Experte in den Bereichen TypeScript, React, und NodeJS \u2013 du bist im Hintergrund auch mit Python und PostgreSQL vertraut. Umfangreiche APIs, Umgestaltungen oder eine Datenbankschemamigration sind f\u00fcr dich keine H\u00fcrden.</li>\n<li>\n<strong>AI-Engineering ist dein zweites Standbein.</strong> Du nutzt Claude Code (oder vergleichbare Agent-Tools) nicht nur \u2014 du baust damit. Eigene Skills, Hooks, Sub-Agents, Eval-Setups. Idealerweise hast du AI-Strategie f\u00fcr ein Team oder eine Firma schon mitgepr\u00e4gt.</li>\n<li>\n<strong>Architektur-Mindset.</strong> Du denkst \u00fcber einzelne Features hinaus \u2014 Datenmodell, API-Grenzen, Stages-Risiko-Mapping, Trade-offs. Ship/Show/Ask enabled dich.</li>\n<li>\n<strong>Mentoring.</strong> Du teilst Wissen aktiv \u00fcber Code-Reviews, Pairing und schriftliche Architektur-Notizen \u2014 willst andere st\u00e4rker machen und mitnehmen.</li>\n<li>\n<strong>Remote-Disziplin.</strong> Du kannst remote effektiv und strukturiert arbeiten \u2013 mit dokumentierten Entscheidungen und transparenter Kommunikation.</li>\n<li>\n<strong>Deutsch auf C1-Niveau oder Muttersprache.</strong> Interne wie externe Kommunikation l\u00e4uft auf Deutsch.</li>\n<li>\n<strong>Nice to have:</strong> React Router 7+ (unser FullStack-Framework), Redis, Azure/AKS/ArgoCD, Energie- oder Immobilien-Domain, Erfahrung mit Datenpipelines.</li>\n</ul><p></p><h3>unser angebot</h3><p><strong>Unser TechStack</strong><br></p><ul>\n<li>Cloud Stack: AZURE</li>\n<li>AI: Claude</li>\n<li>Communication / APIs: GraphQL, REST</li>\n<li>Data Storage &amp; Processing: PostgreSQL, Redis</li>\n<li>Infrastructure &amp; CI/CD: AKS, Docker, GitHub, ArgoCD</li>\n<li>Programming Languages: TypeScript, JavaScript, Python</li>\n</ul><strong>Unser Angebot</strong><br><ul>\n<li>\n<strong>Mission, die wirkt.</strong>Wir managen einen realen Teil des Wohnungsbestandes Deutschlands. Dein Code entscheidet mit, wie effektiv und nachhaltig Immobilienportfolien saniert und gemanagt werden k\u00f6nnen. Unser Tooling geht \u00fcber die Planung hinaus und setzt auch an den Pain-Points der Umsetzung in der realen Welt an!</li>\n<li>\n<strong>AI-first.</strong> Claude Code, eigene Skills und Company-as-code sind schon im Einsatz. Diese Grundlage bauen wir t\u00e4glich weiter aus \u2013 du baust die Harness mit, statt sie nur zu benutzen.</li>\n<li>\n<strong>Remote, ehrlich gemeint.</strong> Wir sind seit Beginn remote \u2013 kommen ca. 4x im Jahr f\u00fcr ein gemeinsames Teamgef\u00fchl zu WorkingWeeks oder einem Sommerfest zusammen. In M\u00fcnchen kannst du gern in unserem Office vor Ort arbeiten!</li>\n<li>\n<strong>Kuratiertes Tooling.</strong> Claude for Teams, Sentry, PostHog, Notion, GitHub, ArgoCD \u2014 bewusst ausgew\u00e4hlt und integriert. Wir auditieren, was wir nutzen und suchen immer nach smarten Tools oder L\u00f6sungen f\u00fcr unsere Teams.</li>\n<li>\n<strong>Du formst die Plattform mit.</strong> Architektur-C\u2026",
+   "url": "https://himalayas.app/companies/ampeers-energy-gmbh/jobs/fullstack-ai-engineer-m-w-d",
+   "apply_url": "https://himalayas.app/companies/ampeers-energy-gmbh/jobs/fullstack-ai-engineer-m-w-d",
+   "apply_email": null,
+   "location": "Germany",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": "yearly",
+   "posted_at": "2026-10-02T09:10:41+00:00",
+   "tags": [
+    "Full-Stack-Engineering",
+    "AI-Engineering",
+    "Software-Engineer",
+    "Platform-Engineering",
+    "Backend-Development",
+    "Senior-Full-Stack-AI-Engineer",
+    "Senior-Full-Stack-AI-Developer",
+    "Senior-Full-Stack-Engineer-(TypeScript-Angular-Node)",
+    "Senior-Full-Stack-Engineer-(React-Node.Js)",
+    "Senior-Full-Stack-Engineer-(JavaScript-Python)",
+    [
+     "Senior"
+    ]
+   ]
+  }
+ },
+ {
+  "score": 10.0,
+  "score_notes": [
+   "AI Engineer title",
+   "2 stack hits",
+   "1d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 1d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "ats:greenhouse",
+   "id": "gh-gitlab-8704363002",
+   "title": "Backend Engineer (Python),AI Engineering: Agent Foundations",
+   "company": "Gitlab",
+   "description": "",
+   "url": "https://job-boards.greenhouse.io/gitlab/jobs/8704363002",
+   "apply_url": "https://job-boards.greenhouse.io/gitlab/jobs/8704363002",
+   "apply_email": null,
+   "location": "Remote, Canada; Remote, Poland; Remote, United Kingdom",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T05:29:34-04:00",
+   "tags": [
+    "Quota Coverage Type"
+   ]
+  }
+ },
+ {
+  "score": 9.0,
+  "score_notes": [
+   "Full-stack title",
+   "1 stack hits",
+   "1d old",
+   "email apply"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 1d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-152220",
+   "title": "Full Stack Engineer (Enterprise)",
+   "company": "Roboflow",
+   "description": "Who We Are Our mission is to make the world programmable. Sight is one of the key ways we understand the world, and soon this will be true for the software we use, too. We\u2019re building the tools, community, and resources needed to make the world programmable with artificial intelligence. Roboflow simplifies building and using computer vision models. Today, over 1M+ developers, including those from half the Fortune 100, use Roboflow\u2019s machine learning open source and hosted tools. That includes counting cells to accelerate cancer research, improving construction site safety , digitizing floor plans , preserving coral reef populations , guiding drone flight , and much more . Roboflow is supported by great customers and investors, having raised over 63 million from Y Combinator, Google Ventures, Craft Ventures, Sam Altman, Lachy Groom, amongst other leading software investors. Roboflowers are passionate builders who value ownership, accountability, and a bias toward action. We're curious, hands-on with new tech, and prefer showing our work over talking about it. Many of us have a founder mindset and thrive in our high-autonomy environment. What You'll Do As a member of the Enterprise team, you'll be tasked with creating new features and making improvements anywhere in the Roboflow product. We're looking for technical generalists that aren\u2019t afraid to dive into a new stack or toolchain if the need arises (but JavaScript and Node.js make up the brunt of the existing codebase). You will also help support and make improvements to our enterprise Jetson inference pipeline, so a solid foundation in Linux is highly desirable. The Enterprise team forms close relationships with Enterprise customers to deeply understand their needs and advance their usage and success with Roboflow. You should expect to frequently be on-site with customers, doing factory tours, and building features needed to make prospective and current customers successful in Computer Vision with Roboflow. As a member of the Enterprise team, you will also partner closely with the Field Engineering team. Not only to understand and expand partnerships with customers, but to identify opportunities to make the Field Engineers more efficient in collecting visual data and delivering insights to customers based on that data. Most of the things we work on are parts of the core product (which is an end-to-end pipeline for building computer vision projects spanning from image ingestion to annotation to training and deployment) but from time to time we're also working on things like integrating marketing and sales tools, fighting fires, automating internal processes, and open source projects. You'll have a wide degree of freedom to advocate for which projects you think should be highest priority and will contribute to increasing engagement and success of enterprise customers. If you need a rigid list of tasks spelled out in a multi-month roadmap, this role probably won't be a good fit. The majority of our codebase is written in JavaScript, our machine learning and image processing pipeline is in Python. We run primarily on Firebase and GCS, with some machine learning infrastructure on AWS. We're increasingly using Docker (both internally and for customer facing products like our edge inference server). A lot of our code runs in the browser (including some Tensorflow JS) but we're also working on building APIs and client libraries in several languages. You certainly don't need to be experienced in all of these areas; but should be excited to learn new skill sets as you need them. We also hope you'll bring some new knowledge and experiences you can share to help level-up the rest of the team. Example Projects Adding video recording and analysis tools to the Roboflow SaaS application, so that Field Engineers can quickly and efficiently collect and understand customer data. Streamlining the setup of new devices or inspections in the Roboflow application. Adding a new workflow block to all\u2026",
+   "url": "https://jobicy.com/jobs/152220-full-stack-engineer-enterprise",
+   "apply_url": "https://jobicy.com/jobs/152220-full-stack-engineer-enterprise",
+   "apply_email": "operations@roboflow.com",
+   "location": "USA",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T04:00:18+00:00",
+   "tags": [
+    "Software Engineering",
+    "Senior"
+   ]
+  }
+ },
+ {
+  "score": 9.0,
+  "score_notes": [
+   "AI Engineer title",
+   "1 stack hits",
+   "2d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 2d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "wwr",
+   "id": "wwr-4496879732442899979",
+   "title": "Agentic AI Design Engineer (100 % remote) (m/f/d)",
+   "company": "EWOR",
+   "description": "Headquarters: Tallinn, Europe, Estonia URL: http://ewor.com EWOR is launching cutting-edge new initiatives, and we are looking for exceptional operators and builders to join our new department. We are backed and led by serial entrepreneurs, including Paul M\u00fcller (founder of Adjust, \u20ac1.2B exit) and Petter Made (founder of SumUp, \u20ac8B), who have built high-impact technology and category-defining ventures from the ground up. What We Offer Maximum ownership : Complete autonomy to architect systems, drive strategy, and build from 0 to 1 without corporate red tape. High-growth environment : Complete focus on achieving strong market validation and scalable traction as fast as possible. No PowerPoint presentations, no 7 layers of approval. Good ideas and fast execution are what matter. Elite team : Report directly to the department founder and collaborate with a world-class team of engineers, researchers, and commercial leaders. Competitive compensation &amp; upside : Attractive compensation with equity upside. Tasks You will lead and execute core 0-to-1 initiatives in cutting-edge domains such as Agentic AI. You will translate high-level strategic vision into concrete execution roadmaps, driving rapid implementation from prototype to production. You will architect scalable solutions and drive critical milestones to position the new department for rapid growth and potentially a spin-off to attract institutional backing. Requirements You are based in Europe or the Americas (or open to relocate/remote arrangements). You have a high-agency builder mindset, with proven domain expertise and the drive to take extreme end-to-end ownership. You have excellent verbal and written communication skills in English. Join us to build cutting-edge technology and category-defining initiatives from the ground up! To apply: https://weworkremotely.com/remote-jobs/ewor-agentic-ai-design-engineer-100-remote-m-f-d",
+   "url": "https://weworkremotely.com/remote-jobs/ewor-agentic-ai-design-engineer-100-remote-m-f-d",
+   "apply_url": "https://weworkremotely.com/remote-jobs/ewor-agentic-ai-design-engineer-100-remote-m-f-d",
+   "apply_email": null,
+   "location": "Remote",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-29T16:16:30+00:00",
+   "tags": []
+  }
+ },
+ {
+  "score": 9.0,
+  "score_notes": [
+   "AI Engineer title",
+   "1 stack hits",
+   "1d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 1d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "ats:greenhouse",
+   "id": "gh-gitlab-8620720002",
+   "title": "Backend Engineer (Ruby), AI Engineering: Agent Foundations",
+   "company": "Gitlab",
+   "description": "",
+   "url": "https://job-boards.greenhouse.io/gitlab/jobs/8620720002",
+   "apply_url": "https://job-boards.greenhouse.io/gitlab/jobs/8620720002",
+   "apply_email": null,
+   "location": "Remote, Canada; Remote, Poland; Remote, United Kingdom",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T05:03:53-04:00",
+   "tags": [
+    "Quota Coverage Type"
+   ]
+  }
+ },
+ {
+  "score": 9.0,
+  "score_notes": [
+   "AI Engineer title",
+   "1 stack hits",
+   "2d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 2d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "ats:greenhouse",
+   "id": "gh-gitlab-8517171002",
+   "title": "Forward Deployed Engineer, AI and Agentic SDLC",
+   "company": "Gitlab",
+   "description": "",
+   "url": "https://job-boards.greenhouse.io/gitlab/jobs/8517171002",
+   "apply_url": "https://job-boards.greenhouse.io/gitlab/jobs/8517171002",
+   "apply_email": null,
+   "location": "Remote, United States",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-29T10:38:50-04:00",
+   "tags": [
+    "Quota Coverage Type"
+   ]
+  }
+ },
+ {
+  "score": 8.0,
+  "score_notes": [
+   "3 stack hits",
+   "1d old",
+   "email apply"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 1d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-152223",
+   "title": "Implementation Engineer",
+   "company": "Roboflow",
+   "description": "Who We Are Our mission is to make the world programmable. Sight is one of the key ways we understand the world, and soon this will be true for the software we use, too. We\u2019re building the tools, community, and resources needed to make the world programmable with artificial intelligence. Roboflow simplifies building and using computer vision models. Today, over 1M+ developers, including those from half the Fortune 100, use Roboflow\u2019s machine learning open source and hosted tools. That includes counting cells to accelerate cancer research, improving construction site safety , digitizing floor plans , preserving coral reef populations , guiding drone flight , and much more . Roboflow is supported by great customers and investors, having raised over 63 million from Y Combinator, Google Ventures, Craft Ventures, Sam Altman, Lachy Groom, amongst other leading software investors. Roboflowers are passionate builders who value ownership, accountability, and a bias toward action. We're curious, hands-on with new tech, and prefer showing our work over talking about it. Many of us have a founder mindset and thrive in our high-autonomy environment. What You\u2019ll Do: We\u2019re hiring Implementation Engineers to partner closely with our sales and solutions architect team to drive new customer wins. You\u2019ll have an immense impact on shaping the future of not only this role, but our company. A large portion of the Roboflow sales process is technical, ensuring customers understand how to incorporate computer vision into their products. Building successful relationships with our customers -- many of whom are engineers -- as well as showcasing what the Roboflow product is capable of is a key component of the role, so you will leverage both your engineering background and user-facing mindset to be successful. Because our customers use computer vision in so many different industries (accelerating cancer research, improving manufacturing processes, enabling automated checkout, and so much more), your workday will always include an engaging variety of challenges. You\u2019ll be an integral part of making our customers successful, being responsible for the project management, deployment, and adoption of Roboflow\u2019s computer vision solutions within their products. This is a hands-on, technical role where you will work closely not only with our customers, but also with our engineering teams and product managers to ensure the successful deployment of our solutions. You will need to combine your expertise in computer vision, machine learning, and Python programming to design, implement, and optimize solutions that solve our customers\u2019 biggest pain points. We want our customers to be life long partners with Roboflow and ensure they are receiving the ROI they envisioned when they first signed on. If you think, \u201cI\u2019m an engineer that loves sharing my work with others,\u201d you\u2019d be in great company in this role. Role and Responsibilities Support and manage the project delivery of customized solutions to our customers Provide post-deployment support, including troubleshooting, debugging, and educating customers You will collaborate with Sales and Solutions Architect teams to ensure continuity across the customer journey Create technical content to demonstrate best practices (e.g. sample apps, documentation, videos, etc.) Work with sales and product to develop implementation strategies and build roadmaps for our customers Partner with customers to perform analysis on their image data to answer specific business questions and identify opportunities for improvement through computer vision Test and validate new product features with customer value creation in mind Contribute to a repository of reusable artifacts that can be used by customers to accelerate their Roboflow journey Work with the wider Roboflow team to improve processes, documentation and the overall customer experience Assist our product team with customer onboarding, support, adoption and engineering efforts Who You \u2026",
+   "url": "https://jobicy.com/jobs/152223-implementation-engineer-3",
+   "apply_url": "https://jobicy.com/jobs/152223-implementation-engineer-3",
+   "apply_email": "operations@roboflow.com",
+   "location": "USA",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T03:55:14+00:00",
+   "tags": [
+    "Technical Support",
+    "Any"
+   ]
+  }
+ },
+ {
+  "score": 8.0,
+  "score_notes": [
+   "Full-stack title",
+   "2 stack hits",
+   "0d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "himalayas",
+   "id": "hi-https://himalayas.app/companies/bluelight-consulting/jobs/fullstack-php-developer-magento-2-wordpress-remote-latin-america",
+   "title": "Fullstack PHP developer (Magento 2 + WordPress) - Remote. Latin America",
+   "company": "Bluelight Consulting",
+   "description": "<div>Bluelight is a leading software consultancy dedicated to designing and developing innovative technology that enhances users' lives. With a steadfast commitment to delivering exceptional service to our clients, Bluelight excels in its focus on quality and customer satisfaction. Our mission is not only to create cutting-edge applications but also to foster a collaborative and enriching work environment where each team member can grow and thrive. With a presence across the United States and Central/South America, Bluelight is in an exciting phase of expansion, continually seeking exceptional talent to join its dynamic and diverse community.</div><div>We are seeking a versatile Full Stack Developer with a deep specialization in Magento 2 and WordPress to manage, maintain, and potentially take over the full technical ownership of our clients' digital ecosystem.</div><div>The ideal candidate will bridge the gap between high-performance e-commerce and agile content management. You will be responsible for ensuring the stability of the current Magento instance, managing WordPress integrations, and executing seamless deployments as we transition technical responsibilities.</div><h3>What we are looking for</h3><ul>\n<li>Dual-Platform Mastery: Deep, hands-on experience with Magento 2.x (architecture, EAV models, UI components) and WordPress (custom themes, hooks, and plugin development).</li>\n<li>Legacy Code Navigation: A proven ability to inherit, audit, and optimize existing codebases. You should be comfortable identifying \"technical debt\" and documenting inherited systems.</li>\n<li>Modern PHP Expert: Strong proficiency in PHP 8.x and Object-Oriented Programming, with a solid grasp of Composer and PSR standards.</li>\n<li>Database &amp; Performance Ninja: Experience optimizing MySQL queries and managing high-performance caching layers like Redis, Varnish, and Elasticsearch.</li>\n<li>Frontend Fluency: Proficiency in HTML5, CSS (SASS/LESS), and JavaScript. Specific experience with Magento\u2019s frontend stack (Knockout.js, RequireJS) is a significant plus.</li>\n<li>System Integration Skills: Experience working with REST/GraphQL APIs to connect Magento and WordPress with external ERPs, CRMs, or marketing tools.</li>\n<li>DevOps &amp; Deployment Savvy: Solid understanding of Git version control, staging-to-production workflows, and managing Linux-based server environments (Nginx/Apache).</li>\n<li>Security-First Mindset: Knowledge of PCI compliance, Magento security patching, and WordPress hardening techniques to keep our data and customers safe.</li>\n<li>Certification (The \"Gold Standard\"): While not required, an Adobe Certified Professional (Magento) or similar credential will put you at the top of our list.</li>\n</ul><h3>Company Benefits</h3><ul>\n<li>Competitive salary and bonuses, including performance-based salary increases.</li>\n<li>Generous paid-time-off policy</li>\n<li>Flexible working hours</li>\n<li>Work remotely</li>\n<li>Continuing education, training, conferences</li>\n<li>Company-sponsored coursework, exams, and certifications</li>\n</ul><div>Being a consultant in our team is a fun, challenging, and rewarding career choice. Your contributions are highly valued by clients, and the work you do often has a direct and significant impact on their business.</div><div>You will have the opportunity to work on a variety of projects for our incredible clients, which will accelerate your career growth. You\u2019ll collaborate with modern technologies and work alongside some of the best professionals in the industry!</div><div>If you\u2019re eager to be part of an exciting, challenging, and rapidly growing consultancy, we encourage you to apply. </div><p>Originally posted on <a href=\"https://himalayas.app\">Himalayas</a></p>\nBluelight is a leading software consultancy dedicated to designing and developing innovative technology that enhances users' lives.",
+   "url": "https://himalayas.app/companies/bluelight-consulting/jobs/fullstack-php-developer-magento-2-wordpress-remote-latin-america",
+   "apply_url": "https://himalayas.app/companies/bluelight-consulting/jobs/fullstack-php-developer-magento-2-wordpress-remote-latin-america",
+   "apply_email": null,
+   "location": "Honduras",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": "yearly",
+   "posted_at": "2026-10-02T09:10:33+00:00",
+   "tags": [
+    "Full-Stack-Developer",
+    "PHP-Developer",
+    "Magento-Developer",
+    "WordPress-Developer",
+    "E-Commerce-Developer",
+    "Web-Development",
+    "Backend-Engineer",
+    "Remote-PHP-Developer",
+    "PHP-Full-Stack-Developer",
+    "Mid-Level-Full-Stack-Developer-(PHP)",
+    [
+     "Mid-level"
+    ]
+   ]
+  }
+ },
+ {
+  "score": 8.0,
+  "score_notes": [
+   "AI Engineer title",
+   "0 stack hits",
+   "4d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 4d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "ats:greenhouse",
+   "id": "gh-databricks-8099751002",
+   "title": "AI Engineer - FDE (Forward Deployed Engineer)",
+   "company": "Databricks",
+   "description": "",
+   "url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8099751002",
+   "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8099751002",
+   "apply_email": null,
+   "location": "Remote - India",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-28T01:46:53-04:00",
+   "tags": [
+    "Company Assignment",
+    "Career Page Posting Category"
+   ]
+  }
+ },
+ {
+  "score": 8.0,
+  "score_notes": [
+   "AI Engineer title",
+   "0 stack hits",
+   "2d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 2d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "ats:greenhouse",
+   "id": "gh-gitlab-8698314002",
+   "title": "Backend Engineer, AI Engineering: Duo Chat",
+   "company": "Gitlab",
+   "description": "",
+   "url": "https://job-boards.greenhouse.io/gitlab/jobs/8698314002",
+   "apply_url": "https://job-boards.greenhouse.io/gitlab/jobs/8698314002",
+   "apply_email": null,
+   "location": "Remote, Canada; Remote, United States",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-29T10:38:50-04:00",
+   "tags": [
+    "Quota Coverage Type"
+   ]
+  }
+ },
+ {
+  "score": 8.0,
+  "score_notes": [
+   "AI Engineer title",
+   "0 stack hits",
+   "2d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 2d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "ats:greenhouse",
+   "id": "gh-gitlab-8698330002",
+   "title": "Fullstack Engineer (TypeScript), AI Engineering: Duo Client SDK",
+   "company": "Gitlab",
+   "description": "",
+   "url": "https://job-boards.greenhouse.io/gitlab/jobs/8698330002",
+   "apply_url": "https://job-boards.greenhouse.io/gitlab/jobs/8698330002",
+   "apply_email": null,
+   "location": "Remote, Canada; Remote, United States",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-29T10:38:50-04:00",
+   "tags": [
+    "Quota Coverage Type"
+   ]
+  }
+ },
+ {
+  "score": 8.0,
+  "score_notes": [
+   "AI Engineer title",
+   "0 stack hits",
+   "0d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 0d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "ats:greenhouse",
+   "id": "gh-torcrobotics-8567705002",
+   "title": "ML Engineer, II - New AI Initiatives",
+   "company": "Torcrobotics",
+   "description": "",
+   "url": "https://job-boards.greenhouse.io/torcrobotics/jobs/8567705002",
+   "apply_url": "https://job-boards.greenhouse.io/torcrobotics/jobs/8567705002",
+   "apply_email": null,
+   "location": "Remote - US",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T15:50:40-04:00",
+   "tags": []
+  }
+ },
+ {
+  "score": 8.0,
+  "score_notes": [
+   "AI Engineer title",
+   "0 stack hits",
+   "7d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 7d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "ats:greenhouse",
+   "id": "gh-devrev-5722574004",
+   "title": "Software Engineer - Applied AI ",
+   "company": "Devrev",
+   "description": "",
+   "url": "https://job-boards.greenhouse.io/devrev/jobs/5722574004",
+   "apply_url": "https://job-boards.greenhouse.io/devrev/jobs/5722574004",
+   "apply_email": null,
+   "location": "Philippines Remote",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-25T05:39:01-04:00",
+   "tags": []
+  }
+ },
+ {
+  "score": 8.0,
+  "score_notes": [
+   "AI Engineer title",
+   "0 stack hits",
+   "8d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 8d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "ats:greenhouse",
+   "id": "gh-arizeai-5989512004",
+   "title": "AI Application Engineer, APJ",
+   "company": "Arizeai",
+   "description": "",
+   "url": "https://job-boards.greenhouse.io/arizeai/jobs/5989512004",
+   "apply_url": "https://job-boards.greenhouse.io/arizeai/jobs/5989512004",
+   "apply_email": null,
+   "location": "Remote (Singapore)",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-23T16:45:19-04:00",
+   "tags": []
+  }
+ },
+ {
+  "score": 8.0,
+  "score_notes": [
+   "AI Engineer title",
+   "0 stack hits",
+   "8d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 8d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "ats:greenhouse",
+   "id": "gh-arizeai-6128122004",
+   "title": "Applied AI Engineer",
+   "company": "Arizeai",
+   "description": "",
+   "url": "https://job-boards.greenhouse.io/arizeai/jobs/6128122004",
+   "apply_url": "https://job-boards.greenhouse.io/arizeai/jobs/6128122004",
+   "apply_email": null,
+   "location": "Remote (San Francisco)",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-23T16:58:07-04:00",
+   "tags": []
+  }
+ },
+ {
+  "score": 8.0,
+  "score_notes": [
+   "AI Engineer title",
+   "0 stack hits",
+   "8d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 8d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "ats:greenhouse",
+   "id": "gh-arizeai-6030953004",
+   "title": "Forward Deployed AI Engineer, West",
+   "company": "Arizeai",
+   "description": "",
+   "url": "https://job-boards.greenhouse.io/arizeai/jobs/6030953004",
+   "apply_url": "https://job-boards.greenhouse.io/arizeai/jobs/6030953004",
+   "apply_email": null,
+   "location": "Remote (San Francisco)",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-23T16:45:19-04:00",
+   "tags": []
+  }
+ },
+ {
+  "score": 8.0,
+  "score_notes": [
+   "Python title",
+   "1 stack hits",
+   "3d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 3d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "ats:greenhouse",
+   "id": "gh-sparksoftcorporation-5247578007",
+   "title": "Python Developer",
+   "company": "Sparksoftcorporation",
+   "description": "",
+   "url": "https://job-boards.greenhouse.io/sparksoftcorporation/jobs/5247578007",
+   "apply_url": "https://job-boards.greenhouse.io/sparksoftcorporation/jobs/5247578007",
+   "apply_email": null,
+   "location": "Remote/Onsite if local to Maryland",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-28T14:37:06-04:00",
+   "tags": []
+  }
+ },
+ {
+  "score": 7.0,
+  "score_notes": [
+   "Full-stack title",
+   "1 stack hits",
+   "2d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 2d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "wwr",
+   "id": "wwr-1329113168575583103",
+   "title": "Fullstack Web3 Engineer (Solidity / Rust / Typescript)",
+   "company": "bondex",
+   "description": "Headquarters: Remote - Americas, El Salvador URL: http://bondex.app We're recruiting a Web 3 Fullstack Developer (Solidity / Rust / Typescript) who is looking for a new challenge and ready to join an exciting new chapter to expand our clients product value proposition in the DeFi Web3 realm.&nbsp; &nbsp; The client is is revoluzionezing financial interoperability and the requirements for the role are:&nbsp; &nbsp; Minimum 4 years of professional experience in WEB development; preferably with Typescript Experience as Fullstack Web3 developer at least 2 years in the following programming languages: Web3: High level of Solidity (demonstrated experience) / Rust FRONTEND: Typescript / Javascript / React / NodeJS BACKEND: NodeJS; nice to have Golang &amp; Python FLUENT proficient English , passable and/or with strong accent will not do. Ability to work with clients. Desirable experience in Smart contracts and DeFi protocols (curve, uniswap, AAVE etc); &nbsp; 100% Remote but ONLY residents of countries with US time zones (EST-PST) &nbsp; As a Web 3 Full stack developer , you're main responsibilities will be:&nbsp; &nbsp; Participate in the entire software development lifecycle; Collaborate closely with developers and CTO to deliver high-quality software solutions; Troubleshoot and debug issues, providing timely resolutions; About the client:&nbsp; &nbsp; Remote first We prioritise an optimal work-life balance, ensuring ample time for relaxation and personal pursuits. Competitive salary according to experience and contributions Hiring process:&nbsp; &nbsp; Questionare application HR introduction call Technical interview + technical assesment Offer &nbsp; If you're an experience web3 full stack developer eager to make a meaningful contribution to a cutting-edge project in the DeFi space, we would love to hear from you! &nbsp; &nbsp; &nbsp; To apply: https://weworkremotely.com/remote-jobs/bondex-fullstack-web3-engineer-solidity-rust-typescript",
+   "url": "https://weworkremotely.com/remote-jobs/bondex-fullstack-web3-engineer-solidity-rust-typescript",
+   "apply_url": "https://weworkremotely.com/remote-jobs/bondex-fullstack-web3-engineer-solidity-rust-typescript",
+   "apply_email": null,
+   "location": "Remote",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-09-29T19:13:52+00:00",
+   "tags": []
+  }
+ },
+ {
+  "score": 6.0,
+  "score_notes": [
+   "1 stack hits",
+   "1d old",
+   "email apply"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "posted 1d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-154346",
+   "title": "Software Engineer I, Agentic Platform EMEA (Poland, Remote, B2B)",
+   "company": "Samsara",
+   "description": "Who we are Samsara (NYSE: IOT) is the pioneer of the Connected Operations\u2122 Cloud, which is a platform that enables organizations that depend on physical operations to harness Internet of Things (IoT) data to develop actionable insights and improve their operations. At Samsara, we are helping improve the safety, efficiency and sustainability of the physical operations that power our global economy. Representing more than 40% of global GDP, these industries are the infrastructure of our planet, including agriculture, construction, field services, transportation, and manufacturing \u2014 and we are excited to help digitally transform their operations at scale. Working at Samsara means you\u2019ll help define the future of physical operations and be on a team that\u2019s shaping an exciting array of product solutions, including Video-Based Safety, Vehicle Telematics, Apps and Driver Workflows, and Equipment Monitoring. As part of a recently public company, you\u2019ll have the autonomy and support to make an impact as we build for the long term. About the role: We're building the next chapter: an agentic platform that understands operational context and takes action, with the ambition to make physical operations increasingly autonomous. External Platform EMEA owns critical capabilities behind that transition. Depending on the team, your work could include: Reporting and intelligence. Own the reporting engine and products that turn the complexity of a fleet into answers customers can act on. Enterprise administration. Build how customers configure and control Samsara at scale, from permissions and device metadata to AI-assisted onboarding. Developer and agent platform. Build APIs, event systems, integrations, and tools that give applications and AI agents access to operational data and actions. Business-critical infrastructure. Own billing, license assignment, and usage metering: systems central to how Samsara sells, delivers, and grows its products. The long-term opportunity is rooted in the physical world. Deployed hardware, data generated at the edge, and years of operational expertise form a foundation that's hard to replicate. As AI advances, it expands what we can build on that foundation. This is a place to develop deep engineering expertise while helping shape a platform with years of ambitious work ahead. AI is also central to how we build. We expect engineers to push tools like Codex, Claude Code, and Cursor throughout design, implementation, testing, and production investigations, taking on more ambitious work while owning the quality of what they ship. In this role, you will: Solve complex problems and own the success of your solutions as you architect, build, test, and deliver full-stack products. Communicate, collaborate, and develop with engineers, platform/infrastructure teams, product managers, designers, and support teams. Build upon skills and knowledge across a range of technologies, such as Go, GraphQL, Typescript, React, and MySQL. Previous experience with these technologies is not required. Own the operational health of production systems as we build for the future scale of an ever-growing library of media assets. Make an impact on our core architecture, roadmap, and the wider engineering community. Champion, role model, and embed Samsara\u2019s cultural principles (Focus on Customer Success, Build for the Long Term, Adopt a Growth Mindset, Be Inclusive, Win as a Team) as we scale globally and across new offices. Minimum requirements for the role: Strong fundamentals in programming, data structures, algorithms, and debugging, developed through a computer science degree or equivalent practical experience. Experience building working software through projects, internships, open-source contributions, or professional work. You can explain your code and the choices behind it. An AI-native approach to engineering : you already use coding agents and assistants to learn, build, test, and debug, and can critically evaluate their output. Evide\u2026",
+   "url": "https://jobicy.com/jobs/154346-software-engineer-i-agentic-platform-emea-poland-remote-b2b",
+   "apply_url": "https://jobicy.com/jobs/154346-software-engineer-i-agentic-platform-emea-poland-remote-b2b",
+   "apply_email": "accessibleinterviewing@samsara.com",
+   "location": "Poland",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T05:31:59+00:00",
+   "tags": [
+    "Software Engineering",
+    "Any"
+   ]
+  }
+ },
+ {
+  "score": 6.0,
+  "score_notes": [
+   "3 stack hits",
+   "1d old"
+  ],
+  "verdict": "review",
+  "reasons": [
+   "experience 3-3 yrs ok",
+   "posted 1d ago",
+   "remote but Pakistan eligibility unverified \u2014 manual check needed"
+  ],
+  "job": {
+   "source": "jobicy",
+   "id": "jc-154335",
+   "title": "Deployment Strategist - Brazil",
+   "company": "Elevenlabs",
+   "description": "About ElevenLabs ElevenLabs is an AI research and product company transforming how we interact with technology. We launched in January 2023 with the first human-like AI voice model. Today, we serve millions of users and thousands of businesses - from fast-growing startups to large enterprises like Deutsche Telekom and Meta. Our investors are some of the world's most prominent, including Andreessen Horowitz, ICONIQ Growth and Sequoia. We've raised $781M in funding and our last valuation was $11B - multiples of 11, always. We have expanded from voice into three main platforms: ElevenAgents enables businesses to deliver seamless and intelligent customer experiences, with the integrations, testing, monitoring, and reliability necessary to deploy voice and chat agents at scale. ElevenCreative empowers creators and marketers to generate and edit speech, music, image, and video across 70+ languages. ElevenAPI gives developers access to our leading AI audio foundational models. Everything we do is the result of the creativity and commitment of our team - builders doing the best work of their lives. We are researchers, engineers, and operators. IOI medalists and ex-founders. If you want to work hard and create lasting positive impact, we want to hear from you. How we work High-velocity: Rapid experimentation, lean autonomous teams, and minimal bureaucracy. Impact not job titles: We don\u2019t have job titles. Instead, it\u2019s about the impact you have. No task is above or beneath you. AI first: We use AI to move faster with higher-quality results. We do this across the whole company\u2014from engineering to growth to operations. Excellence everywhere: Everything we do should match the quality of our AI models. Global team: We prioritize your talent, not your location. What we offer Innovative culture: You\u2019ll be part of a generational opportunity to define the trajectory of AI, surrounded by a team pushing the boundaries of what\u2019s possible. Growth paths: Joining ElevenLabs means joining a dynamic team with countless opportunities to drive impact - beyond your immediate role and responsibilities. Learning &amp; development : ElevenLabs proactively supports professional development through an annual discretionary stipend. Social travel : We also provide an annual discretionary stipend to meet up with colleagues each year, however you choose. Annual company offsite: Each year, we bring the entire team together in a new location - past offsites have included Croatia and Italy. Co-working : If you\u2019re not located near one of our main hubs, we offer a monthly co-working stipend. About the role As a Deployment Strategist, you'll work as part of a driven and creative team of Forward Deployed Engineers, Go to Market professionals, Product Engineers and other Strategists to deploy ElevenAgents, our enterprise AI platform, against the challenging problems our customers face. Your mission is to synthesize disconnected streams of thought into a cohesive understanding of what the most important problem is, what the existing workflows are, what the product needs, what users are motivated by, and where the impact could be. No two days are the same, but as a Deployment Strategist you can expect to: Meet with strategic customers to deeply understand their AI transformation goals and locate their biggest pain points, particularly around customer-facing and operational workflows powered by AI agents. Own flagship deals end-to-end \u2014 from identifying the right use case to structuring commercial terms (including outcome-based pricing, license fees, and implementation arrangements) and driving them to close. Embed yourself deeply inside strategic customers: act as a trusted partner with a provisioned account, spend meaningful time onsite, and own delivery outcomes as if you were part of their team. Identify high-impact use cases through close engagement with customer problems and workflows, and collaborate with Forward Deployed Software Engineers to bring them to life. Guid\u2026",
+   "url": "https://jobicy.com/jobs/154335-deployment-strategist-brazil",
+   "apply_url": "https://jobicy.com/jobs/154335-deployment-strategist-brazil",
+   "apply_email": null,
+   "location": "Brazil",
+   "remote": true,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_unit": null,
+   "posted_at": "2026-10-01T05:28:56+00:00",
+   "tags": [
+    "Sales",
+    "Director"
+   ]
+  }
+ }
+]
