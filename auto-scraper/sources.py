@@ -294,6 +294,219 @@ def fetch_himalayas() -> list[dict]:
     return jobs
 
 
+# ---------------------------------------------------------------- YC Jobs
+# Technique (via github.com/thomascouto/crosscheck): YC's PUBLIC Algolia
+# company index (search-only key shipped in ycombinator.com — public, not a
+# secret) lists every hiring company with region facets -> workatastartup.com
+# company pages embed open jobs as Inertia.js JSON -> job detail pages embed
+# description + visa info. No login, no API key.
+_YC_ALGOLIA = {
+    "url": "https://45BWZJ1SGC-dsn.algolia.net/1/indexes/*/queries",
+    "appId": "45BWZJ1SGC",
+    "key": "NzJmMWExZWYxYzY5OGYwN2VkYWM5YzRiM2VlNDFlM2I0ODU2YjQ2Yjg0MTFiNWE5NzY0NTMyZGI1OWEwMzVjY2FuYWx5dGljc1RhZ3M9eWNkYyZyZXN0cmljdEluZGljZXM9WUNDb21wYW55X3Byb2R1Y3Rpb24lMkNZQ0NvbXBhbnlfQnlfTGF1bmNoX0RhdGVfcHJvZHVjdGlvbiZ0YWdGaWx0ZXJzPSU1QiUyMnljZGNfcHVibGljJTIyJTVE",
+    "index": "YCCompany_production",
+}
+_YC_UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36"}
+# title pre-filter (cheap, before fetching detail pages); filter.py does the precise pass
+_YC_TITLE_RE = re.compile(
+    r"\b(ai|ml|llm|rag|genai|python|full[\s-]?stack|backend|software|data|platform|devops|"
+    r"site reliability|automation|agent|engineer|developer|programmer)\b", re.I)
+# company pre-filter: AI/dev-tool signals in name / one-liner / tags / industries
+_YC_CO_RE = re.compile(
+    r"artificial intelligence|machine learning|generative ai|\bllm\b|developer tools|"
+    r"devtools|\bapi\b|data infrastructure|mlops|ai agent|natural language|computer vision", re.I)
+_YC_MAX_COMPANIES = 80
+
+
+def _yc_algolia(params: dict) -> dict:
+    import urllib.parse
+    payload = {"requests": [{"indexName": _YC_ALGOLIA["index"],
+                             "params": urllib.parse.urlencode(params)}]}
+    req = urllib.request.Request(
+        _YC_ALGOLIA["url"], data=json.dumps(payload).encode(),
+        headers={"Content-Type": "application/json", "Accept": "application/json",
+                 "X-Algolia-Application-Id": _YC_ALGOLIA["appId"],
+                 "X-Algolia-API-Key": _YC_ALGOLIA["key"]})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return json.loads(r.read().decode("utf-8"))["results"][0]
+
+
+def _yc_data_page(url: str):
+    # /jobs/<id> answers 406 unless the request explicitly accepts HTML
+    req = urllib.request.Request(url, headers={**_YC_UA, "Accept": "text/html"})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        html_text = r.read().decode("utf-8", "ignore")
+    m = re.search(r'data-page="([^"]+)"', html_text)
+    if not m:
+        return None
+    import html as _html
+    return json.loads(_html.unescape(m.group(1)))
+
+
+def _yc_salary(s: str):
+    # "$185K - $218K" -> yearly; "$90 - $110 /hr" -> hourly*2080; "$5,000 /mo" -> monthly*12.
+    # Bare small numbers with no period marker are ambiguous -> (None, None), don't fabricate.
+    if not s:
+        return None, None
+    slow = s.lower()
+    if re.search(r"/\s*(hr|hour)|per hour", slow):
+        mult = 2080
+    elif re.search(r"/\s*(mo|month)|per month", slow):
+        mult = 12
+    elif "k" in slow:
+        mult = 1000
+    else:
+        mult = None
+    nums = re.findall(r"\$([\d.,]+)", s)
+    vals = []
+    for n in nums:
+        try:
+            v = float(n.replace(",", ""))
+        except ValueError:
+            continue
+        if mult == 1000 and v < 1000:
+            v *= 1000
+        elif mult in (2080, 12):
+            v *= mult
+        vals.append(v)
+    if not vals:
+        return None, None
+    if mult is None and max(vals) < 10000:
+        return None, None  # ambiguous (hourly? monthly?) — don't guess
+    return (min(vals), max(vals)) if len(vals) > 1 else (vals[0], vals[0])
+
+
+def fetch_yc_jobs() -> list[dict]:
+    """YC jobs via the public Algolia company index + workatastartup pages. No auth."""
+    import time
+    jobs = []
+    try:
+        res = _yc_algolia({
+            "query": "", "hitsPerPage": "1000", "attributesToHighlight": "[]",
+            "attributesToRetrieve": json.dumps(
+                ["name", "slug", "one_liner", "tags", "industries", "regions"]),
+            "facetFilters": json.dumps(["isHiring:true", "regions:Remote"]),
+        })
+    except Exception:
+        return []
+    companies = []
+    for h in res.get("hits", []):
+        blob = " ".join([h.get("name") or "", h.get("one_liner") or "",
+                         " ".join(h.get("tags") or []),
+                         " ".join(h.get("industries") or [])])
+        if _YC_CO_RE.search(blob):
+            companies.append(h)
+    companies.sort(key=lambda h: h.get("name") or "")
+    for h in companies[:_YC_MAX_COMPANIES]:
+        slug = h.get("slug")
+        if not slug:
+            continue
+        try:
+            page = _yc_data_page(f"https://www.workatastartup.com/companies/{slug}")
+            co = ((page or {}).get("props") or {}).get("company") or {}
+        except Exception:
+            time.sleep(0.3)
+            continue
+        time.sleep(0.3)
+        for j in co.get("jobs") or []:
+            title = (j.get("title") or "").strip()
+            if not title or not _YC_TITLE_RE.search(title):
+                continue
+            loc = j.get("location") or ""
+            is_remote = bool(re.search(r"\bremote\b", loc, re.I))
+            desc_parts, visa = [], (j.get("sponsorsVisa") or "")
+            exp = j.get("minExperience") or ""
+            job_url = f"https://www.workatastartup.com/jobs/{j.get('id')}"
+            apply_url, detail = job_url, None
+            try:
+                detail = _yc_data_page(job_url)
+            except Exception:
+                detail = None
+            time.sleep(0.3)
+            if detail:
+                props = detail.get("props") or {}
+                dj = props.get("job") or {}
+                desc_parts.append(_strip_html(dj.get("descriptionHtml") or ""))
+                visa = dj.get("sponsorsVisa") or visa
+                skills = dj.get("skills") or []
+                if skills:
+                    desc_parts.append("Skills: " + ", ".join(skills))
+                apply_url = props.get("applyUrl") or job_url
+            if visa:
+                desc_parts.append(f"Visa/sponsorship: {visa}")
+            if exp:
+                desc_parts.append(f"Experience: {exp}")
+            smin, smax = _yc_salary(j.get("salaryRange") or "")
+            jobs.append({
+                "source": "yc_jobs",
+                "id": f"yc-{j.get('id')}",
+                "title": title,
+                "company": (h.get("name") or "").strip(),
+                "description": "\n".join(p for p in desc_parts if p)[:6000],
+                "url": job_url,
+                "apply_url": apply_url,
+                "apply_email": None,
+                "location": "Remote" if is_remote else loc,
+                "remote": is_remote,
+                "salary_min": smin, "salary_max": smax,
+                "salary_unit": "yearly",
+                "posted_at": None,
+                "tags": [t for t in [h.get("batch")] + (h.get("industries") or []) if t],
+            })
+    return jobs
+
+
+# ---------------------------------------------------------------- Reddit r/forhire
+# reddit.com/.json is 403-blocked from datacenter networks, so this uses the
+# Arctic Shift API (free Pushshift successor, no key): [HIRING] posts only.
+def fetch_reddit_forhire() -> list[dict]:
+    """r/forhire [HIRING] posts via the Arctic Shift API. No key."""
+    from datetime import timedelta
+    jobs = []
+    try:
+        url = ("https://arctic-shift.photon-reddit.com/api/posts/search"
+               "?subreddit=forhire&limit=100&sort=desc")
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (job-scraper)"})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            data = json.loads(r.read().decode("utf-8"))
+    except Exception:
+        return []
+    cutoff = datetime.now(timezone.utc) - timedelta(days=14)
+    for p in data.get("data", []):
+        title = p.get("title") or ""
+        if not re.search(r"\[hiring\]", title, re.I):
+            continue
+        body = p.get("selftext") or ""
+        text = f"{title}\n{body}"
+        if not _YC_TITLE_RE.search(text):
+            continue
+        if not re.search(r"\bremote\b|\bworldwide\b", text, re.I):
+            continue
+        created = _parse_dt(p.get("created_utc"))
+        if created and created < cutoff:
+            continue
+        m = re.search(r"(?:@|at|for)\s+([A-Z][\w&.'-]{1,40}(?:\s+[A-Z][\w&.'-]{1,40}){0,3})", title)
+        company = m.group(1).strip() if m else "r/forhire"
+        emails = _emails(body)
+        jobs.append({
+            "source": "reddit_forhire",
+            "id": f"rd-{p.get('id')}",
+            "title": re.sub(r"^\[hiring\]\s*", "", title, flags=re.I).strip()[:200],
+            "company": company,
+            "description": (body or title)[:6000],
+            "url": "https://www.reddit.com" + (p.get("permalink") or ""),
+            "apply_url": "https://www.reddit.com" + (p.get("permalink") or ""),
+            "apply_email": emails[0] if emails else None,
+            "location": "Remote",
+            "remote": True,
+            "salary_min": None, "salary_max": None,
+            "salary_unit": "yearly",
+            "posted_at": created,
+            "tags": ["reddit", "forhire"],
+        })
+    return jobs
+
+
 def fetch_wwr() -> list[dict]:
     """We Work Remotely RSS feed (job-seeker application is paywalled; RSS is free)."""
     import xml.etree.ElementTree as ET
@@ -334,4 +547,6 @@ SOURCES = {
     "jobicy": fetch_jobicy,
     "himalayas": fetch_himalayas,
     "wwr": fetch_wwr,
+    "yc_jobs": fetch_yc_jobs,
+    "reddit_forhire": fetch_reddit_forhire,
 }

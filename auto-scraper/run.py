@@ -108,7 +108,7 @@ def scrape(sources: list[str]) -> list[dict]:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--top", type=int, default=20)
-    ap.add_argument("--sources", default="remoteok,remotive,hn_hiring,linkedin,workingnomads,jobicy,himalayas,wwr")
+    ap.add_argument("--sources", default="remoteok,remotive,hn_hiring,linkedin,workingnomads,jobicy,himalayas,wwr,yc_jobs,reddit_forhire")
     ap.add_argument("--out", default=os.path.join(BASE, "results"))
     ap.add_argument("--drafts", type=int, default=0,
                     help="create Gmail drafts for top-N email-route leads")
