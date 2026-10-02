@@ -1,9 +1,8 @@
 name: Scheduled job sweep
 
 on:
-  schedule:
-    # every 2 hours: 00,02,...,22 UTC = 05:00,07:00,...,03:00 PKT
-    - cron: "0 */2 * * *"
+  # schedule disabled 2026-10-02: sweeps run on the local runner every 2h instead
+  # (saves GitHub Actions minutes); results are pushed back to main after each run.
   workflow_dispatch:
 
 concurrency:
