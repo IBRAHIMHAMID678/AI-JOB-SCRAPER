@@ -2,8 +2,8 @@ name: Scheduled job sweep
 
 on:
   schedule:
-    # 04:00 and 13:00 UTC = 09:00 and 18:00 PKT
-    - cron: "0 4,13 * * *"
+    # every 2 hours: 00,02,...,22 UTC = 05:00,07:00,...,03:00 PKT
+    - cron: "0 */2 * * *"
   workflow_dispatch:
 
 concurrency:
@@ -16,7 +16,7 @@ permissions:
 jobs:
   sweep:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
 
