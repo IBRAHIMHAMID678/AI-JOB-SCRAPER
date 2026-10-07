@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from datetime import datetime, timezone
 
-from requirements import ROLE_KEYWORDS, PAY_TARGET_MIN, PAY_TARGET_MAX, PREFERRED_AGE_DAYS
+from requirements import ROLE_KEYWORDS, PAY_TARGET_MIN, PAY_TARGET_MAX, PREFERRED_AGE_DAYS, PRIORITY_SOURCES
 
 _STACK_BONUS = ["rag", "llm", "langchain", "fastapi", "python", "pytorch",
                 "transformer", "vector", "embedding", "agent", "openai", "ollama"]
@@ -67,5 +67,10 @@ def score(job: dict, reasons: list[str]) -> tuple[float, list[str]]:
     # Direct email route is the smoothest apply path
     if job.get("apply_email"):
         s += 2; notes.append("email apply")
+
+    # Priority sources: listings here fill or die fastest (churn analysis
+    # 2026-10-07) — surface them first so he can apply before they're gone
+    if (job.get("source") or "").lower() in PRIORITY_SOURCES:
+        s += 4; notes.append("PRIORITY source (fast-moving)")
 
     return s, notes
