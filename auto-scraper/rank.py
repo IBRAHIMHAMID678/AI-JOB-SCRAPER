@@ -73,4 +73,17 @@ def score(job: dict, reasons: list[str]) -> tuple[float, list[str]]:
     if (job.get("source") or "").lower() in PRIORITY_SOURCES:
         s += 4; notes.append("PRIORITY source (fast-moving)")
 
+    # Learned source weight (2026-10-09 P2): bounded [0.5, 2.0] multiplier
+    # from observed yield. Applied as a small additive nudge so it can never
+    # outweigh core fit signals.
+    try:
+        from learn import get_weight
+        w = get_weight(job.get("source"))
+        if w != 1.0:
+            nudge = round((w - 1.0) * 2, 1)  # max ±2 points
+            s += nudge
+            notes.append(f"learned source weight {w} ({nudge:+})")
+    except Exception:
+        pass
+
     return s, notes

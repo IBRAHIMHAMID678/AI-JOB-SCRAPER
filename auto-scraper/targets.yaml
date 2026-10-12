@@ -1,108 +1,174 @@
-# Any website or portal goes here — one entry per line.
-# The scraper auto-detects the site type:
-#   - ATS career boards (Greenhouse, Lever, Ashby, SmartRecruiters, Recruitee)
-#     are pulled via the board's public JSON API — just paste the careers URL.
-#   - Ordinary pages fall back to schema.org JobPosting extraction.
-# For listing pages that link out to individual job pages, add kind: list
-# with a link_re regex matching the detail-page links.
-#
-# ATS board shortlist below: auto-built 2026-10-02 from the open-source
-# Feashliaa/job-board-aggregator company-token lists (Greenhouse/Lever/Ashby).
-# Every board verified live: has >=4 remote jobs and dev-titled roles.
 targets:
-  # --- Local (Pakistan) portals ---
-  - url: https://www.mustakbil.com/jobs/pakistan/islamabad
-    kind: list
-    link_re: /jobs/job/\d+
-    max_items: 20
-  - url: https://www.mustakbil.com/jobs/pakistan/rawalpindi
-    kind: list
-    link_re: /jobs/job/\d+
-    max_items: 20
-
-  # --- Hand-picked AI startup boards ---
-  - url: https://job-boards.greenhouse.io/gleanwork
-  - url: https://boards.greenhouse.io/zencoder
-  - url: https://boards.greenhouse.io/cycles
-
-  # --- Verified remote-friendly ATS boards (auto, 2026-10-02) ---
-  - url: https://boards.greenhouse.io/databricks  # remote=68 dev=440
-  - url: https://jobs.lever.co/shieldai  # remote=11 dev=392
-  - url: https://boards.greenhouse.io/zscaler  # remote=156 dev=183
-  - url: https://boards.greenhouse.io/gitlab  # remote=177 dev=104
-  - url: https://boards.greenhouse.io/datadog  # remote=53 dev=151
-  - url: https://boards.greenhouse.io/grafanalabs  # remote=120 dev=70
-  - url: https://boards.greenhouse.io/veeamsoftware  # remote=70 dev=116
-  - url: https://boards.greenhouse.io/sentinellabs  # remote=52 dev=116
-  - url: https://boards.greenhouse.io/xai  # remote=37 dev=129
-  - url: https://boards.greenhouse.io/voyagertechnologiesinc  # remote=21 dev=103
-  - url: https://boards.greenhouse.io/chainguard  # remote=83 dev=37
-  - url: https://boards.greenhouse.io/sonyinteractiveentertainmentglobal  # remote=15 dev=102
-  - url: https://boards.greenhouse.io/planetlabs  # remote=34 dev=49
-  - url: https://boards.greenhouse.io/airbnb  # remote=19 dev=60
-  - url: https://boards.greenhouse.io/tailscale  # remote=48 dev=29
-  - url: https://boards.greenhouse.io/valtech  # remote=34 dev=41
-  - url: https://boards.greenhouse.io/torcrobotics  # remote=33 dev=40
-  - url: https://boards.greenhouse.io/agilityrobotics  # remote=24 dev=40
-  - url: https://boards.greenhouse.io/jetbrains  # remote=28 dev=34
-  - url: https://jobs.lever.co/mainspringenergy  # remote=4 dev=58
-  - url: https://boards.greenhouse.io/datavant2  # remote=53 dev=7
-  - url: https://boards.greenhouse.io/yipitdata  # remote=46 dev=14
-  - url: https://boards.greenhouse.io/nerostechnologies  # remote=6 dev=53
-  - url: https://boards.greenhouse.io/fundraiseup  # remote=47 dev=7
-  - url: https://boards.greenhouse.io/3cloud  # remote=34 dev=19
-  - url: https://boards.greenhouse.io/phdata  # remote=32 dev=21
-  - url: https://boards.greenhouse.io/robotsandpencils  # remote=29 dev=20
-  - url: https://boards.greenhouse.io/talkspacetherapist  # remote=48 dev=0
-  - url: https://jobs.lever.co/jumpcloud  # remote=29 dev=19
-  - url: https://boards.greenhouse.io/neweratech  # remote=17 dev=28
-  - url: https://boards.greenhouse.io/psiquantum  # remote=4 dev=39
-  - url: https://boards.greenhouse.io/devrev  # remote=13 dev=29
-  - url: https://jobs.lever.co/truezerotech  # remote=21 dev=21
-  - url: https://boards.greenhouse.io/netbrain  # remote=24 dev=17
-  - url: https://boards.greenhouse.io/lightningai  # remote=12 dev=27
-  - url: https://jobs.lever.co/aircall  # remote=5 dev=34
-  - url: https://boards.greenhouse.io/arizeai  # remote=23 dev=15
-  - url: https://boards.greenhouse.io/codeandtheory  # remote=22 dev=16
-  - url: https://jobs.lever.co/muttdata  # remote=7 dev=29
-  - url: https://boards.greenhouse.io/colabsoftware  # remote=26 dev=9
-  - url: https://boards.greenhouse.io/dominodatalab  # remote=15 dev=20
-  - url: https://boards.greenhouse.io/twochairs  # remote=34 dev=1
-  - url: https://jobs.lever.co/penumbrainc  # remote=6 dev=29
-  - url: https://boards.greenhouse.io/enchargeai36  # remote=11 dev=22
-  - url: https://boards.greenhouse.io/hextechnologies  # remote=14 dev=18
-  - url: https://boards.greenhouse.io/sandtechholdingslimited  # remote=4 dev=28
-  - url: https://boards.greenhouse.io/vannevarlabs  # remote=17 dev=15
-  - url: https://boards.greenhouse.io/sparksoftcorporation  # remote=20 dev=10
-  - url: https://boards.greenhouse.io/gitlabcrm  # remote=22 dev=6
-  - url: https://boards.greenhouse.io/orcristtechnologies  # remote=17 dev=11
-  - url: https://jobs.lever.co/merlinlabs  # remote=11 dev=17
-  - url: https://boards.greenhouse.io/rapidfortinc  # remote=16 dev=9
-  - url: https://boards.greenhouse.io/redwoodsoftware  # remote=11 dev=14
-  - url: https://boards.greenhouse.io/datasystemsanalystsinc  # remote=4 dev=20
-  - url: https://boards.greenhouse.io/adaptivebiotechnologies  # remote=19 dev=4
-  - url: https://boards.greenhouse.io/placerlabs  # remote=12 dev=11
-  - url: https://boards.greenhouse.io/technologyadvice  # remote=17 dev=6
-  - url: https://boards.greenhouse.io/databento  # remote=13 dev=9
-  - url: https://boards.greenhouse.io/feedzai  # remote=4 dev=18
-  - url: https://boards.greenhouse.io/kairospower  # remote=4 dev=18
-  - url: https://boards.greenhouse.io/leolabsinc  # remote=10 dev=12
-  - url: https://boards.greenhouse.io/whitetech  # remote=16 dev=6
-  - url: https://boards.greenhouse.io/cybermediatechnologies  # remote=11 dev=10
-  - url: https://boards.greenhouse.io/mitratech  # remote=12 dev=9
-  - url: https://boards.greenhouse.io/datacor  # remote=15 dev=5
-  - url: https://boards.greenhouse.io/pathai  # remote=7 dev=13
-  - url: https://boards.greenhouse.io/scoutai  # remote=5 dev=15
-  - url: https://boards.greenhouse.io/shifttechnology  # remote=8 dev=12
-  - url: https://boards.greenhouse.io/capitaltg  # remote=11 dev=8
-  - url: https://boards.greenhouse.io/hackerrank  # remote=4 dev=15
-  - url: https://boards.greenhouse.io/snorkelai  # remote=6 dev=12
-  - url: https://boards.greenhouse.io/dataiku  # remote=11 dev=6
-  - url: https://boards.greenhouse.io/gatherai  # remote=8 dev=9
-  - url: https://boards.greenhouse.io/kapitus  # remote=14 dev=3
-  - url: https://boards.greenhouse.io/planetscale  # remote=7 dev=9
-  - url: https://boards.greenhouse.io/attainpartners  # remote=14 dev=1
-  - url: https://boards.greenhouse.io/bluefishai  # remote=5 dev=10
-  - url: https://boards.greenhouse.io/stackav  # remote=8 dev=7
-  - url: https://jobs.lever.co/offchainlabs  # remote=9 dev=6
-  - url: https://boards.greenhouse.io/acutechgroupinc  # remote=7 dev=7
+- kind: list
+  link_re: /jobs/job/\d+
+  max_items: 20
+  url: https://www.mustakbil.com/jobs/pakistan/islamabad
+- kind: list
+  link_re: /jobs/job/\d+
+  max_items: 20
+  url: https://www.mustakbil.com/jobs/pakistan/rawalpindi
+- url: https://job-boards.greenhouse.io/gleanwork
+- url: https://boards.greenhouse.io/zencoder
+- url: https://boards.greenhouse.io/cycles
+- url: https://boards.greenhouse.io/databricks
+- url: https://jobs.lever.co/shieldai
+- url: https://boards.greenhouse.io/zscaler
+- url: https://boards.greenhouse.io/gitlab
+- url: https://boards.greenhouse.io/datadog
+- url: https://boards.greenhouse.io/grafanalabs
+- url: https://boards.greenhouse.io/veeamsoftware
+- url: https://boards.greenhouse.io/sentinellabs
+- url: https://boards.greenhouse.io/xai
+- url: https://boards.greenhouse.io/voyagertechnologiesinc
+- url: https://boards.greenhouse.io/chainguard
+- url: https://boards.greenhouse.io/sonyinteractiveentertainmentglobal
+- url: https://boards.greenhouse.io/planetlabs
+- url: https://boards.greenhouse.io/airbnb
+- url: https://boards.greenhouse.io/tailscale
+- url: https://boards.greenhouse.io/valtech
+- url: https://boards.greenhouse.io/torcrobotics
+- url: https://boards.greenhouse.io/agilityrobotics
+- url: https://boards.greenhouse.io/jetbrains
+- url: https://jobs.lever.co/mainspringenergy
+- url: https://boards.greenhouse.io/datavant2
+- url: https://boards.greenhouse.io/yipitdata
+- url: https://boards.greenhouse.io/nerostechnologies
+- url: https://boards.greenhouse.io/fundraiseup
+- url: https://boards.greenhouse.io/3cloud
+- url: https://boards.greenhouse.io/phdata
+- url: https://boards.greenhouse.io/robotsandpencils
+- url: https://boards.greenhouse.io/talkspacetherapist
+- url: https://jobs.lever.co/jumpcloud
+- url: https://boards.greenhouse.io/neweratech
+- url: https://boards.greenhouse.io/psiquantum
+- url: https://boards.greenhouse.io/devrev
+- url: https://jobs.lever.co/truezerotech
+- url: https://boards.greenhouse.io/netbrain
+- url: https://boards.greenhouse.io/lightningai
+- url: https://jobs.lever.co/aircall
+- url: https://boards.greenhouse.io/arizeai
+- url: https://boards.greenhouse.io/codeandtheory
+- url: https://jobs.lever.co/muttdata
+- url: https://boards.greenhouse.io/colabsoftware
+- url: https://boards.greenhouse.io/dominodatalab
+- url: https://boards.greenhouse.io/twochairs
+- url: https://jobs.lever.co/penumbrainc
+- url: https://boards.greenhouse.io/enchargeai36
+- url: https://boards.greenhouse.io/hextechnologies
+- url: https://boards.greenhouse.io/sandtechholdingslimited
+- url: https://boards.greenhouse.io/vannevarlabs
+- url: https://boards.greenhouse.io/sparksoftcorporation
+- url: https://boards.greenhouse.io/gitlabcrm
+- url: https://boards.greenhouse.io/orcristtechnologies
+- url: https://jobs.lever.co/merlinlabs
+- url: https://boards.greenhouse.io/rapidfortinc
+- url: https://boards.greenhouse.io/redwoodsoftware
+- url: https://boards.greenhouse.io/datasystemsanalystsinc
+- url: https://boards.greenhouse.io/adaptivebiotechnologies
+- url: https://boards.greenhouse.io/placerlabs
+- url: https://boards.greenhouse.io/technologyadvice
+- url: https://boards.greenhouse.io/databento
+- url: https://boards.greenhouse.io/feedzai
+- url: https://boards.greenhouse.io/kairospower
+- url: https://boards.greenhouse.io/leolabsinc
+- url: https://boards.greenhouse.io/whitetech
+- url: https://boards.greenhouse.io/cybermediatechnologies
+- url: https://boards.greenhouse.io/mitratech
+- url: https://boards.greenhouse.io/datacor
+- url: https://boards.greenhouse.io/pathai
+- url: https://boards.greenhouse.io/scoutai
+- url: https://boards.greenhouse.io/shifttechnology
+- url: https://boards.greenhouse.io/capitaltg
+- url: https://boards.greenhouse.io/hackerrank
+- url: https://boards.greenhouse.io/snorkelai
+- url: https://boards.greenhouse.io/dataiku
+- url: https://boards.greenhouse.io/gatherai
+- url: https://boards.greenhouse.io/kapitus
+- url: https://boards.greenhouse.io/planetscale
+- url: https://boards.greenhouse.io/attainpartners
+- url: https://boards.greenhouse.io/bluefishai
+- url: https://boards.greenhouse.io/stackav
+- url: https://jobs.lever.co/offchainlabs
+- url: https://boards.greenhouse.io/acutechgroupinc
+- url: https://jobs.ashbyhq.com/abridge
+- url: https://jobs.ashbyhq.com/assorthealth
+- url: https://jobs.ashbyhq.com/clarium
+- url: https://gobloominghealth.com/careers
+- url: https://jobs.ashbyhq.com/relay
+- url: https://jobs.ashbyhq.com/atob
+- url: https://jobs.ashbyhq.com/fleetworks
+- url: https://jobs.ashbyhq.com/vooma
+- url: https://jobs.ashbyhq.com/nirvana
+- url: https://jobs.ashbyhq.com/cloudtrucks
+- url: https://jobs.ashbyhq.com/raft
+- url: https://careers.smartrecruiters.com/Shippeo
+- url: https://careers.cargofy.com/
+- url: https://www.curri.com/careers
+- url: https://nayapay.com/careers
+- url: https://careers.investengine.com/jobs
+- url: https://www.helloprima.com/careers
+- url: https://careers.manomano.jobs
+- url: https://jobs.ashbyhq.com/skydio
+- url: https://jobs.ashbyhq.com/gecko-robotics
+- url: https://jobs.ashbyhq.com/aurorasolar
+- url: https://jobs.ashbyhq.com/watershed
+- url: https://jobs.ashbyhq.com/standardbots
+- url: https://jobs.ashbyhq.com/whatnot
+- url: https://www.opendoor.com/careers/open-positions
+- max_items: 50
+  url: https://jobs.ashbyhq.com/Anima
+- max_items: 50
+  url: https://jobs.ashbyhq.com/railway
+- url: https://jobs.ashbyhq.com/agentmail
+- url: https://job-boards.greenhouse.io/aidocmedical
+- url: https://job-boards.greenhouse.io/air
+- url: https://job-boards.greenhouse.io/assemblyai
+- url: https://jobs.ashbyhq.com/basecamp-research
+- url: https://jobs.ashbyhq.com/bland
+- url: https://botpress.workable.com
+- url: https://jobs.ashbyhq.com/brettonai
+- url: https://jobs.ashbyhq.com/comind
+- url: https://jobs.ashbyhq.com/composio
+- url: https://jobs.ashbyhq.com/Deepgram
+- url: https://jobs.ashbyhq.com/deepsetai
+- url: https://jobs.ashbyhq.com/Distyl
+- url: https://job-boards.greenhouse.io/dropzoneai
+- url: https://jobs.ashbyhq.com/edgerunner-ai
+- url: https://jobs.ashbyhq.com/fragmentai
+- url: https://jobs.ashbyhq.com/fyxer
+- url: https://jobs.ashbyhq.com/geordieai
+- url: https://jobs.ashbyhq.com/Gray
+- url: https://jobs.ashbyhq.com/higgsfieldai
+- url: https://jobs.ashbyhq.com/langchain
+- url: https://jobs.ashbyhq.com/lumaai
+- url: https://jobs.ashbyhq.com/mem0
+- url: https://jobs.ashbyhq.com/mimica
+- url: https://jobs.ashbyhq.com/nory
+- url: https://job-boards.greenhouse.io/observeai
+- url: https://jobs.ashbyhq.com/onyx
+- url: https://jobs.lever.co/Osmind
+- url: https://jobs.ashbyhq.com/percepta
+- url: https://jobs.ashbyhq.com/radai
+- url: https://jobs.ashbyhq.com/read-ai
+- url: https://jobs.ashbyhq.com/reevo
+- url: https://job-boards.greenhouse.io/relationalai
+- url: https://jobs.ashbyhq.com/retell-ai
+- url: https://job-boards.greenhouse.io/riverai
+- url: https://jobs.ashbyhq.com/sarvam
+- url: https://jobs.ashbyhq.com/Sierra
+- url: https://jobs.ashbyhq.com/sim
+- url: https://jobs.ashbyhq.com/simple-ai
+- url: https://soda.workable.com
+- url: https://jobs.lever.co/spiceai
+- url: https://jobs.ashbyhq.com/sprout-ai
+- url: https://jobs.ashbyhq.com/terraai
+- url: https://jobs.ashbyhq.com/tortus
+- url: https://jobs.ashbyhq.com/unlikelyai
+- url: https://jobs.ashbyhq.com/unmind
+- url: https://jobs.ashbyhq.com/vapi
+- url: https://jobs.ashbyhq.com/Wisdom-AI
+- url: https://jobs.ashbyhq.com/wordsmith
+- url: https://job-boards.greenhouse.io/yellowbrickdata
+- url: https://jobs.lever.co/zilliz
+- url: https://jobs.ashbyhq.com/nectar-social
+- url: https://job-boards.greenhouse.io/gomotive

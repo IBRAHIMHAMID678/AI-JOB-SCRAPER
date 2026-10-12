@@ -14,7 +14,7 @@ import json
 import re
 from urllib.parse import urlparse
 
-from sources import _emails, _get, _parse_dt, _strip_html
+from sources import _emails, _get, _parse_dt, _stable_id, _strip_html
 
 
 # ---------------------------------------------------------------- ATS
@@ -218,7 +218,7 @@ def fetch_generic_page(url: str) -> list[dict]:
             loc = _loc_to_str(jp.get("jobLocation"))
             emails = _emails(desc) or ([mailtos[0]] if mailtos else [])
             jobs.append({
-                "source": "generic", "id": f"gen-{abs(hash(str(jp.get('url') or title + comp)))}",
+                "source": "generic", "id": f"gen-{_stable_id(str(jp.get('url') or title + comp))}",
                 "title": title, "company": (comp or host).strip(),
                 "description": desc, "url": jp.get("url") or url,
                 "apply_url": jp.get("url") or url,

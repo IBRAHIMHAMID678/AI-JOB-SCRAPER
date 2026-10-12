@@ -47,6 +47,10 @@ NON_DEV_TITLE_PATTERNS = [
     "tutor", "teacher", "instructor", "driver",
     "security", "devops", "sre", "site reliability", "platform engineer",
     "android", "ios developer", "mobile developer",
+    # non-software engineering (2026-10-08: embedded/mechanical/aerospace
+    # roles were reaching the digest email despite being outside his field)
+    "embedded", "firmware", "mechanical", "electrical", "aerospace",
+    "civil engineer", "chemical engineer", "propulsion",
 ]
 
 # Titles that are hard-blocked (senior-only)
@@ -89,6 +93,7 @@ CITIZENSHIP_HARD_GATE_PATTERNS = [
     r"green\s*card\s+holders?\s+(only|required)",
     r"work\s+authorization\s+(in|for)\s+(the\s+)?[\w\s\.]+\s+required",
     r"(u\.?s\.?|united\s+states)\s+work\s+authorization\s+required",
+    r"must\s+have\s+(u\.?s\.?|united\s+states)\s+work\s+authorization",
     r"must\s+have\s+(the\s+)?(legal\s+)?right\s+to\s+work\s+in",
     r"right\s+to\s+work\s+in\s+(the\s+)?[\w\s\.]+\s+required",
     # region-exclusion gates (caught via detail-page enrichment)

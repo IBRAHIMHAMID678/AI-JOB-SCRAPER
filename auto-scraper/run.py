@@ -92,23 +92,31 @@ def save_applied(entries: list[dict]):
         json.dump(data, f, indent=1)
 
 
-def scrape(sources: list[str]) -> list[dict]:
+def scrape(sources: list[str]) -> tuple[list[dict], list[str], dict]:
+    """Returns (jobs, errors, per_source_stats). A source error is recorded
+    in per_source_stats and never aborts other sources."""
     jobs, errors = [], []
+    stats: dict[str, dict] = {}
     for name in sources:
+        st = {"raw": 0, "ok": False, "error": ""}
         try:
             batch = SOURCES[name]()
             jobs.extend(batch)
+            st["raw"] = len(batch)
+            st["ok"] = True
             print(f"  {name}: {len(batch)} raw", flush=True)
         except Exception as e:
+            st["error"] = f"{type(e).__name__}: {str(e)[:150]}"
             errors.append(f"{name}: {e}")
             print(f"  {name}: ERROR {e}", flush=True)
-    return jobs, errors
+        stats[name] = st
+    return jobs, errors, stats
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--top", type=int, default=20)
-    ap.add_argument("--sources", default="remoteok,remotive,hn_hiring,linkedin,workingnomads,jobicy,himalayas,wwr,yc_jobs,reddit_forhire")
+    ap.add_argument("--sources", default="remoteok,remotive,hn_hiring,linkedin,workingnomads,jobicy,himalayas,wwr,yc_jobs,reddit_rss,wearedistributed,nocommute,justremote,pythonorg,arc,remotecom,dailyremote,techjobsforgood,remote4africa,builtin,jobsbylevel,arbeitnow,rj_ai_curator,tg_remotejobs,tg_remote_python,berlinstartupjobs,getinit,dice")
     ap.add_argument("--out", default=os.path.join(BASE, "results"))
     ap.add_argument("--drafts", type=int, default=0,
                     help="create Gmail drafts for top-N email-route leads")
@@ -119,7 +127,7 @@ def main():
 
     src_names = [s for s in args.sources.split(",") if s in SOURCES]
     print(f"Scraping {len(src_names)} sources...")
-    jobs, errors = scrape(src_names)
+    jobs, errors, src_stats = scrape(src_names)
 
     # Universal targets: any website or portal listed in targets.yaml
     if args.targets and _generic:
@@ -150,19 +158,54 @@ def main():
             print("  (no targets.yaml — skipping universal scrape)")
         except ImportError:
             print("  (pyyaml missing — skipping universal scrape)")
-    print(f"Raw total: {len(jobs)}")
+    print(f"Raw total: {len(jobs)}", flush=True)
+    raw_total = len(jobs)  # capture before dedup (for honest metrics)
+
+    # Layered deduplication (2026-10-09 P1): stable ATS id > canonical URL >
+    # company+title+location > conservative fuzzy match. Replaces the old
+    # fragile company|title-only check.
+    from dedup import deduplicate
+    jobs, merge_log = deduplicate(jobs)
+    print(f"dedup: {len(merge_log)} duplicates merged, {len(jobs)} unique", flush=True)
+    for m in merge_log[:5]:
+        print(f"  merged [{m['layer']}] {m['dropped_id']} -> {m['kept_id']}")
 
     applied = load_applied()
     seen_run = set()
     passed, review, failed = [], [], []
+    from extract import enrich_description
+    from feedback import load_feedback, job_suppressed
+    fb_data = load_feedback()
+    fb_suppressed_n = 0
     for j in jobs:
         key = f"{j['company']}|{j['title']}".lower()
         if key in applied or key in seen_run:
             continue
         seen_run.add(key)
-        verdict, reasons = filter_job(j)
+        # Manual feedback suppresses dead/unsuitable/rejected jobs (2026-10-09 P0)
+        suppressed, why, _matched_via = job_suppressed(j, fb_data)
+        if suppressed:
+            fb_suppressed_n += 1
+            failed.append({"job": j, "verdict": "fail", "reasons": [why],
+                           "reason_codes": ["manual_feedback_suppressed"],
+                           "evidence_fields": {}, "missing_fields": [],
+                           "confidence": "high",
+                           "ruleset_version": "2026-10-09-p0",
+                           "score": 0.0, "score_notes": []})
+            continue
+        # Cheap pre-filter classification: set description_status from what the
+        # source provided (no network). Full detail-page enrichment happens
+        # later, only for pass/review candidates.
+        enrich_description(j, pre_classify_only=True)
+        fr = filter_job(j)
+        verdict, reasons = fr["verdict"], fr["reasons"]
         sc, notes = score(j, reasons)
         rec = {"job": j, "verdict": verdict, "reasons": reasons,
+               "reason_codes": fr["reason_codes"],
+               "evidence_fields": fr["evidence_fields"],
+               "missing_fields": fr["missing_fields"],
+               "confidence": fr["confidence"],
+               "ruleset_version": fr["ruleset_version"],
                "score": round(sc, 1), "score_notes": notes}
         # make posted_at JSON-safe later
         if verdict == "pass":
@@ -171,25 +214,168 @@ def main():
             review.append(rec)
         else:
             failed.append(rec)
-    print(f"pass={len(passed)} review={len(review)} fail={len(failed)}")
+    print(f"pass={len(passed)} review={len(review)} fail={len(failed)} "
+          f"(feedback-suppressed={fb_suppressed_n})")
+
+    # Description extraction pipeline (2026-10-09 P0): for jobs reaching
+    # pass/review, ensure description_status is set and attempt to recover
+    # complete JDs from official detail pages via source-specific adapters.
+    # Bounded to keep the sweep fast; API-complete sources skip fetching.
+    try:
+        from extract import enrich_description
+        cands = sorted(passed + review, key=lambda r: -r["score"])
+        enriched_n = 0
+        ENRICH_CAP = 60
+        for rec in cands:
+            j = rec["job"]
+            if j.get("description_status") in ("full",):
+                continue  # already complete, no fetch needed
+            if enriched_n >= ENRICH_CAP:
+                # mark the rest as not-attempted rather than leaving stale state
+                if not j.get("description_status"):
+                    from extract import set_description
+                    set_description(j, j.get("description") or "", "partial",
+                                    "enrich_cap_reached", j.get("url", ""),
+                                    error="enrichment cap reached; completeness unverified")
+                continue
+            enrich_description(j)
+            enriched_n += 1
+            # re-filter on the enriched record so new JD text feeds the gates
+            fr = filter_job(j)
+            sc, notes = score(j, fr["reasons"])
+            rec.update({"verdict": fr["verdict"], "reasons": fr["reasons"],
+                        "reason_codes": fr["reason_codes"],
+                        "evidence_fields": fr["evidence_fields"],
+                        "missing_fields": fr["missing_fields"],
+                        "confidence": fr["confidence"],
+                        "ruleset_version": fr["ruleset_version"],
+                        "score": round(sc, 1), "score_notes": notes})
+        # re-bucket after re-filtering
+        passed = [r for r in cands if r["verdict"] == "pass"]
+        review = [r for r in cands if r["verdict"] == "review"]
+        refiltered = [r for r in cands if r["verdict"] == "fail"]
+        failed.extend(refiltered)
+        print(f"description enrichment: {enriched_n} jobs processed; "
+              f"{len(refiltered)} newly failed after enrichment")
+    except Exception as e:
+        print(f"description enrichment skipped: {e}")
+
+    # Legacy WAD detail-page enrichment is now handled by extract.adapt_wad
+    # via the pipeline above; the old enrich.py path is retired.
 
     passed.sort(key=lambda r: -r["score"])
     review.sort(key=lambda r: -r["score"])
+
+    # Hiring lanes (2026-10-09 P2): separate ranked shortlists so one
+    # category never crowds out the others.
+    def _lane(r) -> str:
+        j, ev = r["job"], r.get("evidence_fields", {})
+        geo = ev.get("geo_class", "")
+        if geo == "local":
+            return "C"  # Islamabad–Rawalpindi local
+        unit = (j.get("salary_unit") or "")
+        desc = ((j.get("description_full") or j.get("description")) or "").lower()
+        is_contract = unit == "hourly" or any(
+            k in desc for k in ("contract", "freelance", "hourly", "$/hr", "per hour"))
+        if r["verdict"] == "pass" and geo in ("pk_remote", "worldwide"):
+            return "B" if is_contract else "A"
+        if r["verdict"] == "review":
+            return "D"  # stretch / needs manual assessment
+        return "A" if geo in ("pk_remote", "worldwide") else "D"
+
+    lanes: dict[str, list] = {"A": [], "B": [], "C": [], "D": []}
+    for r in passed + review:
+        lanes[_lane(r)].append(r)
+    lane_names = {
+        "A": "Pakistan-eligible international remote (employment)",
+        "B": "USD hourly contracts / freelance",
+        "C": "Islamabad–Rawalpindi local",
+        "D": "Stretch — needs manual assessment",
+    }
+
     top = (passed + review)[:args.top]
+
+    # Per-source health metrics (2026-10-09 P1): description extraction
+    # success + verdict distribution per source, recorded every run.
+    try:
+        from monitor import record_run
+        # Collect job IDs per source for unique-evidence tracking in learning.
+        # Uses stable IDs where available, else canonical URL, else content hash.
+        # Also tracks which IDs were eligible (pass/review) for accurate yield,
+        # and per-job description status for consistent description rates.
+        # Identity aliases: store all layers so enrichment transitions
+        # (title-only → URL → ATS ID) can be reconciled to one canonical ID.
+        from dedup import dedup_key_layers
+        source_job_ids: dict[str, set[str]] = {}
+        source_eligible_ids: dict[str, set[str]] = {}
+        source_desc_status: dict[str, dict[str, str]] = {}
+        source_identity_aliases: dict[str, dict[str, str]] = {}
+        source_unambiguous_ids: dict[str, set[str]] = {}
+        for r in passed + review + failed:
+            job = r["job"]
+            src = job.get("source", "?")
+            s = src_stats.setdefault(src, {})
+            s[r["verdict"]] = s.get(r["verdict"], 0) + 1
+            ds = (job.get("description_status") or "unknown")
+            s[f"desc_{ds}"] = s.get(f"desc_{ds}", 0) + 1
+            # ID for cross-run deduplication (strongest available)
+            layers = dedup_key_layers(job)
+            jid = layers["stable_id"] or layers["url"] or f"ct:{layers['company']}|{layers['title']}"
+            if jid:
+                source_job_ids.setdefault(src, set()).add(jid)
+                source_desc_status.setdefault(src, {})[jid] = ds
+                # Store all layers as aliases for reconciliation
+                aliases = {}
+                if layers["stable_id"]:
+                    aliases["stable_id"] = layers["stable_id"]
+                if layers["url"]:
+                    aliases["url"] = layers["url"]
+                aliases["ct"] = f"ct:{layers['company']}|{layers['title']}"
+                source_identity_aliases.setdefault(src, {})[jid] = aliases
+                # Unambiguous attribution: single contributing source only
+                contrib = job.get("_dedup_sources", [src])
+                if len(contrib) == 1:
+                    source_unambiguous_ids.setdefault(src, set()).add(jid)
+                if r["verdict"] in ("pass", "review"):
+                    source_eligible_ids.setdefault(src, set()).add(jid)
+        record_run(src_stats, errors, {
+            "raw": raw_total, "unique": len(passed) + len(review) + len(failed),
+            "pass": len(passed), "review": len(review), "fail": len(failed),
+            "duplicates_merged": len(merge_log),
+        }, source_job_ids, source_eligible_ids, source_desc_status,
+            source_identity_aliases, source_unambiguous_ids)
+        print(f"health recorded for {len(src_stats)} sources")
+    except Exception as e:
+        print(f"health recording skipped: {e}")
 
     day = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     outdir = os.path.join(args.out, day)
     os.makedirs(outdir, exist_ok=True)
 
+    # store lane on each record for downstream consumers
+    for lid, recs in lanes.items():
+        for r in recs:
+            r["lane"] = lid
+
     def _ser(r):
         j = dict(r["job"])
         p = j.get("posted_at")
         j["posted_at"] = p.isoformat() if p else None
-        # trim huge descriptions
+        # Preserve the complete description for filters/downstream processing.
+        # Only the display copy is truncated; description_full is never cut.
+        full = j.get("description_full") or j.get("description") or ""
+        j["description_full"] = full
         if len(j.get("description") or "") > 4000:
             j["description"] = j["description"][:4000] + "…"
         return {"score": r["score"], "score_notes": r["score_notes"],
-                "verdict": r["verdict"], "reasons": r["reasons"], "job": j}
+                "verdict": r["verdict"], "reasons": r["reasons"],
+                "reason_codes": r.get("reason_codes", []),
+                "evidence_fields": r.get("evidence_fields", {}),
+                "missing_fields": r.get("missing_fields", []),
+                "confidence": r.get("confidence", "low"),
+                "ruleset_version": r.get("ruleset_version", "?"),
+                "lane": r.get("lane", "D"),
+                "job": j}
 
     with open(os.path.join(outdir, "leads.json"), "w") as f:
         json.dump([_ser(r) for r in top], f, indent=1)
@@ -197,6 +383,9 @@ def main():
     lines = [f"# Auto-scraper report — {day}", "",
              f"Scraped {len(jobs)} raw listings from {', '.join(src_names)}.",
              f"Passed: {len(passed)} | Review: {len(review)} | Failed: {len(failed)}",
+             f"Lanes: " + " | ".join(
+                 f"{lid} ({lane_names[lid].split(' —')[0].split(' (')[0]}): {len(recs)}"
+                 for lid, recs in lanes.items()),
              f"Errors: {'; '.join(errors) if errors else 'none'}", "",
              f"## Top {len(top)}", ""]
     for i, r in enumerate(top, 1):

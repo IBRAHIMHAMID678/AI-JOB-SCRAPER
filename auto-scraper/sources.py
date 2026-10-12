@@ -6,6 +6,32 @@ import re
 import urllib.request
 from datetime import datetime, timezone
 
+from requirements import FOREIGN_CITY_MARKERS
+
+# ---- source expansion 2026-10-06 (VM-tested, stdlib-only modules) ----
+try:
+    import sys as _sys
+    import os as _os
+    _sys.path.insert(0, _os.path.expanduser("~/workspace/job_hunt/source-expansion-2026-10-06"))
+    from new_boards import FETCHERS as _NEW_BOARD_FETCHERS
+    from niche_sources import FETCHERS as _NICHE_FETCHERS
+    from reddit_sources import fetch_reddit_jobs
+    _EXPANSION_OK = True
+except Exception:
+    _EXPANSION_OK = False
+
+_CITY_RE = re.compile("|".join(re.escape(c) for c in FOREIGN_CITY_MARKERS), re.I)
+
+
+def _regions_remote(regions: str) -> bool:
+    """Derive the remote flag from a hire-from regions string.
+    A regions string naming a foreign city WITHOUT the word 'remote'
+    means on-site abroad (some feeds hardcode remote=True for everything)."""
+    rl = (regions or "").lower()
+    if "remote" in rl:
+        return True
+    return not bool(_CITY_RE.search(rl))
+
 EMAIL_RE = re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
 GENERIC_EMAILS = {"example.com", "email.com", "domain.com", "remoteok.com", "remotive.com"}
 
@@ -19,8 +45,18 @@ def _emails(text: str) -> list[str]:
     return out
 
 
-def _get(url: str, timeout: int = 25) -> str:
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (job-scraper)"})
+def _stable_id(s) -> str:
+    """Deterministic short id from a string. (Built-in hash() is salted per
+    process, so abs(hash(...)) changes on every run — never use it for ids.)"""
+    import hashlib
+    return hashlib.md5(str(s or "").encode("utf-8")).hexdigest()[:16]
+
+
+def _get(url: str, timeout: int = 25, headers: dict | None = None) -> str:
+    hdrs = {"User-Agent": "Mozilla/5.0 (job-scraper)"}
+    if headers:
+        hdrs.update(headers)
+    req = urllib.request.Request(url, headers=hdrs)
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.read().decode("utf-8", "replace")
 
@@ -35,6 +71,8 @@ def _strip_html(html: str) -> str:
 
 def _parse_dt(s):
     if not s:
+        return None
+    if isinstance(s, float) and s != s:  # NaN (pandas missing value) is truthy — reject it
         return None
     if isinstance(s, (int, float)) or (isinstance(s, str) and s.strip().isdigit()):
         v = int(float(s))
@@ -188,7 +226,7 @@ def fetch_linkedin() -> list[dict]:
             posted = r.get("date_posted")
             jobs.append({
                 "source": "linkedin",
-                "id": f"li-{r.get('id') or abs(hash(str(r.get('job_url'))))}",
+                "id": f"li-{r.get('id') or _stable_id(str(r.get('job_url')))}",
                 "title": str(r.get("title") or ""),
                 "company": str(r.get("company") or ""),
                 "description": desc,
@@ -218,7 +256,7 @@ def fetch_workingnomads() -> list[dict]:
             tags = [t.strip() for t in tags.split(",") if t.strip()]
         jobs.append({
             "source": "workingnomads",
-            "id": f"wn-{j.get('url', '').rstrip('/').split('/')[-1] or abs(hash(j.get('title') or ''))}",
+            "id": f"wn-{j.get('url', '').rstrip('/').split('/')[-1] or _stable_id(j.get('title') or '')}",
             "title": j.get("title") or "",
             "company": (j.get("company_name") or "").strip(),
             "description": desc,
@@ -273,7 +311,7 @@ def fetch_himalayas() -> list[dict]:
                 loc = ", ".join(str(x) for x in loc)
             jobs.append({
                 "source": "himalayas",
-                "id": f"hi-{j.get('guid') or j.get('applicationLink') or abs(hash(j.get('title') or ''))}",
+                "id": f"hi-{j.get('guid') or j.get('applicationLink') or _stable_id(j.get('title') or '')}",
                 "title": j.get("title") or "",
                 "company": (j.get("companyName") or "").strip(),
                 "description": desc,
@@ -319,16 +357,29 @@ _YC_MAX_COMPANIES = 80
 
 
 def _yc_algolia(params: dict) -> dict:
-    import urllib.parse
+    import urllib.parse, time, http.client
     payload = {"requests": [{"indexName": _YC_ALGOLIA["index"],
                              "params": urllib.parse.urlencode(params)}]}
-    req = urllib.request.Request(
-        _YC_ALGOLIA["url"], data=json.dumps(payload).encode(),
-        headers={"Content-Type": "application/json", "Accept": "application/json",
-                 "X-Algolia-Application-Id": _YC_ALGOLIA["appId"],
-                 "X-Algolia-API-Key": _YC_ALGOLIA["key"]})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read().decode("utf-8"))["results"][0]
+    last = None
+    for attempt in range(4):
+        try:
+            req = urllib.request.Request(
+                _YC_ALGOLIA["url"], data=json.dumps(payload).encode(),
+                headers={"Content-Type": "application/json", "Accept": "application/json",
+                         "X-Algolia-Application-Id": _YC_ALGOLIA["appId"],
+                         "X-Algolia-API-Key": _YC_ALGOLIA["key"]})
+            with urllib.request.urlopen(req, timeout=30) as r:
+                raw = r.read()
+            try:
+                return json.loads(raw.decode("utf-8"))["results"][0]
+            except (json.JSONDecodeError, KeyError) as e:
+                # truncated body (IncompleteRead surfaces here on some stacks)
+                last = e
+        except (http.client.IncompleteRead, http.client.RemoteDisconnected,
+                TimeoutError, ConnectionError, OSError) as e:
+            last = e
+        time.sleep(1.5 * (attempt + 1))
+    raise RuntimeError(f"YC Algolia failed after retries: {last}")
 
 
 def _yc_data_page(url: str):
@@ -522,7 +573,7 @@ def fetch_wwr() -> list[dict]:
         company, role = (m.group(1).strip(), m.group(2).strip()) if m else ("", title)
         jobs.append({
             "source": "wwr",
-            "id": f"wwr-{abs(hash(link))}",
+            "id": f"wwr-{_stable_id(link)}",
             "title": role,
             "company": company,
             "description": desc,
@@ -533,6 +584,226 @@ def fetch_wwr() -> list[dict]:
             "remote": True,
             "salary_min": None, "salary_max": None, "salary_unit": None,
             "posted_at": _parse_dt(pub) if pub else None,
+            "tags": [],
+        })
+    return jobs
+
+
+def fetch_wearedistributed() -> list[dict]:
+    """We Are Distributed job feed (edge-cached JSON). Human-verified remote board;
+    requires a Referer header or the feed returns {"error":"forbidden"}.
+    Fields: t=title c=company w=hire-from regions s=salary sl=slug dp=dept dt=date.
+    No descriptions or apply URLs in the feed; job page is /job/{slug}.
+
+    2026-10-09 P0: the feed frequently truncates mid-transfer (IncompleteRead).
+    Fetch with retries, validate the JSON structure before accepting it, and
+    raise a descriptive error (not silent partial data) when validation fails.
+    """
+    from extract import fetch_with_retry
+    feed_url = "https://wearedistributed.org/job/feed.json"
+    body, err = fetch_with_retry(
+        feed_url,
+        headers={"Referer": "https://wearedistributed.org/remote-jobs/pakistan",
+                 "Accept": "application/json"},
+        max_retries=4, timeout=40,
+    )
+    if err:
+        raise ValueError(f"wearedistributed feed fetch failed: {err}")
+    try:
+        raw = json.loads(body)
+    except Exception as e:
+        raise ValueError(f"wearedistributed feed JSON invalid: {e}")
+    rows = raw.get("rows") or []
+    fields = raw.get("fields") or []
+    # validate: the feed must have the expected columns, else it's a partial/
+    # error payload masquerading as data
+    if not rows or "t" not in fields or "sl" not in fields:
+        raise ValueError(f"wearedistributed feed empty/unexpected: {str(raw)[:120]}")
+    ix = {f: i for i, f in enumerate(fields)}
+
+    def cell(r, k):
+        i = ix.get(k)
+        return r[i] if i is not None and i < len(r) else ""
+
+    jobs = []
+    for r in rows:
+        title = str(cell(r, "t") or "").strip()
+        if not title:
+            continue
+        company = str(cell(r, "c") or "").strip()
+        regions = str(cell(r, "w") or "").strip()
+        salary = str(cell(r, "s") or "").strip()
+        slug = str(cell(r, "sl") or "").strip()
+        smin = smax = None
+        m = re.search(r"\$([\d,]+)", salary.replace(" ", ""))
+        if m:
+            try:
+                smin = smax = int(m.group(1).replace(",", ""))
+            except ValueError:
+                pass
+        url = f"https://wearedistributed.org/job/{slug}" if slug else ""
+        jobs.append({
+            "source": "wearedistributed",
+            "id": f"wad-{slug or _stable_id(title + company)}",
+            "title": title,
+            "company": company,
+            "description": "",
+            "url": url,
+            "apply_url": url,
+            "apply_email": None,
+            "location": regions or "Remote",
+            "remote": _regions_remote(regions),
+            "salary_min": smin, "salary_max": smax,
+            "salary_unit": "yearly" if smin else None,
+            "posted_at": _parse_dt(cell(r, "dt")),
+            "tags": [str(cell(r, "dp") or "").strip()],
+        })
+    return jobs
+
+
+def fetch_nocommute() -> list[dict]:
+    """no-commute-jobs.com public JSON API (single page, ~700 remote jobs).
+    Rich records: full description, direct apply_url, salary, posted_date."""
+    raw = json.loads(_get("https://no-commute-jobs.com/api/jobs?limit=2000"))
+    jobs = []
+    for j in (raw.get("jobs") or []):
+        title = (j.get("title") or "").strip()
+        if not title:
+            continue
+        desc = _strip_html(j.get("description") or "")
+        salary = (j.get("salary") or "").strip()
+        smin = smax = None
+        nums = re.findall(r"\$([\d,]+)", salary)
+        if nums:
+            try:
+                vals = sorted(int(n.replace(",", "")) for n in nums)
+                smin, smax = vals[0], vals[-1]
+            except ValueError:
+                pass
+        unit = "yearly"
+        if re.search(r"(?i)\b(hour|hr)\b", salary):
+            unit = "hourly"
+        elif re.search(r"(?i)\bmonth", salary):
+            unit = "monthly"
+        apply_url = (j.get("apply_url") or "").strip()
+        jobs.append({
+            "source": "nocommute",
+            "id": f"ncj-{j.get('id') or _stable_id(title + str(j.get('company')))}",
+            "title": title,
+            "company": (j.get("company") or "").strip(),
+            "description": desc,
+            "url": apply_url,
+            "apply_url": apply_url,
+            "apply_email": (_emails(desc) or [None])[0],
+            "location": (j.get("location") or "Remote").strip(),
+            "remote": True,
+            "salary_min": smin, "salary_max": smax,
+            "salary_unit": unit if smin else None,
+            "posted_at": _parse_dt(j.get("created_at")) or _parse_dt(j.get("posted_date")),
+            "tags": list(j.get("tags") or []),
+        })
+    return jobs
+
+
+def fetch_justremote() -> list[dict]:
+    """JustRemote internal API (found in their JS bundles).
+    List: /api/v1/jobs (+ category=developer / devopsandsysadmin); detail:
+    /api/v1/jobs/{id} carries descriptions, direct apply link, country_list."""
+    base = "https://justremote-api.herokuapp.com/api/v1"
+    seen, jobs = {}, []
+
+    def _list(qs=""):
+        try:
+            return json.loads(_get(f"{base}/jobs{qs}"))
+        except Exception:
+            return []
+
+    for qs in ("", "?category=developer", "?category=devopsandsysadmin"):
+        for j in _list(qs):
+            if isinstance(j, dict) and j.get("id") not in seen:
+                seen[j["id"]] = j
+    for jid, j in seen.items():
+        if not j.get("is_active", True):
+            continue
+        title = (j.get("title") or "").strip()
+        if not title:
+            continue
+        # detail page: description + apply link + countries + real posted date
+        try:
+            d = json.loads(_get(f"{base}/jobs/{jid}"))
+        except Exception:
+            d = {}
+        desc = _strip_html(" ".join([
+            str(d.get("about_role") or ""), str(d.get("who_looking_for") or ""),
+            str(d.get("our_offer") or ""),
+        ]))
+        apply_html = str(d.get("apply") or "")
+        m = re.search(r'href="([^"]+)"', apply_html)
+        apply_url = (m.group(1) if m else "").strip()
+        countries = [str(c.get("label") or "").strip()
+                     for c in (d.get("country_list") or j.get("location_restrictions") or [])
+                     if isinstance(c, dict)]
+        if not countries and isinstance(j.get("location_restrictions"), list):
+            countries = [str(x).strip() for x in j["location_restrictions"] if x]
+        location = ", ".join(countries) if countries else (j.get("remote_type") or "Remote")
+        href = (j.get("href") or "").strip()
+        page_url = f"https://justremote.co/{href}" if href else ""
+        if not apply_url:
+            apply_url = page_url
+        jobs.append({
+            "source": "justremote",
+            "id": f"jr-{jid}",
+            "title": title,
+            "company": (j.get("company_name") or "").strip(),
+            "description": desc,
+            "url": page_url,
+            "apply_url": apply_url,
+            "apply_email": (_emails(desc) or [None])[0],
+            "location": location,
+            "remote": True,
+            "salary_min": None, "salary_max": None, "salary_unit": None,
+            "posted_at": _parse_dt(d.get("raw_date")) or _parse_dt(j.get("date")),
+            "tags": [j.get("category") or "", j.get("remote_type") or ""],
+        })
+    return jobs
+
+
+def fetch_apnijobs() -> list[dict]:
+    """ApniJobs.pk — Pakistan-native job portal (WordPress REST API).
+    Entry-level + twin-cities onsite roles. No account needed."""
+    jobs = []
+    try:
+        raw = json.loads(_get(
+            "https://www.apnijobs.pk/wp-json/wp/v2/posts"
+            "?per_page=100&_fields=id,title,link,date,content"))
+    except Exception:
+        return jobs
+    for p in raw:
+        title = _strip_html((p.get("title") or {}).get("rendered") or "")
+        if not title:
+            continue
+        desc = _strip_html((p.get("content") or {}).get("rendered") or "")
+        link = p.get("link") or ""
+        # city hints from title/desc
+        loc = "Pakistan"
+        for city in ("islamabad", "rawalpindi", "lahore", "karachi",
+                     "peshawar", "faisalabad", "multan"):
+            if city in (title + " " + desc).lower():
+                loc = city.capitalize() + ", Pakistan"
+                break
+        jobs.append({
+            "source": "apnijobs",
+            "id": f"apn-{p.get('id')}",
+            "title": title,
+            "company": "",
+            "description": desc[:4000],
+            "url": link,
+            "apply_url": link,
+            "apply_email": (_emails(desc) or [None])[0],
+            "location": loc,
+            "remote": "remote" in (title + " " + desc).lower(),
+            "salary_min": None, "salary_max": None, "salary_unit": None,
+            "posted_at": _parse_dt(p.get("date")),
             "tags": [],
         })
     return jobs
@@ -549,4 +820,15 @@ SOURCES = {
     "wwr": fetch_wwr,
     "yc_jobs": fetch_yc_jobs,
     "reddit_forhire": fetch_reddit_forhire,
+    "wearedistributed": fetch_wearedistributed,
+    "nocommute": fetch_nocommute,
+    "justremote": fetch_justremote,
+    "apnijobs": fetch_apnijobs,
 }
+
+if _EXPANSION_OK:
+    # 2026-10-06 expansion: 7 board APIs + 8 niche sources + Reddit RSS
+    # (replaces the dead Arctic Shift reddit_forhire fetcher).
+    SOURCES.update(_NEW_BOARD_FETCHERS)
+    SOURCES.update(_NICHE_FETCHERS)
+    SOURCES["reddit_rss"] = fetch_reddit_jobs
