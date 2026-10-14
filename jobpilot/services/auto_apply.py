@@ -315,12 +315,16 @@ def _classify_and_resolve_field(
         return ("nationality", "Pakistan")
     if _has_word(combined, "preferred first name", "preferred name", "preferred firstname"):
         return ("preferred_name", candidate.get("preferred_name", candidate["first_name"]))
-    if _has_word(combined, "intend to work", "where do you intend", "from where do you intend", "intended location"):
-        return ("intend_to_work", "Worldwide Remote / Islamabad, Pakistan")
-    if _has_word(combined, "worked for", "worked here before", "previously employed", "previous employee", "worked as an employee"):
+    if _has_word(combined, "how many companies", "number of companies", "companies have you worked for", "companies you have worked"):
+        return ("companies_worked_for", "1")
+    if _has_word(combined, "worked here before", "previously worked for canonical", "previously worked for us", "previously employed", "previous employee", "worked as an employee"):
         return ("previously_employed", "No")
     if _has_word(combined, "18 years", "18 or older", "age of 18", "legal age"):
         return ("legal_age", "Yes")
+    if _has_word(combined, "eu citizen", "european union", "citizen of european union"):
+        return ("eu_citizen", "No")
+    if _has_word(combined, "citizen", "citizenship"):
+        return ("citizenship", "Pakistan")
 
     # 3. First Name (ensure not "first degree" or "first university")
     if not _has_word(combined, "first degree", "first university", "first job"):
@@ -363,13 +367,15 @@ def _classify_and_resolve_field(
         return ("discipline", "Computer Science")
     if _has_word(combined, "degree", "qualification"):
         return ("degree", "Bachelor's Degree")
+    if _has_word(combined, "how many companies", "number of companies", "companies have you worked for"):
+        return ("companies_worked_for", "1")
     if _has_word(combined, "graduation date", "date of graduation", "grad date", "completion date"):
         return ("graduation_date", candidate.get("graduation_date", "2026-07-01"))
     if _has_word(combined, "graduation month", "grad month", "month of graduation"):
         return ("graduation_month", candidate.get("graduation_month", "July"))
     if _has_word(combined, "graduation year", "grad year", "year of graduation", "completion year"):
         return ("graduation_year", candidate["graduation_year"])
-    if _has_word(combined, "graduation", "graduated", "completion"):
+    if _has_word(combined, "graduation", "graduated", "completion") and not _has_word(combined, "companies", "worked for", "how many"):
         return ("graduation_text", candidate.get("graduation_text", "July 2026"))
     if _has_word(combined, "gpa", "grade point", "cgpa"):
         return ("gpa", candidate["gpa"])
@@ -506,39 +512,30 @@ def _get_element_prompt(el) -> str:
     """Climbs label and ancestor container hierarchy to reliably extract question prompt text."""
     try:
         prompt = el.evaluate("""e => {
-            // Check direct id
+            // Direct id
             if (e.id) {
                 const l = document.querySelector(`label[for='${e.id}']`) || document.getElementById(`${e.id}-label`);
                 if (l && l.innerText.trim()) return l.innerText.trim();
             }
-            // Check inner input id (for custom select controls, comboboxes, dropzones)
+            // Inner input
             const innerInp = e.tagName.toLowerCase() === 'input' ? e : e.querySelector('input');
-            if (innerInp && innerInp.id) {
-                const l = document.querySelector(`label[for='${innerInp.id}']`) || document.getElementById(`${innerInp.id}-label`);
-                if (l && l.innerText.trim()) return l.innerText.trim();
+            if (innerInp) {
+                if (innerInp.id) {
+                    const l = document.querySelector(`label[for='${innerInp.id}']`) || document.getElementById(`${innerInp.id}-label`);
+                    if (l && l.innerText.trim()) return l.innerText.trim();
+                }
+                const ariaLabelledby = innerInp.getAttribute('aria-labelledby');
+                if (ariaLabelledby) {
+                    const l = document.getElementById(ariaLabelledby);
+                    if (l && l.innerText.trim()) return l.innerText.trim();
+                }
             }
-            // Check parent field/question container label
-            const field = e.closest('.field, [class*="field"], [class*="question"]');
-            if (field) {
-                const l = field.querySelector('label, legend, [class*="label"], [class*="title"], h3, strong');
-                if (l && l.innerText.trim()) return l.innerText.trim();
-            }
-            const lClosest = e.closest('label');
-            if (lClosest && lClosest.innerText.trim()) return lClosest.innerText.trim();
-
-            const ariaLabel = e.getAttribute('aria-label');
-            if (ariaLabel && ariaLabel.trim()) return ariaLabel.trim();
-            const ariaLabelledby = e.getAttribute('aria-labelledby');
-            if (ariaLabelledby) {
-                const elLabel = document.getElementById(ariaLabelledby);
-                if (elLabel && elLabel.innerText.trim()) return elLabel.innerText.trim();
-            }
-
-            let cur = e.parentElement;
-            for (let depth = 0; depth < 6 && cur; depth++) {
-                const labelElem = cur.querySelector('label, [class*="label"], [class*="title"], legend, p, strong, h3, h4');
-                if (labelElem && labelElem.innerText.trim() && !labelElem.innerText.toLowerCase().includes('select...')) {
-                    return labelElem.innerText.trim();
+            // Check nearest container or sibling label
+            let cur = e;
+            while (cur && cur !== document.body) {
+                const l = cur.querySelector('label') || (cur.parentElement ? cur.parentElement.querySelector('label') : null);
+                if (l && l.innerText.trim() && !l.innerText.toLowerCase().includes('select...')) {
+                    return l.innerText.trim();
                 }
                 cur = cur.parentElement;
             }
@@ -603,15 +600,20 @@ def _fill_radio_or_checkbox(element, field_category: str, desired_value: str) ->
         is_checkbox = element.get_attribute("type") == "checkbox"
 
         if is_checkbox:
-            # For consent, terms, agreements, certifications -> ALWAYS check
-            element.check()
+            try:
+                element.check(timeout=1000, force=True)
+            except Exception:
+                element.click(timeout=1000, force=True)
         else:
             # Radio button logic
             label_text = (element.evaluate("el => el.closest('label')?.innerText || el.parentElement?.innerText || ''") or "").strip().lower()
             desired_lower = str(desired_value).lower()
 
             if desired_lower in label_text or (desired_lower == "yes" and any(k in label_text for k in ["yes", "agree", "authorized"])) or (desired_lower == "no" and any(k in label_text for k in ["no", "none", "not"])):
-                element.check()
+                try:
+                    element.check(timeout=1000, force=True)
+                except Exception:
+                    element.click(timeout=1000, force=True)
     except Exception as exc:
         logger.debug("Could not interact with radio/checkbox: %s", exc)
 
@@ -649,10 +651,10 @@ def _handle_custom_react_select(page, csel, category: str, value: str) -> bool:
             search_kw = "Bachelor"
         elif category in ("discipline", "major"):
             search_kw = "Computer Science"
-        elif category in ("privacy_policy", "privacy_notice", "recruitment_privacy"):
-            search_kw = "Acknowledge"
         elif category == "university":
             search_kw = "Other"
+        elif category == "companies_worked_for":
+            search_kw = "1"
 
         if len(search_kw) > 30:
             search_kw = "Yes" if any(w in search_kw.lower() for w in ["yes", "agree", "confirm", "true", "bachelor", "cs"]) else ""
@@ -673,8 +675,8 @@ def _handle_custom_react_select(page, csel, category: str, value: str) -> bool:
             val_lower = search_kw.lower()
             for opt in menu_options:
                 txt = (opt.inner_text() or "").strip().lower()
-                if val_lower == "male":
-                    if txt == "male":
+                if val_lower in ("0", "1", "2", "3", "4", "5", "male"):
+                    if txt == val_lower:
                         target_opt = opt
                         break
                 elif val_lower in txt:
@@ -1018,18 +1020,21 @@ def _click_submit_button(page) -> bool:
 def _generic_apply(url: str, cv_path: str, cover_letter: Optional[str] = None) -> bool:
     """Universal Playwright auto-apply flow for any job board or company website."""
     from playwright.sync_api import sync_playwright
+    from ..agents.application.stealth import STEALTH_LAUNCH_ARGS, apply_stealth_to_context
 
     candidate = _candidate()
 
     with sync_playwright() as p:
         browser = p.chromium.launch(
             headless=settings.PLAYWRIGHT_HEADLESS,
-            args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
+            args=STEALTH_LAUNCH_ARGS,
         )
         context = browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-            viewport={"width": 1280, "height": 800},
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            viewport={"width": 1366, "height": 768},
+            locale="en-US",
         )
+        apply_stealth_to_context(context)
         page = context.new_page()
 
         try:

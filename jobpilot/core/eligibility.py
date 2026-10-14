@@ -199,10 +199,10 @@ def check_geographic_eligibility(
             return False, "LOCATION_INELIGIBLE", "EMEA posting excludes Pakistan"
         return True, None, None
 
-    # If onsite or hybrid role outside Pakistan (Islamabad / Rawalpindi / Pakistan)
+    # If onsite or hybrid role outside Pakistan (Islamabad / Rawalpindi / Lahore / Karachi / Pakistan)
     loc_clean = (job_location or "").lower()
-    is_pk_location = any(pk in loc_clean for pk in ["pakistan", "islamabad", "rawalpindi"])
-    is_worldwide_remote = any(rem in loc_clean for rem in ["worldwide", "anywhere", "global", "work from anywhere"])
+    is_pk_location = any(pk in loc_clean for pk in ["pakistan", "islamabad", "rawalpindi", "lahore", "karachi"])
+    is_worldwide_remote = any(rem in loc_clean for rem in ["worldwide", "anywhere", "global", "work from anywhere", "remote", "emea"])
 
     # If location is not in Pakistan and not explicitly worldwide remote:
     if not is_pk_location and not is_worldwide_remote:

@@ -78,6 +78,8 @@ jobpilot/screenshots/
 .env*
 !.env.example
 scratch/
+scratch_*.py
+uploads/
 *.backup
 jobpilot.db.backup
 

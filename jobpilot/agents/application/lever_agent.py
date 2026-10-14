@@ -64,13 +64,19 @@ class LeverAgent(BaseApplicationAgent):
         try:
             from playwright.sync_api import sync_playwright
             from ...services.auto_apply import _fill_all_form_fields
+            from .stealth import STEALTH_LAUNCH_ARGS, apply_stealth_to_context
 
             with sync_playwright() as p:
-                browser = p.chromium.launch(headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
-                context = browser.new_context(
-                    user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-                    viewport={"width": 1280, "height": 900},
+                browser = p.chromium.launch(
+                    headless=True,
+                    args=STEALTH_LAUNCH_ARGS
                 )
+                context = browser.new_context(
+                    user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                    viewport={"width": 1366, "height": 768},
+                    locale="en-US",
+                )
+                apply_stealth_to_context(context)
                 page = context.new_page()
 
                 logger.info("[LeverAgent] Navigating to %s", job_url)
@@ -178,7 +184,9 @@ class LeverAgent(BaseApplicationAgent):
     def _check_unfilled_visible_fields(self, page) -> bool:
         """Checks if any visible input or select elements remain empty."""
         try:
-            empty_inputs = page.locator("input:not([type='hidden']):not([type='submit']):not([type='button'])").all()
+            empty_inputs = page.locator(
+                "input:not([type='hidden']):not([type='submit']):not([type='button']):not([type='checkbox']):not([type='radio'])"
+            ).all()
             for inp in empty_inputs:
                 if inp.is_visible() and not inp.input_value():
                     return True

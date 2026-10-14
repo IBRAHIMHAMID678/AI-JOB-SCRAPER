@@ -158,6 +158,12 @@ class Settings(BaseSettings):
     LOG_FORMAT: str = "json"                 # json | text
     EVAL_CACHE_FILE: str = "eval_cache.json"
 
+    # ── Apollo & Founder Radar ───────────────────────────────────────────────
+    APOLLO_EMAIL: Optional[str] = None
+    APOLLO_PASSWORD: Optional[str] = None
+    APOLLO_SESSION_TOKEN: Optional[str] = None
+    RADAR_POLL_INTERVAL_MINUTES: int = 5
+
     # ── Data Retention ───────────────────────────────────────────────────────
     AUDIT_LOG_RETENTION_DAYS: int = 90
     JOB_RETENTION_DAYS: int = 180
