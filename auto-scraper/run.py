@@ -123,6 +123,10 @@ def main():
     ap.add_argument("--targets", default=os.path.join(BASE, "targets.yaml"),
                     help="YAML file of arbitrary websites/portals to scrape "
                          "(empty string disables)")
+    ap.add_argument("--verify", type=int, default=0,
+                    help="after ranking, live-verify the apply routes of the "
+                         "top-N leads in headless Chromium via verify_live.py "
+                         "(default 0 = off)")
     args = ap.parse_args()
 
     src_names = [s for s in args.sources.split(",") if s in SOURCES]
@@ -295,6 +299,29 @@ def main():
 
     top = (passed + review)[:args.top]
 
+    # Live apply-route verification (2026-10-14): render each top lead's
+    # apply URL in headless Chromium and classify it. Off by default.
+    verified_map = {}
+    if args.verify and args.verify > 0:
+        try:
+            import verify_live
+            vurls, vkeys = [], []
+            for r in top[:args.verify]:
+                j = r["job"]
+                u = j.get("apply_url") or j.get("url")
+                if u:
+                    vurls.append(u)
+                    vkeys.append((j.get("company"), j.get("title")))
+            print(f"Live-verifying {len(vurls)} apply routes...")
+            vres = verify_live.verify(vurls)
+            for u, key in zip(vurls, vkeys):
+                verified_map[u] = vres.get(u, {})
+            n_live = sum(1 for v in verified_map.values()
+                         if v.get("verdict") == "live_apply")
+            print(f"Verification: {n_live}/{len(vurls)} live apply routes")
+        except Exception as e:
+            print(f"Live verification skipped: {e}")
+
     # Per-source health metrics (2026-10-09 P1): description extraction
     # success + verdict distribution per source, recorded every run.
     try:
@@ -375,6 +402,8 @@ def main():
                 "confidence": r.get("confidence", "low"),
                 "ruleset_version": r.get("ruleset_version", "?"),
                 "lane": r.get("lane", "D"),
+                "verified": verified_map.get(
+                    j.get("apply_url") or j.get("url"), {}),
                 "job": j}
 
     with open(os.path.join(outdir, "leads.json"), "w") as f:
@@ -410,6 +439,16 @@ def main():
         for r in review[:10]:
             j = r["job"]
             lines.append(f"- {j['title']} — {j['company']} ({j['source']}): {'; '.join(r['reasons'])}")
+    if verified_map:
+        lines += ["", "## Verified apply routes (live Chromium check)", ""]
+        for i, r in enumerate(top[:args.verify], 1):
+            j = r["job"]
+            v = verified_map.get(j.get("apply_url") or j.get("url"), {})
+            verdict = v.get("verdict", "not run")
+            au = v.get("apply_url") or ""
+            au_s = f" → {au}" if au and au != (j.get("apply_url") or j.get("url")) else ""
+            lines.append(f"- {i}. {j['title']} — {j['company']}: **{verdict}**{au_s}"
+                         f" ({v.get('notes', 'n/a')})")
     with open(os.path.join(outdir, "report.md"), "w") as f:
         f.write("\n".join(lines))
     print(f"Wrote {outdir}/leads.json and report.md")
