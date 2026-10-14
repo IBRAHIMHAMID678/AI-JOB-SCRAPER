@@ -832,3 +832,11 @@ if _EXPANSION_OK:
     SOURCES.update(_NEW_BOARD_FETCHERS)
     SOURCES.update(_NICHE_FETCHERS)
     SOURCES["reddit_rss"] = fetch_reddit_jobs
+
+try:
+    # 2026-10-14 expansion: talenthubsol (PK portal, WP REST noo_job),
+    # indeed_pk (Indeed Pakistan via jobspy). See sources_extra.py.
+    from sources_extra import FETCHERS as _EXTRA_FETCHERS
+    SOURCES.update(_EXTRA_FETCHERS)
+except Exception:
+    pass
