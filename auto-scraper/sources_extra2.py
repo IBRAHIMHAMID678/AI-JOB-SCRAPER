@@ -863,7 +863,7 @@ FETCHERS = {
     "adzuna": fetch_adzuna,
     "jooble": fetch_jooble,
     "hiringcafe": fetch_hiringcafe,
-    "jobspy_extra": fetch_jobspy_extra,
+    "jobspy_bayt": fetch_jobspy_extra,
 }
 
 

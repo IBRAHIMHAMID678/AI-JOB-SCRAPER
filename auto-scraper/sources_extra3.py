@@ -352,7 +352,9 @@ def fetch_getmanfred() -> list[dict]:
                 f"https://www.getmanfred.com/offers/{o.get('slug')}" if o.get("slug") else "",
                 location=loc_txt,
                 remote=(o.get("remotePercentage") or 0) >= 80 or _remote_of(loc_txt),
-                desc=(o.get("highlights") or "")[:4000],
+                desc=(" • ".join(str(h) for h in o.get("highlights") or [])
+                      if isinstance(o.get("highlights"), list)
+                      else (o.get("highlights") or ""))[:4000],
                 posted=_parse_dt(o.get("updatedAt")),
                 salary_min=o.get("salaryFrom"), salary_max=o.get("salaryTo"),
                 salary_unit=o.get("currency")))
