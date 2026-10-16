@@ -116,7 +116,7 @@ def scrape(sources: list[str]) -> tuple[list[dict], list[str], dict]:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--top", type=int, default=20)
-    ap.add_argument("--sources", default="remoteok,remotive,hn_hiring,linkedin,workingnomads,jobicy,himalayas,wwr,yc_jobs,reddit_rss,wearedistributed,nocommute,justremote,pythonorg,arc,remotecom,dailyremote,techjobsforgood,remote4africa,builtin,jobsbylevel,arbeitnow,rj_ai_curator,tg_remotejobs,tg_remote_python,berlinstartupjobs,getinit,dice,talenthubsol,indeed_pk,ats_greenhouse,ats_lever,ats_ashby,reed,adzuna,jooble,hiringcafe,jobspy_extra,workable_search,themuse,landing_jobs,getonbrd,fourdayweek,a16z_speedrun,amazon_jobs,getmanfred,thehub,rj_api,flowxtra,remotli,jobspresso_rss,crypto_rss,smartrecruiters,justjoin")
+    ap.add_argument("--sources", default="remoteok,remotive,hn_hiring,linkedin,workingnomads,jobicy,himalayas,wwr,yc_jobs,reddit_rss,wearedistributed,nocommute,justremote,pythonorg,arc,remotecom,dailyremote,techjobsforgood,remote4africa,builtin,jobsbylevel,arbeitnow,rj_ai_curator,tg_remotejobs,tg_remote_python,berlinstartupjobs,getinit,dice,talenthubsol,indeed_pk,ats_greenhouse,ats_lever,ats_ashby,reed,adzuna,jooble,hiringcafe,jobspy_bayt,workable_search,themuse,landing_jobs,getonbrd,fourdayweek,a16z_speedrun,amazon_jobs,getmanfred,thehub,rj_api,flowxtra,remotli,jobspresso_rss,crypto_rss,smartrecruiters,justjoin")
     ap.add_argument("--out", default=os.path.join(BASE, "results"))
     ap.add_argument("--drafts", type=int, default=0,
                     help="create Gmail drafts for top-N email-route leads")
