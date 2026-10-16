@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import re
+import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 
@@ -298,11 +299,17 @@ def fetch_jobicy() -> list[dict]:
 
 
 def fetch_himalayas() -> list[dict]:
-    """Himalayas public jobs API, cursor-paginated (2 pages x 20)."""
-    jobs, cursor, pages = [], None, 0
-    while pages < 2:
-        url = "https://himalayas.app/jobs/api?limit=20" + (f"&cursor={cursor}" if cursor else "")
-        raw = json.loads(_get(url))
+    """Himalayas public jobs API via /jobs/api/search (the /jobs/api endpoint
+    silently ignores the q filter — fixed 2026-10-16)."""
+    jobs = []
+    for kw in ("AI engineer", "machine learning engineer", "python developer",
+               "full stack developer", "chatbot developer"):
+        q = urllib.parse.quote(kw)
+        try:
+            raw = json.loads(_get(
+                f"https://himalayas.app/jobs/api/search?q={q}&limit=40"))
+        except Exception:
+            continue
         for j in (raw.get("jobs") or []):
             desc = (j.get("description") or "") + "\n" + (j.get("excerpt") or "")
             emails = _emails(desc)
@@ -325,10 +332,6 @@ def fetch_himalayas() -> list[dict]:
                 "posted_at": _parse_dt(j.get("pubDate")),
                 "tags": (j.get("categories") or []) + [j.get("seniority") or ""],
             })
-        cursor = raw.get("nextCursor")
-        pages += 1
-        if not cursor:
-            break
     return jobs
 
 
@@ -838,5 +841,25 @@ try:
     # indeed_pk (Indeed Pakistan via jobspy). See sources_extra.py.
     from sources_extra import FETCHERS as _EXTRA_FETCHERS
     SOURCES.update(_EXTRA_FETCHERS)
+except Exception:
+    pass
+
+try:
+    # 2026-10-16 expansion (user-authorized GitHub integration):
+    # ATS lanes (greenhouse/lever/ashby @ 358 AI-company boards),
+    # Reed/Adzuna/Jooble official APIs (key-gated, skip without keys),
+    # hiringcafe (unofficial SSR), jobspy_extra (zip_recruiter+google).
+    # See sources_extra2.py.
+    from sources_extra2 import FETCHERS as _EXTRA2_FETCHERS
+    SOURCES.update(_EXTRA2_FETCHERS)
+except Exception:
+    pass
+try:
+    # 2026-10-16 keyless-alternatives integration (user-authorized):
+    # 16 keyless lanes (workable/themuse/landing/getonbrd/4dayweek/
+    # a16z/amazon/getmanfred/thehub/rj_api/flowxtra/remotli/RSSx2/
+    # smartrecruiters/justjoin). See sources_extra3.py.
+    from sources_extra3 import FETCHERS as _EXTRA3_FETCHERS
+    SOURCES.update(_EXTRA3_FETCHERS)
 except Exception:
     pass
