@@ -3,156 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Job Matcher & Pipeline Control Center</title>
+    <title>AI Job Hunter — Pipeline Control Center</title>
+    <meta name="description" content="Automated multi-source job scraper and AI-powered evaluation engine for remote software and AI engineering roles.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="app-container">
-        <!-- Executive Header Bar -->
+        <!-- Top navigation bar -->
         <header class="app-header">
             <div class="brand-block">
-                <div class="logo-mark">⚡</div>
-                <div>
-                    <h1>AI Remote Job Hunter <span class="brand-sub">Enterprise Engine</span></h1>
-                    <p class="subtitle">Multi-source automated scraper & precision evaluation engine for Pakistan & Worldwide Remote roles.</p>
+                <div class="logo-mark">AI</div>
+                <div class="brand-text">
+                    <h1>AI Job Hunter</h1>
+                    <p class="subtitle">Multi-source scraper &amp; evaluation engine for remote software / AI roles</p>
                 </div>
             </div>
-            
             <div class="header-status">
                 <span class="status-badge" id="pipeline-status-badge">System Ready</span>
-                <span class="status-badge" id="mongo-status-badge">DB: Checking...</span>
+                <span class="status-badge status-neutral" id="mongo-status-badge">DB: Checking...</span>
             </div>
         </header>
 
-        <!-- Metrics Overview Grid -->
+        <!-- Key metrics -->
         <section class="metrics-grid">
             <div class="metric-card">
-                <div class="metric-header">
+                <div class="metric-top">
                     <span class="metric-title">Scraped Jobs</span>
-                    <span class="metric-icon">🌐</span>
+                    <span class="metric-icon metric-icon-blue">Jobs</span>
                 </div>
                 <div class="metric-value" id="metric-scraped">0</div>
                 <div class="metric-desc">Raw postings collected</div>
             </div>
-            
-            <div class="metric-card success-card">
-                <div class="metric-header">
-                    <span class="metric-title">Auto-Approved (≥60%)</span>
-                    <span class="metric-icon">🎯</span>
+
+            <div class="metric-card">
+                <div class="metric-top">
+                    <span class="metric-title">Auto-Approved (&ge;60%)</span>
+                    <span class="metric-icon metric-icon-green">Fit</span>
                 </div>
-                <div class="metric-value" id="metric-matched">0</div>
+                <div class="metric-value metric-value-green" id="metric-matched">0</div>
                 <div class="metric-desc">Passed strict verifier gate</div>
             </div>
 
-            <div class="metric-card warning-card">
-                <div class="metric-header">
+            <div class="metric-card">
+                <div class="metric-top">
                     <span class="metric-title">Pending Review</span>
-                    <span class="metric-icon">⏳</span>
+                    <span class="metric-icon metric-icon-amber">Review</span>
                 </div>
-                <div class="metric-value" id="metric-pending">0</div>
+                <div class="metric-value metric-value-amber" id="metric-pending">0</div>
                 <div class="metric-desc">Borderline roles for inspection</div>
             </div>
 
-            <div class="metric-card info-card">
-                <div class="metric-header">
+            <div class="metric-card">
+                <div class="metric-top">
                     <span class="metric-title">Applied Jobs</span>
-                    <span class="metric-icon">💼</span>
+                    <span class="metric-icon metric-icon-slate">Done</span>
                 </div>
                 <div class="metric-value" id="metric-applied">0</div>
                 <div class="metric-desc">Applications tracked</div>
             </div>
         </section>
 
-        <!-- Command Toolbar -->
+        <!-- Command toolbar -->
         <section class="toolbar">
             <div class="toolbar-actions">
-                <button id="start-btn" class="btn btn-primary">
-                    <span class="btn-icon">⚡</span> Run Multi-Site Pipeline
-                </button>
-                <button id="clear-all-btn" class="btn btn-danger">
-                    <span class="btn-icon">🧹</span> Purge All Data
-                </button>
+                <button id="start-btn" class="btn btn-primary">Run Multi-Site Pipeline</button>
+                <button id="clear-all-btn" class="btn btn-danger-outline">Purge All Data</button>
             </div>
-
             <div class="toolbar-exports">
-                <a href="/api/download" id="download-btn" class="btn btn-secondary" download>
-                    <span class="btn-icon">📊</span> Export CSV
-                </a>
-                <a href="/api/download/docx" id="download-docx-btn" class="btn btn-secondary" download>
-                    <span class="btn-icon">📄</span> Export DOCX
-                </a>
+                <a href="/api/download" id="download-btn" class="btn btn-outline" download>Export CSV</a>
+                <a href="/api/download/docx" id="download-docx-btn" class="btn btn-outline" download>Export DOCX</a>
             </div>
         </section>
 
-        <!-- Scraper Sources Grid -->
+        <!-- Scraper sources -->
         <section class="sources-section">
             <div class="section-header">
-                <h3>📡 Active Scraper Sources (10 Platforms)</h3>
+                <h3>Active Scraper Sources</h3>
+                <span class="section-count">10 platforms</span>
             </div>
             <div class="sources-grid" id="sources-grid">
                 <div class="source-item" data-source="JobSpy (LinkedIn/Indeed/Glassdoor/ZipRecruiter)">
-                    <span class="source-name">JobSpy (LinkedIn & Indeed)</span>
+                    <span class="source-dot"></span>
+                    <span class="source-name">JobSpy (LinkedIn &amp; Indeed)</span>
                     <span class="source-count">Ready</span>
                 </div>
                 <div class="source-item" data-source="Himalayas API">
+                    <span class="source-dot"></span>
                     <span class="source-name">Himalayas.app</span>
                     <span class="source-count">Ready</span>
                 </div>
                 <div class="source-item" data-source="Remotive API">
+                    <span class="source-dot"></span>
                     <span class="source-name">Remotive API</span>
                     <span class="source-count">Ready</span>
                 </div>
                 <div class="source-item" data-source="Remote OK API">
+                    <span class="source-dot"></span>
                     <span class="source-name">Remote OK</span>
                     <span class="source-count">Ready</span>
                 </div>
                 <div class="source-item" data-source="Jobicy API">
+                    <span class="source-dot"></span>
                     <span class="source-name">Jobicy Remote</span>
                     <span class="source-count">Ready</span>
                 </div>
                 <div class="source-item" data-source="Working Nomads API">
+                    <span class="source-dot"></span>
                     <span class="source-name">Working Nomads</span>
                     <span class="source-count">Ready</span>
                 </div>
                 <div class="source-item" data-source="WeWorkRemotely RSS">
+                    <span class="source-dot"></span>
                     <span class="source-name">WeWorkRemotely</span>
                     <span class="source-count">Ready</span>
                 </div>
                 <div class="source-item" data-source="Python.org & NoDesk RSS">
+                    <span class="source-dot"></span>
                     <span class="source-name">Python.org / NoDesk</span>
                     <span class="source-count">Ready</span>
                 </div>
                 <div class="source-item" data-source="The Muse API">
+                    <span class="source-dot"></span>
                     <span class="source-name">The Muse</span>
                     <span class="source-count">Ready</span>
                 </div>
                 <div class="source-item" data-source="Arbeitnow API">
+                    <span class="source-dot"></span>
                     <span class="source-name">Arbeitnow</span>
                     <span class="source-count">Ready</span>
                 </div>
             </div>
         </section>
 
-        <!-- Main Dashboard Content Split -->
+        <!-- Main dashboard -->
         <div class="main-dashboard">
-            <!-- Left Pane: Console & Borderline Review -->
+            <!-- Left pane -->
             <div class="left-pane">
                 <div class="card console-card">
                     <div class="card-header">
-                        <h3>💻 Execution Console</h3>
-                        <button id="clear-console-btn" class="btn-icon-only" title="Clear logs">🧹</button>
+                        <h3>Execution Console</h3>
+                        <button id="clear-console-btn" class="btn-icon-only" title="Clear logs">Clear</button>
                     </div>
                     <div id="console-output" class="console-output">
-                        <p class="log-system">> System ready. Click "Run Multi-Site Pipeline" to execute scrapers & verifier engine.</p>
+                        <p class="log-system">&gt; System ready. Click "Run Multi-Site Pipeline" to execute scrapers &amp; verifier engine.</p>
                     </div>
                 </div>
 
                 <div class="card pending-card">
                     <div class="card-header">
-                        <h3>⏳ Borderline Pending Review</h3>
+                        <h3>Borderline — Pending Review</h3>
                     </div>
                     <div id="pending-list" class="pending-list">
                         <p class="empty-state">No jobs pending manual review.</p>
@@ -160,24 +162,23 @@
                 </div>
             </div>
 
-            <!-- Right Pane: Approved Jobs Results Table -->
+            <!-- Right pane -->
             <div class="right-pane">
                 <div class="card table-card">
                     <div class="table-card-header">
                         <div>
-                            <h2>Approved Jobs (≥60% Fit)</h2>
-                            <p class="sub-text">Jobs passing strict verification: Worldwide / UK / Pakistan Remote, 0-2 yrs experience, $\ge 2$ tech skills.</p>
+                            <h2>Approved Jobs (&ge;60% Fit)</h2>
+                            <p class="sub-text">Jobs passing strict verification: Worldwide / UK / Pakistan remote, 0&ndash;2 yrs experience, 2+ tech-skill matches.</p>
                         </div>
                     </div>
 
                     <div class="table-controls">
                         <div class="search-box">
-                            <span class="search-icon">🔍</span>
                             <input type="text" id="search-input" placeholder="Search by title, company, skills...">
                         </div>
                         <div class="filter-pills">
                             <button class="filter-pill active" data-filter="all">All Matched</button>
-                            <button class="filter-pill" data-filter="high">High Fit (≥80%)</button>
+                            <button class="filter-pill" data-filter="high">High Fit (&ge;80%)</button>
                             <button class="filter-pill" data-filter="hourly">USD Hourly</button>
                             <button class="filter-pill" data-filter="worldwide">Worldwide / UK</button>
                             <button class="filter-pill" data-filter="applied">Applied Jobs</button>
@@ -189,8 +190,8 @@
                             <thead>
                                 <tr>
                                     <th>Match Score</th>
-                                    <th>Job Title & Skill Tags</th>
-                                    <th>Company & Source</th>
+                                    <th>Job Title &amp; Skill Tags</th>
+                                    <th>Company &amp; Source</th>
                                     <th>Est. Pay</th>
                                     <th>Action</th>
                                 </tr>
@@ -208,12 +209,12 @@
             </div>
         </div>
 
-        <!-- Verification Modal -->
+        <!-- Verification modal -->
         <div id="verification-modal" class="modal-overlay">
             <div class="modal-card">
                 <div class="modal-header">
                     <h2>Manual Job Verification</h2>
-                    <button id="modal-close" class="close-btn">&times;</button>
+                    <button id="modal-close" class="close-btn" aria-label="Close">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="modal-left">
@@ -222,51 +223,51 @@
                         <div class="detail-row"><strong>Company:</strong> <span id="modal-job-company"></span></div>
                         <div class="detail-row"><strong>Location:</strong> <span id="modal-job-location"></span></div>
                         <div class="detail-row"><strong>Source:</strong> <span id="modal-job-source"></span></div>
-                        <div class="detail-row"><strong>URL:</strong> <a id="modal-job-url" href="#" target="_blank" class="link-external">Open Original Posting &nearr;</a></div>
-                        
+                        <div class="detail-row"><strong>URL:</strong> <a id="modal-job-url" href="#" target="_blank" class="link-external">Open original posting</a></div>
+
                         <div class="desc-box">
                             <h4>Description Snippet</h4>
                             <div id="modal-job-desc" class="desc-content"></div>
                         </div>
                     </div>
-                    
+
                     <div class="modal-right">
                         <h3>Match Parameters</h3>
                         <div class="cv-reference">
                             <pre id="modal-candidate-cv"></pre>
                         </div>
-                        
+
                         <form id="verification-form">
                             <div class="form-checkbox">
                                 <label>
                                     <input type="checkbox" id="verify-remote" checked>
-                                    Valid Worldwide / Pakistan / UK Remote Position
+                                    Valid Worldwide / Pakistan / UK remote position
                                 </label>
                             </div>
-                            
+
                             <div class="form-group">
-                                <label for="verify-score">Match Score: <span id="verify-score-val">60%</span></label>
+                                <label for="verify-score">Match score: <span id="verify-score-val">60%</span></label>
                                 <input type="range" id="verify-score" min="0" max="100" value="60">
                             </div>
-                            
+
                             <div class="form-group">
-                                <label for="verify-pay">Pay Rate:</label>
-                                <input type="text" id="verify-pay">
+                                <label for="verify-pay">Pay rate</label>
+                                <input type="text" id="verify-pay" placeholder="e.g. $30/hr">
                             </div>
-                            
+
                             <div class="form-group">
-                                <label for="verify-location">Location String:</label>
-                                <input type="text" id="verify-location">
+                                <label for="verify-location">Location string</label>
+                                <input type="text" id="verify-location" placeholder="e.g. Remote, Pakistan">
                             </div>
-                            
+
                             <div class="form-group">
-                                <label for="verify-reason">Verifier Notes:</label>
-                                <textarea id="verify-reason" rows="3"></textarea>
+                                <label for="verify-reason">Verifier notes</label>
+                                <textarea id="verify-reason" rows="3" placeholder="Why does this job fit?"></textarea>
                             </div>
-                            
+
                             <div class="modal-actions">
-                                <button type="button" id="btn-approve" class="btn btn-primary">Approve & Save</button>
-                                <button type="button" id="btn-reject" class="btn btn-secondary">Reject</button>
+                                <button type="button" id="btn-approve" class="btn btn-primary">Approve &amp; Save</button>
+                                <button type="button" id="btn-reject" class="btn btn-outline">Reject</button>
                             </div>
                         </form>
                     </div>
@@ -274,17 +275,17 @@
             </div>
         </div>
 
-        <!-- Job Details Modal -->
+        <!-- Inspector modal -->
         <div id="inspector-modal" class="modal-overlay">
             <div class="modal-card inspector-card">
                 <div class="modal-header">
-                    <h2>Job Details & Full Description</h2>
-                    <button id="inspector-close" class="close-btn">&times;</button>
+                    <h2>Job Details &amp; Full Description</h2>
+                    <button id="inspector-close" class="close-btn" aria-label="Close">&times;</button>
                 </div>
                 <div class="inspector-body">
                     <div class="inspector-meta-bar">
                         <div class="meta-item">
-                            <span class="meta-label">Position Title</span>
+                            <span class="meta-label">Position title</span>
                             <span class="meta-val" id="inspect-title"></span>
                         </div>
                         <div class="meta-item">
@@ -296,11 +297,11 @@
                             <span class="meta-val highlight-pay" id="inspect-pay"></span>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">Match Score</span>
+                            <span class="meta-label">Match score</span>
                             <span class="meta-val score-badge" id="inspect-score"></span>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">Source Board</span>
+                            <span class="meta-label">Source board</span>
                             <span class="meta-val" id="inspect-source"></span>
                         </div>
                         <div class="meta-item">
@@ -310,23 +311,26 @@
                     </div>
 
                     <div class="inspector-reason-box">
-                        <strong>Match Analysis:</strong>
+                        <strong>Match analysis</strong>
                         <p id="inspect-reason"></p>
                     </div>
 
                     <div class="inspector-actions">
-                        <a id="inspect-apply-btn" href="#" target="_blank" class="btn btn-primary apply-btn-large">🔗 Apply Direct on Employer Site &nearr;</a>
-                        <button id="inspect-mark-applied-btn" class="btn btn-secondary apply-btn-large">✓ Mark as Applied</button>
+                        <a id="inspect-apply-btn" href="#" target="_blank" class="btn btn-primary apply-btn-large">Apply on employer site</a>
+                        <button id="inspect-mark-applied-btn" class="btn btn-outline apply-btn-large">Mark as applied</button>
                     </div>
 
                     <div class="desc-box">
-                        <h3>Full Job Description</h3>
+                        <h3>Full job description</h3>
                         <div id="inspect-desc" class="desc-content full-desc"></div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <footer class="app-footer">
+            <p>AI Job Hunter &mdash; automated multi-source scraper &amp; evaluation engine. Built by <a href="https://github.com/IBRAHIMHAMID678" target="_blank" rel="noopener">Ibrahim Hamid</a>.</p>
+        </footer>
     </div>
     <script src="/static/script.js"></script>
 </body>

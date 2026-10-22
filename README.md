@@ -1,71 +1,113 @@
-# AI Remote Job Generator & Orchestrator Pro
+# AI Job Hunter
 
-An automated multi-source job scraper and AI-powered evaluation engine tailored for finding remote, Pakistan-eligible, and junior-friendly software/AI engineering roles.
+An automated multi-source job scraper and AI-powered evaluation engine for finding remote software and AI engineering roles — with a live pipeline control dashboard.
 
----
-
-## 🚀 Key Features
-
-- **Multi-Source Scraping**: Pulls job postings from LinkedIn, Indeed, Glassdoor, ZipRecruiter (via JobSpy), Himalayas API, Remotive API, Remote OK API, WeWorkRemotely RSS, and Python.org/NoDesk.
-- **Smart Local Evaluator**: Automatically scores jobs based on tech stack relevance (Python, FastAPI, React, Next.js, LangChain, RAG, MongoDB) and flags location/visa restrictions (e.g., US-only).
-- **Auto-Approval Pipeline**: Automatically accepts jobs scoring $\ge 40\%$ and places borderline jobs into a **Pending Manual Review** queue.
-- **Dual Storage**: Stores matched opportunities in MongoDB (falls back to local memory mode if MongoDB is offline).
-- **Real-Time Control Panel**: Live console logs, status trackers, and interactive inspection tools using FastAPI and EventSource (SSE).
-- **Report Exports**: One-click download of matched jobs as CSV or formatted Word documents (DOCX).
+![Dashboard](docs/screenshots/hero.png)
 
 ---
 
-## 🛠️ Project Structure
+## About
 
-- `server.py`: FastAPI server serving endpoints, logs, and downloads.
-- `main.py`: CLI pipeline runner.
-- `evaluator.py`: High-speed local filtering, matching logic, and evaluation cache.
-- `database.py`: MongoDB client setup and schema helper functions.
-- `log_manager.py`: Centralized logging queues.
-- `scrapers/`: Sub-modules containing site-specific scrapers.
-- `static/`: Frontend dashboard assets (`index.html`, `script.js`, `style.css`).
+**AI Job Hunter** scrapes job postings from 10+ platforms, scores each one against a candidate profile (tech-stack relevance, experience band, location/visa eligibility), and auto-approves strong matches while routing borderline roles into a manual review queue. A real-time dashboard shows pipeline metrics, per-source counts, a live execution console, and a searchable table of approved jobs with match scores, skill tags, pay estimates, and one-click exports.
+
+It was built to run a real job hunt: remote, Pakistan-eligible, and junior-friendly (0–3 years) software/AI engineering roles — filtering out senior-only postings, region-gated listings, and QA/SDET roles automatically.
+
+![Full dashboard](docs/screenshots/dashboard.png)
 
 ---
 
-## ⚙️ Setup Instructions
+## Key Features
+
+- **Multi-source scraping** — JobSpy (LinkedIn/Indeed/Glassdoor/ZipRecruiter), Himalayas API, Remotive API, Remote OK API, Jobicy, Working Nomads, WeWorkRemotely RSS, Python.org/NoDesk, The Muse, Arbeitnow.
+- **Smart evaluator** — scores jobs on tech-stack fit (Python, FastAPI, React, Next.js, LangChain, RAG, MongoDB, …) and flags location/visa restrictions (e.g. US-only).
+- **Auto-approval pipeline** — jobs scoring ≥ 60% are auto-approved; borderline jobs go to a **Pending Review** queue with a manual verification modal.
+- **Live control dashboard** — pipeline metrics, per-source job counts, streaming execution console, search + filter pills, job inspector with full description, and mark-as-applied tracking.
+- **Report exports** — one-click download of matched jobs as CSV or DOCX.
+- **Dual storage** — MongoDB for persistence, with automatic fallback to in-memory mode.
+
+---
+
+## Project Structure
+
+```
+├── server.py              # FastAPI server: API endpoints, SSE logs, downloads, dashboard
+├── main.py                # CLI pipeline runner
+├── evaluator.py           # Filtering, match scoring, evaluation cache
+├── database.py            # MongoDB client + schema helpers
+├── log_manager.py         # Centralized logging queues
+├── email_service.py       # Email digest delivery
+├── application_engine.py  # Application helpers
+├── scrapers/              # Site-specific scraper modules
+├── jobpilot/              # Extended pipeline package (agents, services, workers)
+├── static/                # Dashboard frontend (index.html, style.css, script.js)
+│   ├── index.html         # Pipeline control center UI
+│   ├── style.css          # Professional light theme
+│   └── script.js          # Dashboard logic (SSE console, filters, modals)
+└── docs/screenshots/      # Dashboard screenshots
+```
+
+---
+
+## Setup
 
 ### 1. Prerequisites
-Ensure you have Python 3.10+ installed.
 
-### 2. Install Dependencies
-Run the following command to install required Python libraries:
+- Python 3.10+
+- *(Optional)* MongoDB Community Server for persistent storage — the app falls back to in-memory mode if MongoDB is unavailable.
+
+### 2. Install dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
-*(Optional)* Install MongoDB Community Server locally to enable persistent storage. If MongoDB is not running, the application will automatically fall back to in-memory storage.
 
-### 3. Environment Variables
-Create a `.env` file in the root directory based on `.env.example`:
+### 3. Environment variables
+
+Create a `.env` file in the project root (see `.env.example`):
+
 ```env
-GROQ_API_KEY=your_groq_api_key_here
-OPENROUTER_API_KEY=your_openrouter_api_key_here
+GROQ_API_KEY=<your-key>
+OPENROUTER_API_KEY=<your-key>
 MONGO_URI=mongodb://localhost:27017/
 MONGO_DB_NAME=job_scraper_db
 ```
 
----
+### 4. Run
 
-## 🏃 Running the Application
+**Dashboard** (recommended):
 
-To run the full interactive dashboard:
 ```bash
 python server.py
 ```
-Then open your browser and navigate to **[http://localhost:8000](http://localhost:8000)**.
 
-To run the pipeline via CLI:
+Then open [http://localhost:8000](http://localhost:8000) — the pipeline control center with live metrics, console, and job review.
+
+**CLI pipeline**:
+
 ```bash
 python main.py
 ```
 
 ---
 
-## 📈 Planned Capabilities
-- **Automated Applications**: Automated form submissions for Greenhouse and Lever.
-- **Guided Workday Assistant**: Headed browser automation helping with login and page-by-page profile filling.
-- **Profile Customization**: Interactive resume uploading and profile details form directly in the dashboard.
+## How the pipeline works
+
+1. **Scrape** — each source module pulls fresh postings (titles, companies, locations, descriptions, URLs).
+2. **Evaluate** — every posting is scored 0–100% on skill overlap, experience band (0–3 yrs), and geo eligibility (worldwide / Pakistan-eligible remote).
+3. **Route** — ≥ 60% → approved table; borderline → pending review queue for manual verify/approve/reject.
+4. **Track** — mark jobs as applied; export approved lists to CSV/DOCX; optional email digests.
+
+---
+
+## Tech Stack
+
+- **Backend:** Python, FastAPI, Server-Sent Events (SSE)
+- **Frontend:** Vanilla HTML/CSS/JS, Inter typeface, responsive light-theme dashboard
+- **Data:** MongoDB (with in-memory fallback), CSV/DOCX export
+- **Scraping:** JobSpy, REST APIs, RSS feeds, requests/BeautifulSoup
+
+---
+
+## Author
+
+Built by [Ibrahim Hamid](https://github.com/IBRAHIMHAMID678) — AI Engineer working on LLM applications, RAG pipelines, voice AI, and automation tooling.
