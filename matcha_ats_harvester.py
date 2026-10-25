@@ -27,7 +27,7 @@ def load_company_registry() -> Dict[str, List[str]]:
                 return json.load(f)
         except Exception:
             pass
-    return {"greenhouse": [], "ashby": [], "lever": [], "rippling": [], "workable": []}
+    return {"greenhouse": [], "ashby": [], "lever": [], "rippling": [], "workable": [], "smartrecruiters": []}
 
 class MatchaATSHarvester:
     def __init__(self, max_concurrent: int = 15, timeout: float = 12.0):
@@ -172,6 +172,105 @@ class MatchaATSHarvester:
             pass
         return jobs
 
+    async def fetch_rippling_board(self, client: httpx.AsyncClient, token: str, max_hours: float = 24.0) -> List[Dict[str, Any]]:
+        url = f"https://api.rippling.com/platform/api/ats/v2/board/{token}/jobs?groupJobsByLocation=true&page=0&pageSize=1000"
+        jobs: List[Dict[str, Any]] = []
+        try:
+            resp = await client.get(url, timeout=self.timeout)
+            if resp.status_code != 200:
+                return []
+            data = resp.json()
+            items = data.get("items", [])
+            for r in items:
+                job_id = str(r.get("id"))
+                title = (r.get("name") or "").strip()
+                canonical_url = r.get("url") or f"https://ats.rippling.com/{token}/jobs/{job_id}"
+
+                locations = r.get("locations") or []
+                loc_parts = []
+                is_remote = False
+                for loc in locations:
+                    wp = loc.get("workplaceType", "")
+                    if wp == "REMOTE":
+                        is_remote = True
+                    loc_name = loc.get("name") or f"{loc.get('city', '')}, {loc.get('country', '')}"
+                    if loc_name.strip():
+                        loc_parts.append(loc_name.strip())
+
+                loc_str = ", ".join(loc_parts) if loc_parts else "Remote"
+                if is_remote and "remote" not in loc_str.lower():
+                    loc_str = f"Remote - {loc_str}"
+
+                ts = r.get("publishedAt") or r.get("createdAt") or datetime.now(timezone.utc).isoformat()
+                is_fresh, hrs_old, dt, reason = verify_24h_freshness(ts, max_hours=max_hours)
+
+                job_obj = {
+                    "id": f"rippling-{token}-{job_id}",
+                    "title": title,
+                    "company": token.replace("-", " ").title(),
+                    "company_slug": token,
+                    "url": canonical_url,
+                    "direct_career_url": canonical_url,
+                    "location": loc_str,
+                    "description": f"{title} at {token.title()} ({loc_str})",
+                    "source": "ats_rippling",
+                    "ats_platform": "rippling",
+                    "board_token": token,
+                    "date_posted": dt.isoformat() if dt else str(ts or ""),
+                    "hours_old": hrs_old,
+                    "is_24h_fresh": is_fresh
+                }
+                jobs.append(job_obj)
+        except Exception:
+            pass
+        return jobs
+
+    async def fetch_smartrecruiters_board(self, client: httpx.AsyncClient, token: str, max_hours: float = 24.0) -> List[Dict[str, Any]]:
+        url = f"https://api.smartrecruiters.com/v1/companies/{token}/postings"
+        jobs: List[Dict[str, Any]] = []
+        try:
+            resp = await client.get(url, timeout=self.timeout)
+            if resp.status_code != 200:
+                return []
+            data = resp.json()
+            items = data.get("content", [])
+            for r in items:
+                job_id = str(r.get("id"))
+                title = (r.get("name") or "").strip()
+                canonical_url = f"https://jobs.smartrecruiters.com/{token}/{job_id}"
+
+                ts = r.get("releasedDate")
+                is_fresh, hrs_old, dt, reason = verify_24h_freshness(ts, max_hours=max_hours)
+
+                loc_obj = r.get("location") or {}
+                city = loc_obj.get("city", "")
+                country = loc_obj.get("country", "")
+                is_remote = loc_obj.get("remote", False)
+                loc_str = f"{city}, {country}".strip(", ")
+                if is_remote:
+                    loc_str = f"Remote - {loc_str}" if loc_str else "Remote"
+
+                job_obj = {
+                    "id": f"sr-{token}-{job_id}",
+                    "title": title,
+                    "company": token.replace("-", " ").title(),
+                    "company_slug": token,
+                    "url": canonical_url,
+                    "direct_career_url": canonical_url,
+                    "location": loc_str or "Remote",
+                    "description": f"{title} at {token.title()} ({loc_str})",
+                    "source": "ats_smartrecruiters",
+                    "ats_platform": "smartrecruiters",
+                    "board_token": token,
+                    "date_posted": dt.isoformat() if dt else str(ts or ""),
+                    "hours_old": hrs_old,
+                    "is_24h_fresh": is_fresh
+                }
+                jobs.append(job_obj)
+        except Exception:
+            pass
+        return jobs
+
     async def harvest_all_async(self, max_hours: float = 24.0, only_fresh: bool = True) -> List[Dict[str, Any]]:
         limits = httpx.Limits(max_keepalive_connections=20, max_connections=self.max_concurrent)
         all_jobs: List[Dict[str, Any]] = []
@@ -187,6 +286,12 @@ class MatchaATSHarvester:
             # Lever
             for lev_tok in self.registry.get("lever", []):
                 tasks.append(self.fetch_lever_board(client, lev_tok, max_hours=max_hours))
+            # Rippling
+            for rip_tok in self.registry.get("rippling", []):
+                tasks.append(self.fetch_rippling_board(client, rip_tok, max_hours=max_hours))
+            # SmartRecruiters
+            for sr_tok in self.registry.get("smartrecruiters", []):
+                tasks.append(self.fetch_smartrecruiters_board(client, sr_tok, max_hours=max_hours))
 
             results = await asyncio.gather(*tasks, return_exceptions=True)
             for res in results:

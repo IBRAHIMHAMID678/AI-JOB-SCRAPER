@@ -38,5 +38,8 @@
   ],
   "workable": [
     "browserstack", "invision", "typeform", "hotjar", "transferwise", "intercom"
+  ],
+  "smartrecruiters": [
+    "canva", "square", "visa", "ikea", "informatica", "ubisoft", "skechers"
   ]
 }
