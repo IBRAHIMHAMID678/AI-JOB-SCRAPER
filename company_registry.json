@@ -1,0 +1,42 @@
+{
+  "greenhouse": [
+    "coinbase", "bitwarden", "axle", "togetherai", "truebill", "buildkite", "amperon",
+    "clever", "submittable", "myfitnesspal", "thatch", "pathai", "zattoo", "syndio",
+    "trolley", "vercel", "canonical", "gitlab", "stripe", "figma", "datadog",
+    "brex", "gusto", "reddit", "discord", "instacart", "affirm", "elastic",
+    "cockroachlabs", "remote", "anthropic", "scaleapi", "blend", "hashicorp",
+    "chime", "plaid", "carta", "flexport", "samsara", "tripactions",
+    "benchling", "checkr", "temporal", "postman", "sourcegraph", "dbtlabs",
+    "airbyte", "astronomer", "prefect", "cribl", "clickhouse", "starburst",
+    "launchdarkly", "fivetran", "retool", "sentry", "auth0", "mux",
+    "supabase", "render", "flyio", "harness", "pagerduty", "instructure",
+    "toast", "automattic", "zapier", "webflow", "duolingo", "datadoghq",
+    "notion", "hubspot", "ramp", "rippling", "klarna", "monzo", "revolut",
+    "branch", "braze", "segment", "iterable", "mparticle", "amplitude",
+    "mixpanel", "heap", "algolia", "contentful", "sanity", "strapi",
+    "prisma", "hasura", "neon", "faunadb", "planetscale", "timescale"
+  ],
+  "ashby": [
+    "openai", "cursor", "elevenlabs", "runway", "replit", "supabase", "railway",
+    "cohere", "perplexity", "modal", "resend", "clerk", "hud", "synthesia",
+    "n8n", "baseten", "qdrant", "weaviate", "pinecone", "groq", "writer",
+    "dust", "contextual", "tavily", "poe", "linear", "reflect", "heptabase",
+    "superhuman", "granola", "raycast", "warp", "zed", "screen-studio",
+    "descript", "v0", "tldraw", "excalidraw", "livekit", "daily", "deepgram",
+    "assemblyai", "cartesia", "playht", "speechify", "langchain", "llamaindex",
+    "unstructured", "chroma", "milvus", "voyage", "mistral", "poolside",
+    "cognition", "magic", "augment", "factory", "codeium", "continue",
+    "tabnine", "sweep", "greptile", "mentat", "aider", "devin", "polymath"
+  ],
+  "lever": [
+    "spotify", "figma", "palantir", "webflow", "linear", "khoros", "atlassian",
+    "deliveroo", "grammarly", "lyft", "medium", "netflix", "shopify",
+    "uber", "yelp", "affirm", "box", "coursera", "eventbrite", "github"
+  ],
+  "rippling": [
+    "clay", "harvey", "ironclad", "pilot", "modern-treasury", "deel"
+  ],
+  "workable": [
+    "browserstack", "invision", "typeform", "hotjar", "transferwise", "intercom"
+  ]
+}

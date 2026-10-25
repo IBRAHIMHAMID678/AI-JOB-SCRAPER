@@ -15,6 +15,21 @@ from pydantic_settings import BaseSettings
 
 load_dotenv()
 
+# Explicitly isolate all caches, temp files, and browser data to D: drive (.cache)
+_ROOT_DIR = pathlib.Path(__file__).resolve().parent.parent.parent
+_CACHE_DIR = _ROOT_DIR / ".cache"
+_TEMP_DIR = _CACHE_DIR / "temp"
+_TEMP_DIR.mkdir(parents=True, exist_ok=True)
+
+os.environ["TEMP"] = str(_TEMP_DIR)
+os.environ["TMP"] = str(_TEMP_DIR)
+os.environ["TMPDIR"] = str(_TEMP_DIR)
+os.environ["PLAYWRIGHT_BROWSERS_PATH"] = str(_CACHE_DIR / "ms-playwright")
+os.environ["XDG_CACHE_HOME"] = str(_CACHE_DIR)
+os.environ["HF_HOME"] = str(_CACHE_DIR / "huggingface")
+os.environ["TORCH_HOME"] = str(_CACHE_DIR / "torch")
+os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
+
 
 class Settings(BaseSettings):
     # ── Application ──────────────────────────────────────────────────────────

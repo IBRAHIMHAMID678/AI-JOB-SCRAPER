@@ -51,12 +51,13 @@ NON_DEV_TITLE_PATTERNS = [
     # roles were reaching the digest email despite being outside his field)
     "embedded", "firmware", "mechanical", "electrical", "aerospace",
     "civil engineer", "chemical engineer", "propulsion",
+    "service engineer", "medical", "branch manager",
 ]
 
 # Titles that are hard-blocked (senior-only)
 SENIOR_TITLE_PATTERNS = [
-    "senior", "sr.", "staff", "principal", "lead", "architect",
-    "manager", "director", "head of", "vp ", "vice president",
+    "senior", "sr.", "staff", "principal", "principle", "lead", "architect",
+    "manager", "managers", "director", "directors", "head of", "vp ", "vice president",
     "distinguished", "fellow",
 ]
 
@@ -147,15 +148,16 @@ FOREIGN_COUNTRY_MARKERS = [
     "japan", "south korea", "korea", "singapore", "malaysia", "indonesia",
     "philippines", "thailand", "vietnam", "australia", "new zealand", "new zealand",
     "brazil", "mexico", "colombia", "argentina", "chile", "peru",
+    "paraguay", "ecuador", "uruguay", "bolivia", "venezuela", "costa rica", "panama",
     "south africa", "nigeria", "kenya", "egypt",
     # region labels that exclude Pakistan
     "latam", "namer", "amer", "north america",
 ]
 
 # ---- Experience --------------------------------------------------------------
-# 0-3 years qualifies; 4+ years and senior-only are excluded.
+# 0-2 years qualifies (< 2 years / Junior level); 3+ years and senior-only are excluded.
 MIN_EXP_QUALIFY = 0
-MAX_EXP_QUALIFY = 3
+MAX_EXP_QUALIFY = 2
 
 # ---- Locations ---------------------------------------------------------------
 LOCAL_CITIES = [

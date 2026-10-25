@@ -13,9 +13,24 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+# Isolate temp and cache to D: drive
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_CACHE = os.path.join(_ROOT, ".cache")
+_TEMP = os.path.join(_CACHE, "temp")
+os.makedirs(_TEMP, exist_ok=True)
+os.environ["TEMP"] = _TEMP
+os.environ["TMP"] = _TEMP
+os.environ["TMPDIR"] = _TEMP
+tempfile.tempdir = _TEMP
+os.environ["PLAYWRIGHT_BROWSERS_PATH"] = os.path.join(_CACHE, "ms-playwright")
+os.environ["XDG_CACHE_HOME"] = _CACHE
+os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
+sys.dont_write_bytecode = True
 
 from sources import SOURCES
 from filter import filter_job

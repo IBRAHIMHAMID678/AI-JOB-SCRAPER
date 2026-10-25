@@ -7,15 +7,17 @@ from log_manager import log
 def scrape_single_term(term):
     term_jobs = []
     
-    # 1. Scrape LinkedIn and Indeed Remote
-    log(f"  -> Scraping Remote Job Boards for '{term}'...")
+    hours_target = getattr(config, 'HOURS_OLD', 24)
+    
+    # 1. Scrape LinkedIn and Indeed Remote (Worldwide remote)
+    log(f"  -> Scraping Remote Job Boards for '{term}' (past {hours_target}h)...")
     try:
         jobs_df = scrape_jobs(
             site_name=["linkedin", "indeed"],
             search_term=term,
             location="Remote",
             results_wanted=config.RESULTS_PER_TERM,
-            hours_old=120,  # user rule: LinkedIn freshness <= 5 days
+            hours_old=hours_target,
             is_remote=True
         )
         if jobs_df is not None and not jobs_df.empty:
@@ -35,30 +37,32 @@ def scrape_single_term(term):
     except Exception as e:
         log(f"  -> Error scraping Remote Job Boards for '{term}': {e}")
         
-    # 2. Scrape LinkedIn Local (Islamabad / Rawalpindi, Pakistan - remote, onsite, hybrid)
-    try:
-        jobs_df = scrape_jobs(
-            site_name=["linkedin"],
-            search_term=term,
-            location="Islamabad, Pakistan",
-            results_wanted=config.RESULTS_PER_TERM,
-            hours_old=120  # user rule: LinkedIn freshness <= 5 days
-        )
-        if jobs_df is not None and not jobs_df.empty:
-            for _, row in jobs_df.iterrows():
-                job = {
-                    "title": str(row.get("title", "")),
-                    "company": str(row.get("company", "")),
-                    "url": str(row.get("job_url", "")),
-                    "description": str(row.get("description", "")) if pd.notna(row.get("description")) else "No description available",
-                    "location": str(row.get("location", "Islamabad, Pakistan")),
-                    "estimated_pay": "Not Disclosed",
-                    "source": "JobSpy - LinkedIn Local"
-                }
-                if job["url"] and job["url"] != "nan":
-                    term_jobs.append(job)
-    except Exception as e:
-        log(f"  -> Error scraping LinkedIn Local for '{term}': {e}")
+    # 2. Scrape Twin Cities Local (Islamabad & Rawalpindi, Pakistan - remote, onsite, hybrid)
+    twin_cities = ["Islamabad, Pakistan", "Rawalpindi, Pakistan"]
+    for city in twin_cities:
+        try:
+            jobs_df = scrape_jobs(
+                site_name=["linkedin"],
+                search_term=term,
+                location=city,
+                results_wanted=config.RESULTS_PER_TERM,
+                hours_old=hours_target
+            )
+            if jobs_df is not None and not jobs_df.empty:
+                for _, row in jobs_df.iterrows():
+                    job = {
+                        "title": str(row.get("title", "")),
+                        "company": str(row.get("company", "")),
+                        "url": str(row.get("job_url", "")),
+                        "description": str(row.get("description", "")) if pd.notna(row.get("description")) else "No description available",
+                        "location": str(row.get("location", city)),
+                        "estimated_pay": "Not Disclosed",
+                        "source": f"JobSpy - {city.split(',')[0]} Local"
+                    }
+                    if job["url"] and job["url"] != "nan":
+                        term_jobs.append(job)
+        except Exception as e:
+            log(f"  -> Error scraping {city} for '{term}': {e}")
 
     return term_jobs
 

@@ -327,9 +327,9 @@ def filter_job(job: dict) -> dict:
     if dstatus in ("empty", "unavailable", "blocked"):
         _add(res, "exp_unverifiable", "experience requirements unverifiable — no description")
         # cannot fail on experience without evidence; stays review
-    elif exp["mandatory_min"] is not None and exp["mandatory_min"] >= 4:
+    elif exp["mandatory_min"] is not None and exp["mandatory_min"] > MAX_EXP_QUALIFY:
         _add(res, "exp_exceeds_cap",
-             f"mandatory minimum {exp['mandatory_min']} years exceeds 0-3 cap",
+             f"mandatory minimum {exp['mandatory_min']} years exceeds {MAX_EXP_QUALIFY} yr junior cap",
              {"mandatory_min": exp["mandatory_min"]})
         res["verdict"] = "fail"; res["confidence"] = "high"
         return res

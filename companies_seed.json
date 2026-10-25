@@ -1,0 +1,2046 @@
+{
+  "axle": {
+    "id": "axle",
+    "name": "Axle",
+    "domain": "axle.com",
+    "logo_url": "https://bookface-images.s3.amazonaws.com/small_logos/fc7d56236fe67577e1d51a8f6c48ef7c48d88c9a.png",
+    "funding_total": "$$8.56M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Gradient",
+      "Y Combinator"
+    ],
+    "company_size": 394,
+    "company_summary": "AI-native clearinghouse for insurance."
+  },
+  "togetherai": {
+    "id": "togetherai",
+    "name": "Together AI",
+    "domain": "togetherai.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/fdd7032edb0f97bb1e9ed55e199b725c3343eaafbb48483453ada3f3c01da45e.jpg",
+    "funding_total": "$$305M Series B",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Salesforce Ventures",
+      "Kleiner Perkins",
+      "NVIDIA",
+      "Prosperity7 Ventures"
+    ],
+    "company_size": 445,
+    "company_summary": "AI-native cloud platform for scalable inference, model shaping, and pre-training."
+  },
+  "hud": {
+    "id": "hud",
+    "name": "HUD",
+    "domain": "hud.com",
+    "logo_url": "https://bookface-images.s3.amazonaws.com/small_logos/53fffc4904f866d9d44ba9a47862b594f1d45667.png",
+    "funding_total": "$$500K Pre Seed",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 16,
+    "company_summary": "Unified platform for evaluating computer and browser AI agents."
+  },
+  "trust&will": {
+    "id": "trust&will",
+    "name": "Trust & Will",
+    "domain": "trust&will.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/efbd279cd4d889c402dafe25afc9d58fe5e24c240a8d9bb2fa4350a7937c0d6b.jpg",
+    "funding_total": "$$77.6M",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "MassChallenge",
+      "Techstars",
+      "Curql"
+    ],
+    "company_size": 137,
+    "company_summary": "Leading digital estate planning platform; AI-powered, attorney-approved documents."
+  },
+  "buildkite": {
+    "id": "buildkite",
+    "name": "Buildkite",
+    "domain": "buildkite.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/d2e0495b715c99cbfac6cbcb4bbbdcaf5a2d3a7837bd4ad4046723d0b281fcdb.jpg",
+    "funding_total": "$$20.3M Series A, $21.0M Series B",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "OpenView",
+      "OneVentures",
+      "Airtree Ventures"
+    ],
+    "company_size": 157,
+    "company_summary": "CI platform for teams; trusted by top global organizations."
+  },
+  "amperon": {
+    "id": "amperon",
+    "name": "Amperon",
+    "domain": "amperon.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/083f3d7bbe8ae9130a468e3f6564267c2c82a74a519712c9b04e34f18fa41c86.jpg",
+    "funding_total": "$$38.3M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "The New York Community Trust",
+      "Samsung Ventures"
+    ],
+    "company_size": 94,
+    "company_summary": "AI-powered energy forecasting for grid reliability and the energy transition."
+  },
+  "clever": {
+    "id": "clever",
+    "name": "Clever",
+    "domain": "clever.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/e54506113066040cb894c4d84d0b06a7c4dd03f940346a404679159e9c735511.jpg",
+    "funding_total": "$$43.3M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Lightspeed Venture Partners"
+    ],
+    "company_size": 376,
+    "company_summary": "Clever uses technology to make K-12 education equitable for all."
+  },
+  "rocketmoney": {
+    "id": "rocketmoney",
+    "name": "Rocket Money",
+    "domain": "rocketmoney.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/e609054df3a2d0d78067bd5d28270b01ab30ade02047960b525c09889c3570d9.jpg",
+    "funding_total": "$$1.2B Acquisition by Rocket Companies",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 308,
+    "company_summary": "Personal finance app helping millions save, budget, and manage subscriptions."
+  },
+  "submittable": {
+    "id": "submittable",
+    "name": "Submittable",
+    "domain": "submittable.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/df3cbb3285f709186df230aaa1e7f925add40103e441b8d191fded3b7e0858ba.jpg",
+    "funding_total": "$$155.7M funded",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "K5 Ventures",
+      "StepStone Group",
+      "Start Fund",
+      "Goodworks Ventures",
+      "NEXT Frontier Capital",
+      "77 Ventures",
+      "Knight Enterprise Fund",
+      "True Ventures"
+    ],
+    "company_size": 246,
+    "company_summary": "Enabling advanced giving and granting through trusted tools for impact."
+  },
+  "myfitnesspal": {
+    "id": "myfitnesspal",
+    "name": "MyFitnessPal",
+    "domain": "myfitnesspal.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/d7622d8c05d4b9a087de2b583917d144f56fc0e63bea4596c9df8f136c22bdcf.jpg",
+    "funding_total": "$$838M Total Funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Francisco Partners Management, L.P"
+    ],
+    "company_size": 237,
+    "company_summary": "Unlock your healthy and find your happy with MyFitnessPal."
+  },
+  "banqsi": {
+    "id": "banqsi",
+    "name": "BanQsi",
+    "domain": "banqsi.com",
+    "logo_url": "https://secured-assets.ripplingcdn.com/us1/ats/63fd24066bb3a50bab2f5c0c/ats_public/1064bef10c2c45dc8e9d887a75c96381-sensitive.jpg?Expires=1789433561&Signature=Acvat9KlJfXfyJgYVAPWcwY0rXBRvn1oIBXLMECpIsldZupHS4KTo0kp4qJpd755pDK7EInr4CfiK32bcCQnmgcfywTFsmW7k3fnfLbFL-z80iAHX3hUTBDLRjHpFxtiYbR~BYAJnGT0PJ~mh2WxZlkhnEnLmcpUuyRWq9WOtutWYrQa8W8P2pwzo6m4hOFdHmZ1VDzzWw1DDgPXT~fuhKyJlHBujAgv5LH9vIylbtqy1yI~iXhb6nE2uimybiPbn0yoes3ntfBBH-CIRk24oZivktL9vwNe7grNEsDz1rr-1XtyatyBT1o-8D~vAM2b691Sag-HlVsCR~gKf7BF1g__&Key-Pair-Id=K2SM3GXN9F9XGM",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 39,
+    "company_summary": "Innovative core banking solutions: cloud, implementations, migrations, merger support."
+  },
+  "agilityprsolutions": {
+    "id": "agilityprsolutions",
+    "name": "Agility PR Solutions",
+    "domain": "agilityprsolutions.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/4f32cd60ae62478dcb2068323c9f37cc5c8eeb5745dc9533e1a203724c310e61.jpg",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 244,
+    "company_summary": "AI-powered PR platform for monitoring, outreach, analysis; measurable ROI."
+  },
+  "incognia": {
+    "id": "incognia",
+    "name": "Incognia",
+    "domain": "incognia.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/c392b592f9514d87a4b88079a4f46586a5b56f7c3fb2a308489d40f328efea4b.jpg",
+    "funding_total": "$$46.5M total funding, Series B",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Prosus Ventures",
+      "Valor Capital Group",
+      "Unbox Capital",
+      "Bessemer Venture Partners",
+      "FJ Labs",
+      "Point72 Ventures",
+      "Endeavor Catalyst"
+    ],
+    "company_size": 252,
+    "company_summary": "Innovator of secure identity verification using device fingerprinting and risk insights."
+  },
+  "homeward": {
+    "id": "homeward",
+    "name": "Homeward",
+    "domain": "homeward.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/5feefe89ffc51d6082ed8fd61a7acf1982107683410ea206e4e8b3f16fef60a9.jpg",
+    "funding_total": "$$82M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "General Catalyst",
+      "ARCH Venture Partners",
+      "Human Capital",
+      "Glen Tullman",
+      "Lee Shapiro",
+      "Advanced Research Projects Agency for Health",
+      "Mentors Fund"
+    ],
+    "company_size": 181,
+    "company_summary": "Rural health coordination platform aligning incentives to improve outcomes."
+  },
+  "workstreet": {
+    "id": "workstreet",
+    "name": "Workstreet",
+    "domain": "workstreet.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/92202fe7174dee529d584f30c1afb3b08a645fb0195b21d77b77cf8d03ebcd89.jpg",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 205,
+    "company_summary": "AI-powered security firm delivering full-stack security and compliance solutions."
+  },
+  "dbeaver": {
+    "id": "dbeaver",
+    "name": "DBeaver",
+    "domain": "dbeaver.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/f5a8ea12d6d902e2f7b5c3f504fae293305e86138e975ade6fda6870ae2b6787.jpg",
+    "funding_total": "$$6M Seed",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Headline"
+    ],
+    "company_size": 66,
+    "company_summary": "DBeaver: 20-year IT firm delivering adaptable database management tools."
+  },
+  "phaidra": {
+    "id": "phaidra",
+    "name": "Phaidra",
+    "domain": "phaidra.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/f896d8e8fcfa8e2a5a1cc0afc0b502ee148dd4a194552c56b9dfcc8c27d77262.jpg",
+    "funding_total": "$$92.5M",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Agility Ventures",
+      "Nvidia",
+      "Sony Innovation Fund",
+      "Amazon Launchpad Sustainability Accelerator",
+      "Index Ventures"
+    ],
+    "company_size": 98,
+    "company_summary": "AI agents for AI factories"
+  },
+  "vannevar": {
+    "id": "vannevar",
+    "name": "Vannevar",
+    "domain": "vannevar.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/603e5622d8dfb41df2b954329d88a71b5a9c84ee43a0a43a03517b4b154faa03.jpg",
+    "funding_total": "$$91.5M Series B",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Felicis",
+      "The New Normal Fund",
+      "DFJ Growth",
+      "Allison Pickens",
+      "Shield Capital",
+      "General Catalyst",
+      "Costanoa Ventures",
+      "Point72 Ventures"
+    ],
+    "company_size": 189,
+    "company_summary": "AI-powered defense platform delivering targeting, planning, and deterrence at edge."
+  },
+  "coinbase": {
+    "id": "coinbase",
+    "name": "Coinbase",
+    "domain": "coinbase.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/ce0ee3ba57f52a7b1c91947cf9bb0d3b7bfb776033860d4799ddff0b09bc566e.jpg",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 39,
+    "company_summary": "Coinbase is a publicly traded crypto exchange and platform where people and institutions buy,\n  sell, and hold crypto. It also runs Base, an Ethereum layer 2, and the Coinbase Developer Platform for\n  builders."
+  },
+  "tensordyne": {
+    "id": "tensordyne",
+    "name": "Tensordyne",
+    "domain": "tensordyne.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/449d9c190721631e09c214c24e3bb9e33b547701dde963a4c74d71e0cbd7be49.jpg",
+    "funding_total": "$$211.05M Series C",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Plug and Play",
+      "Pledge Ventures",
+      "Celesta Capital",
+      "Continental",
+      "HSBC Innovation Banking",
+      "Fluxunit - Osram Ventures",
+      "Great Point Partners",
+      "BMW i Ventures"
+    ],
+    "company_size": 123,
+    "company_summary": "Designs fast, cheap AI chips and rack systems for inference."
+  },
+  "prompt.ioinc.": {
+    "id": "prompt.ioinc.",
+    "name": "Prompt.io Inc.",
+    "domain": "prompt.ioinc..com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/90abb026a5d49fc3e934f71be79fc646f0a6811da61bcdb88e2c4923ae06f9db.jpg",
+    "funding_total": "$$18.2M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 41,
+    "company_summary": "Winning influence engine amplifying political, union, advocacy impacts via text and voice."
+  },
+  "foundant+smartsimple": {
+    "id": "foundant+smartsimple",
+    "name": "Foundant + smartsimple",
+    "domain": "foundant+smartsimple.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/054859b7a0715aa6100f48c5ab07d6db0262e03a47fc3d54fe705ac2ebc9fc36.jpg",
+    "funding_total": "Acquired by L Squared Capital Partners (2023)",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "L Squared Capital Partners"
+    ],
+    "company_size": 116,
+    "company_summary": "Cloud automation and collaboration for purpose-driven organizations worldwide."
+  },
+  "threecolts": {
+    "id": "threecolts",
+    "name": "Threecolts",
+    "domain": "threecolts.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/468a89f1230e0675cd7105083bdc627f3757c9faea8ed4a13e4237e25667fbec.jpg",
+    "funding_total": "$$90.7M Series A",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "General Global Capital",
+      "Crossbeam Venture Partners"
+    ],
+    "company_size": 316,
+    "company_summary": "Acquiring and bundling software to offer affordable marketplace and retail operations."
+  },
+  "practifi": {
+    "id": "practifi",
+    "name": "Practifi",
+    "domain": "practifi.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/1a02e5cc9cc57a5d2666d65448710762105f5af79335c103082bd58f8b19f3e8.jpg",
+    "funding_total": "$$20M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Updata Partners",
+      "EVP"
+    ],
+    "company_size": 68,
+    "company_summary": "AI CRM for wealth management streamlining operations, compliance, insights."
+  },
+  "turnkey": {
+    "id": "turnkey",
+    "name": "Turnkey",
+    "domain": "turnkey.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/1c5d41fc6bc21804d9f32700628f157577ab29d1283ce211813a054b9d5b476c.jpg",
+    "funding_total": "$$30M Series B",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Bain Capital",
+      "9Yards Capital Management",
+      "Galaxy Ventures",
+      "Wintermute Ventures",
+      "20VC"
+    ],
+    "company_size": 130,
+    "company_summary": "Secure, flexible, and scalable wallet infrastructure"
+  },
+  "evio": {
+    "id": "evio",
+    "name": "Evio",
+    "domain": "evio.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/d3f0b63b12d53dccf92ab5f1d439ede04e5b19d9fcecd1c7b7397ef90de72307.jpg",
+    "funding_total": "$$8.5M Venture Round",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 74,
+    "company_summary": "Pharmacy solutions startup transforming medication experience for patients, providers, plans."
+  },
+  "steer": {
+    "id": "steer",
+    "name": "Steer",
+    "domain": "steer.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/9b41a69872ae3675a0b237575f51775a3ea85e5eaa909d7c538ec9b1ab7bea34.jpg",
+    "funding_total": "$$1.1M Pre Seed",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 151,
+    "company_summary": "Marketing platform for auto shops with booking, loyalty, growth."
+  },
+  "ably(uk)": {
+    "id": "ably(uk)",
+    "name": "Ably (UK)",
+    "domain": "ably(uk).com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/23012573970e3963502a9733b49e04d982ad2440cf047bf50c7355daf22b45a6.jpg",
+    "funding_total": "$$82.3M",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 118,
+    "company_summary": "Resilient global realtime layer for AI UX, chat, and agents."
+  },
+  "thatch": {
+    "id": "thatch",
+    "name": "Thatch",
+    "domain": "thatch.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/9cbab66abd164e45c9d3565fe8f8ad7679ef915f84ad2c81b1a49ddf36706863.jpg",
+    "funding_total": "$$84M Series B",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Google Ventures",
+      "Andreessen Horowitz"
+    ],
+    "company_size": 273,
+    "company_summary": "All-in-one platform offering personalized employee healthcare with flexible spending."
+  },
+  "ilof": {
+    "id": "ilof",
+    "name": "iLoF",
+    "domain": "ilof.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/6db7c5a12d30dccc6dcba0bf1129cd45ed47ed7ef9d74c08e498fa994a0736d0.jpg",
+    "funding_total": "$$11.48M",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "M12 - Microsoft's Venture Fund",
+      "European Innovation Council",
+      "Greater London Authority",
+      "Hamamatsu Ventures"
+    ],
+    "company_size": 40,
+    "company_summary": "AI-photonics digital health accelerating personalized drug discovery and development."
+  },
+  "backblazeexternalwebsite": {
+    "id": "backblazeexternalwebsite",
+    "name": "Backblaze External Website",
+    "domain": "backblazeexternalwebsite.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/0ded0ccac28e03d9c8e1029a7fd1961e93f0e5c0a498ca696cb5712d815b7ff3.jpg",
+    "funding_total": "$$162.8M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "TMT Investments"
+    ],
+    "company_size": 395,
+    "company_summary": "Secure, high-performance cloud object storage for AI, backups, media, ransomware protection."
+  },
+  "creditstar": {
+    "id": "creditstar",
+    "name": "Creditstar",
+    "domain": "creditstar.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/c6722529465667b5ad873fe69fd59eba8add871aab24717f5cf1268c22398e23.jpg",
+    "funding_total": "$$15.3M+",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Kilde"
+    ],
+    "company_size": 128,
+    "company_summary": "International fintech building digital banking products across Europe."
+  },
+  "pindrop": {
+    "id": "pindrop",
+    "name": "Pindrop",
+    "domain": "pindrop.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/0996d45cb9d7bd54c02cc2626c6af4462edcd054c5e7ebf76e5414add19c6d88.jpg",
+    "funding_total": "$$408.4M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "IVP",
+      "National Science Foundation"
+    ],
+    "company_size": 374,
+    "company_summary": "Voice security and identity tech protecting banks, reducing fraud."
+  },
+  "trivelta": {
+    "id": "trivelta",
+    "name": "Trivelta",
+    "domain": "trivelta.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/a14f54c918b4212bd32534d461721c805ae9632f33bb1a771a9f3c4c634a5143.jpg",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 18,
+    "company_summary": "Clear, scalable compliance verification to prevent fraud in regulated industries."
+  },
+  "fluxx": {
+    "id": "fluxx",
+    "name": "Fluxx",
+    "domain": "fluxx.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/65f32ab4048132afe0799e524dac57491dc6bd9d70b34e206fa4756e357385d4.jpg",
+    "funding_total": "$$51.4M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Felicis",
+      "Canvas Prime"
+    ],
+    "company_size": 169,
+    "company_summary": "Cloud-based grantmaking platform delivering automation, integrations, and insights."
+  },
+  "ledgebrook": {
+    "id": "ledgebrook",
+    "name": "Ledgebrook",
+    "domain": "ledgebrook.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/b53a358da66057e027c2187d1ebdb63b8e3f953b0debe0fb7e3d973f04d7a288.jpg",
+    "funding_total": "$$114.8M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Floating Point",
+      "Brand Foundry Ventures",
+      "American Family Ventures",
+      "Duquesne",
+      "Stephens Group",
+      "Markd"
+    ],
+    "company_size": 302,
+    "company_summary": "Remote US-based InsurTech MGA modernizing specialty insurance with technology."
+  },
+  "coinspaid": {
+    "id": "coinspaid",
+    "name": "Coinspaid",
+    "domain": "coinspaid.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/6447c64d983acc840979c6dca9c73d3938ffee81a6da13485df4f7d61c7e320a.jpg",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 3,
+    "company_summary": "Seamless cross-border crypto payments with fiat settlements and compliance."
+  },
+  "oneleet": {
+    "id": "oneleet",
+    "name": "Oneleet",
+    "domain": "oneleet.com",
+    "logo_url": "https://bookface-images.s3.amazonaws.com/small_logos/35b93ab2671a1397037aa92e0703d5f6c2ec0fba.png",
+    "funding_total": "$$33M Series A",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Dawn Capital",
+      "Y Combinator",
+      "Frank Slootman",
+      "Arash Ferdowsi"
+    ],
+    "company_size": 53,
+    "company_summary": "Cybersecurity startup delivering a platform to manage security programs."
+  },
+  "statsports": {
+    "id": "statsports",
+    "name": "STATSports",
+    "domain": "statsports.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/936087d53e064d3b50d9d24369cc8e8af4d9038ec615cc7eb312fa9fad9d21f1.jpg",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Sony"
+    ],
+    "company_size": 200,
+    "company_summary": "Wearable GPS athlete tracking technology provider for teams worldwide."
+  },
+  "clearcapital|cubicasa|restb.ai": {
+    "id": "clearcapital|cubicasa|restb.ai",
+    "name": "Clear Capital | CubiCasa  | restb.ai",
+    "domain": "clearcapital|cubicasa|restb.ai.com",
+    "logo_url": "https://lever-client-logos.s3.us-west-2.amazonaws.com/9343dc2e-6ac2-4edb-86e0-eae12e5c63dc-1786721269421.png",
+    "funding_total": "$$3.3M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Horizon 2020"
+    ],
+    "company_size": 71,
+    "company_summary": "AI computer vision for real estate property analysis and valuation."
+  },
+  "midnite": {
+    "id": "midnite",
+    "name": "Midnite",
+    "domain": "midnite.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/11b9d83009145588cf1b88fc7ea233ba695f5cecec3b71eb95b68c6379734810.jpg",
+    "funding_total": "$$128.6M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Makers Fund",
+      "Discerning Capital",
+      "PvX Partners",
+      "The Raine Group",
+      "Venrex"
+    ],
+    "company_size": 224,
+    "company_summary": "Modern, user-friendly betting app reinventing sportsbook and casino."
+  },
+  "realitydefender": {
+    "id": "realitydefender",
+    "name": "Reality Defender",
+    "domain": "realitydefender.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/ddc30bda0c0b6e36ab2bd01884510e6bd818e98c0f6f3ffb2377a5bac98145d0.jpg",
+    "funding_total": "$$33M Series A",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Illuminate Financial",
+      "Booz Allen Ventures",
+      "IBM Ventures",
+      "DCVC"
+    ],
+    "company_size": 94,
+    "company_summary": "Award-Winning Deepfake Detection and Protection"
+  },
+  "tabbed": {
+    "id": "tabbed",
+    "name": "Tabbed",
+    "domain": "tabbed.com",
+    "logo_url": "https://app.ashbyhq.com/api/images/org-theme-logo/0ae77a20-86bf-4f7a-9dc1-7dd480d2ae36/4f539b39-d6e2-4e3c-bec1-885298c61225/0bea4822-bdaf-47b0-a178-50a1a175c122.png",
+    "funding_total": "$$2.6M Seed",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 14,
+    "company_summary": "Frictionless payment and guest intelligence for hospitality, personalizing experiences."
+  },
+  "waabi": {
+    "id": "waabi",
+    "name": "Waabi",
+    "domain": "waabi.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/bf314f7e0fc9375b64b4d6edd2c14b3e12ca1ce9e1b05d1b3c54b01050798d6f.jpg",
+    "funding_total": "$$1B Series C",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Khosla Ventures",
+      "Volvo Group Venture Capital",
+      "Uber"
+    ],
+    "company_size": 366,
+    "company_summary": "Built to think. Born to haul."
+  },
+  "titan": {
+    "id": "titan",
+    "name": "Titan",
+    "domain": "titan.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/fbfdf53d0a11c5b407149f2258fff093dc58a6106acd7039758df098adc18298.jpg",
+    "funding_total": "$$173.1M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Andreessen Horowitz",
+      "Y Combinator"
+    ],
+    "company_size": 75,
+    "company_summary": "SEC-registered adviser helping equity decisions with human support and platform."
+  },
+  "morningconsult": {
+    "id": "morningconsult",
+    "name": "Morning Consult",
+    "domain": "morningconsult.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/db20c9796ee356dabdbe8da8863231c121cdcaedd73cdc57f68a328a3de3ae78.jpg",
+    "funding_total": "$$91M total raised",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Advance Venture Partners",
+      "Lupa Systems"
+    ],
+    "company_size": 329,
+    "company_summary": "Global decision intelligence and AI-powered market research delivering real-time insights."
+  },
+  "airtm": {
+    "id": "airtm",
+    "name": "Airtm",
+    "domain": "airtm.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/f125ec6793e96789eb25d9c4ca8ea0eb3458e5667a1271a13bee58664843d808.jpg",
+    "funding_total": "$$24.7M",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 343,
+    "company_summary": "Airtm enables fair, flexible global payouts for digital entrepreneurs worldwide."
+  },
+  "loancrate": {
+    "id": "loancrate",
+    "name": "Loancrate",
+    "domain": "loancrate.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/f5b2d4257eedb1da7d8407bef07f79698fae9f8ac1c50694739f66e155731b95.jpg",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 54,
+    "company_summary": "AI-powered loan origination system for streamlined mortgage processing and efficiency."
+  },
+  "h2analytics": {
+    "id": "h2analytics",
+    "name": "H2 Analytics",
+    "domain": "h2analytics.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/dd115162dcbdd96d712d57553ae6c5f25bcf79e0fdf501225038e72a21613ea0.jpg",
+    "funding_total": "$$4.2M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Spiral Capital",
+      "JAFCO",
+      "New Enterprise Associates"
+    ],
+    "company_size": 1,
+    "company_summary": null
+  },
+  "keplercommunications": {
+    "id": "keplercommunications",
+    "name": "Kepler Communications",
+    "domain": "keplercommunications.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/2d71081cb5762c70a34a1a9cb9a737eac225fdee8aaed526f0eef97cd8979a30.jpg",
+    "funding_total": "$$92M Series C",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "IA Ventures"
+    ],
+    "company_size": 244,
+    "company_summary": "On-orbit data relay via in-house hybrid optical satellite constellation network."
+  },
+  "welltheory": {
+    "id": "welltheory",
+    "name": "WellTheory",
+    "domain": "welltheory.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/64ecd4808aa4fd647aaca76af817a633e9da99bcf692a52047fecc6322574799.jpg",
+    "funding_total": "$$26.2M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "General Catalyst",
+      "UnitedHealthcare Accelerator"
+    ],
+    "company_size": 73,
+    "company_summary": "Personalized AI-driven autoimmune care improving lives while reducing costs."
+  },
+  "matx": {
+    "id": "matx",
+    "name": "MatX",
+    "domain": "matx.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/6a0266fb690db20fab1394565bab1b31b20a426a56bf81ce823ffe0b1f0a4a4a.jpg",
+    "funding_total": "$$625M",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 151,
+    "company_summary": "Hardware boosting large AI models 10\u00c3\u0097, affordable smarter intelligence."
+  },
+  "onebrief": {
+    "id": "onebrief",
+    "name": "Onebrief",
+    "domain": "onebrief.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/cdef79f6da0e95e8aee50665689325d6614b495eac9b6d908793d9198ef05156.jpg",
+    "funding_total": "$$333M",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "General Catalyst",
+      "Insight Partners",
+      "Battery Ventures",
+      "Sapphire Ventures"
+    ],
+    "company_size": 391,
+    "company_summary": "Plan at the speed of war"
+  },
+  "sardine": {
+    "id": "sardine",
+    "name": "Sardine",
+    "domain": "sardine.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/e186a9cea340cefeb78154566cb472837818f2b93ff8910d9a11cf42f5136627.jpg",
+    "funding_total": "$$145.6M",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "FIS Impact Ventures",
+      "Ross Fubini",
+      "Activant Capital",
+      "Andreessen Horowitz"
+    ],
+    "company_size": 395,
+    "company_summary": "Real-time AI risk platform for fraud, compliance, underwriting."
+  },
+  "quadric": {
+    "id": "quadric",
+    "name": "quadric",
+    "domain": "quadric.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/befd4df982a12be911fb343337c28b56d1aa36cce82ab0d0aceea314e91ea56e.jpg",
+    "funding_total": "$$89.75M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "International Finance Corporation",
+      "Xerox",
+      "Mesh Ventures"
+    ],
+    "company_size": 75,
+    "company_summary": "Quadric licenses on-device AI processor IP: Chimera GPNPU for scalable inference."
+  },
+  "harrisdach": {
+    "id": "harrisdach",
+    "name": "Harris DACH",
+    "domain": "harrisdach.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/7d7495f472e0bbaf4dbfe083a99155612192f16599b0945b5355d9b83f6ca184.jpg",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Constellation Software Inc."
+    ],
+    "company_size": 46,
+    "company_summary": "Harris D-A-CH kauft Softwarefirmen, betreut sie langfristig, f\u00c3\u00b6rdert Vielfalt."
+  },
+  "bidgely,inc": {
+    "id": "bidgely,inc",
+    "name": "Bidgely, Inc",
+    "domain": "bidgely,inc.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/90606e6d6f1748a9831f98d4ae34918a494d830f1da256b5be2e6e39f0a30feb.jpg",
+    "funding_total": "$$113.7M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Khosla Ventures",
+      "Constellation Technology Ventures"
+    ],
+    "company_size": 277,
+    "company_summary": "Disaggregation tech for utilities: optimize value, personalize engagement, modernize grid."
+  },
+  "picus": {
+    "id": "picus",
+    "name": "Picus",
+    "domain": "picus.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/83110b0efc58ec1deb6dada2712bf5539b8f06f02432cb7513544e98df115326.jpg",
+    "funding_total": "$$77.95M Series C",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Social Capital",
+      "Riverwood Capital",
+      "Bek Ventures",
+      "Turkven Private Equity",
+      "Earlybird Venture Capital",
+      "ScaleX Ventures"
+    ],
+    "company_size": 313,
+    "company_summary": "Validates exploitable cyber exposures to prioritize defensible risk reduction."
+  },
+  "exa": {
+    "id": "exa",
+    "name": "Exa",
+    "domain": "exa.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/a592d5abdf74f07fd543b8666121738de9f53173f0e13c3c21bfc47c9a5d19a0.jpg",
+    "funding_total": "$$361.4M",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Andreessen Horowitz",
+      "Lightspeed Venture Partners"
+    ],
+    "company_size": 202,
+    "company_summary": "Global SAP software for transparent transfer pricing, value chain, sustainability."
+  },
+  "transficc": {
+    "id": "transficc",
+    "name": "TransFICC",
+    "domain": "transficc.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/17b044f463925fe6899a40b8fd94deec458ff37d95932c29533281583738e557.jpg",
+    "funding_total": "$$49.2M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Neosfer",
+      "Illuminate Financial",
+      "Citi",
+      "Citadel Securities",
+      "AlbionVC"
+    ],
+    "company_size": 70,
+    "company_summary": "E-trading connectivity and automated workflows for Fixed Income and Derivatives."
+  },
+  "seeq": {
+    "id": "seeq",
+    "name": "Seeq",
+    "domain": "seeq.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/96c6cddc948d9a28698dcb7d26e39a9424acda55abf45cbe9b64028c42bc320b.jpg",
+    "funding_total": "$$255.75M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 337,
+    "company_summary": "Industrial AI platform connecting expertise and operational data for actionable decisions."
+  },
+  "iseatz": {
+    "id": "iseatz",
+    "name": "iSeatz",
+    "domain": "iseatz.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/e08d3a1862655ae9b54f57d42f323696a4bef1cea4506d3ae991adde3510e618.jpg",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 132,
+    "company_summary": "iSeatz builds loyalty-driven connected travel commerce experiences for leading brands."
+  },
+  "prenuvo": {
+    "id": "prenuvo",
+    "name": "Prenuvo",
+    "domain": "prenuvo.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/ffd6fb6715d86dd94e127b6ce6686542d09245faa562ab66494fab7c4a4c787f.jpg",
+    "funding_total": "$$190M",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 482,
+    "company_summary": "Fast, comprehensive whole-body health scan under 1 hour; no radiation."
+  },
+  "sitezeus": {
+    "id": "sitezeus",
+    "name": "SiteZeus",
+    "domain": "sitezeus.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/b31d28ccb646fcde76f5be99e178c77a909570f059a6e4cb747a4a120c7cc815.jpg",
+    "funding_total": "$$8.457M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 28,
+    "company_summary": "Data-driven SaaS for multi-unit businesses, boosting profits and growth."
+  },
+  "checkbook": {
+    "id": "checkbook",
+    "name": "Checkbook",
+    "domain": "checkbook.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/d347ea5f8b99db72ca050d97da43ac8a50d47a4e381d5c7bd3d81c8a42b9381d.jpg",
+    "funding_total": "$$24.2M",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 51,
+    "company_summary": "Modern, secure payment infrastructure for scalable disbursements, collections, reconciliation."
+  },
+  "dscout": {
+    "id": "dscout",
+    "name": "Dscout",
+    "domain": "dscout.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/79996bbed32efa3f588f0eedf27e38d687da5b342bf649c547ca75c2c8f88df5.jpg",
+    "funding_total": "$$81.0M Series C",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Synetro Group",
+      "Beringea",
+      "Guidepost Growth Equity"
+    ],
+    "company_size": 299,
+    "company_summary": "AI-powered research platform for high-quality participant insights."
+  },
+  "retorna": {
+    "id": "retorna",
+    "name": "Retorna",
+    "domain": "retorna.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/963dfa186641cb63a793c1b1bbd39530dfbc063739823c3f165cbc2e78298461.jpg",
+    "funding_total": "$$3M seed",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Impacta VC"
+    ],
+    "company_size": 93,
+    "company_summary": "Fast secure international money transfers with fair rates and trust."
+  },
+  "alvys": {
+    "id": "alvys",
+    "name": "Alvys",
+    "domain": "alvys.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/e9b74cdfc584e6fdbe16f4d59c339f9abb9e678883373a0b5ec4e06c147e730b.jpg",
+    "funding_total": "$$72.1M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 119,
+    "company_summary": "All-in-one cloud TMS boosting loads, integrations, and accounting\u00e2\u0080\u0094no added staff."
+  },
+  "triplewhale": {
+    "id": "triplewhale",
+    "name": "Triple Whale",
+    "domain": "triplewhale.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/547ebe1c10fa787e410499ed9405cfc587f4e4755d78c4e430ae969996415d90.jpg",
+    "funding_total": "$$25M Series B",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "NFX",
+      "Elephant"
+    ],
+    "company_size": 318,
+    "company_summary": "Ecommerce intelligence platform with AI-driven insights and automated actions."
+  },
+  "redcellpartners": {
+    "id": "redcellpartners",
+    "name": "Red Cell Partners",
+    "domain": "redcellpartners.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/9529fe305cdca6745befcc85f02a814789e80bd6438c4aa62583caa6f0b10c21.jpg",
+    "funding_total": "$$91.2M",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 99,
+    "company_summary": "Incubation firm launching technology-led healthcare, cyber, and national-security solutions."
+  },
+  "hatchcontracts": {
+    "id": "hatchcontracts",
+    "name": "Hatch Contracts",
+    "domain": "hatchcontracts.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/b1be8fac647fdb8a2d0aa8f37a103616dd268cf507a0a7ca333fbfc8e098da27.jpg",
+    "funding_total": "$$27.1M",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "True Ventures"
+    ],
+    "company_size": 259,
+    "company_summary": "Smart sleep products for babies, kids, and adults worldwide."
+  },
+  "lts": {
+    "id": "lts",
+    "name": "LTS",
+    "domain": "lts.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/7672ee415730daf18439e99f66fd279b3af80869c7a5b8162e4fe6d6d932419f.jpg",
+    "funding_total": "$$17.6M",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Gradient",
+      "Headline",
+      "Uncork Capital",
+      "Zetta Venture Partners"
+    ],
+    "company_size": 2,
+    "company_summary": "Automated healthcare kiosk enabling private access to diagnostics and care."
+  },
+  "vectara": {
+    "id": "vectara",
+    "name": "Vectara",
+    "domain": "vectara.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/7a715d6a1a7364410da192014916fcf8a5cf08061529b0bc2e9953a91d0be2e9.jpg",
+    "funding_total": "$$53.5M Series A",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Top Harvest Capital",
+      "Vertex Ventures",
+      "Databricks Ventures",
+      "Mack Ventures",
+      "Alumni Ventures",
+      "Ruttenberg Gordon Investments",
+      "Emad Mostaque",
+      "Mike Olson",
+      "Race Capital",
+      "FPV Ventures"
+    ],
+    "company_size": 71,
+    "company_summary": "Enterprise-grade RAG AI platform: accurate, explainable, secure, scalable."
+  },
+  "canonical": {
+    "id": "canonical",
+    "name": "Canonical",
+    "domain": "canonical.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/6ab4dfb1a8f1210ba1f5103c753f55de48748fe69c8afc93015f6718f44111ee.jpg",
+    "funding_total": "\u00e2\u0082\u00ac9M venture round",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 1,
+    "company_summary": "Global open-source solutions provider; Ubuntu publisher."
+  },
+  "pathai": {
+    "id": "pathai",
+    "name": "PathAI",
+    "domain": "pathai.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/b0612e8bb5d3aae78d569ce387205842e094f0da4351f2b38d1e8f12eb69815f.jpg",
+    "funding_total": "$$100M Debt Financing",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Kaiser Permanente",
+      "D1 Capital Partners"
+    ],
+    "company_size": 277,
+    "company_summary": "AI-powered pathology firm improving cancer outcomes through accurate diagnoses."
+  },
+  "sidecarhealth": {
+    "id": "sidecarhealth",
+    "name": "Sidecar Health",
+    "domain": "sidecarhealth.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/4043eaefa98b94f5d2e9414bd753f78353ddeff03572fa72eb606c62eccf61f1.jpg",
+    "funding_total": "$$328M Series D",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Duke University",
+      "Comcast Ventures",
+      "Koch Disruptive Technologies",
+      "Kauffman Fellows",
+      "Drive Capital",
+      "Bond",
+      "Marbruck",
+      "Morpheus Ventures"
+    ],
+    "company_size": 260,
+    "company_summary": "Common-sense health insurance giving consumers control over costs and choices."
+  },
+  "prophetx": {
+    "id": "prophetx",
+    "name": "ProphetX",
+    "domain": "prophetx.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/dfece9f2a7baac350c399e2e4e796982ad2a9682538e15c520b6273e42ab9226.jpg",
+    "funding_total": "$$28.6M Series A",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Data Point Capital"
+    ],
+    "company_size": 83,
+    "company_summary": "Federally regulated platform for America's first sports prediction market."
+  },
+  "orbis": {
+    "id": "orbis",
+    "name": "Orbis",
+    "domain": "orbis.com",
+    "logo_url": null,
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [
+      "McNally Capital"
+    ],
+    "company_size": 173,
+    "company_summary": "Forward-leaning security solutions delivering strategic insight, training, and capability worldwide."
+  },
+  "absencesoft": {
+    "id": "absencesoft",
+    "name": "AbsenceSoft",
+    "domain": "absencesoft.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/bc51f65a0c2499319fa0223d9ea2cc6acca3607264dd22b4b47dc366d999f7fd.jpg",
+    "funding_total": "$$27M from 3 rounds",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Luminate Capital Partners",
+      "Norwest"
+    ],
+    "company_size": 204,
+    "company_summary": "Leave and accommodations management SaaS delivering regulatory compliance for 7M+."
+  },
+  "katmai": {
+    "id": "katmai",
+    "name": "Katmai",
+    "domain": "katmai.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/56f14501f2075f507f4e4e2064aa086be85b9d7ad7167c2a2b0864d042191f22.jpg",
+    "funding_total": "$$22M Series A",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Starr Insurance"
+    ],
+    "company_size": 55,
+    "company_summary": "Create a virtual office for seamless, in-person-like team collaboration."
+  },
+  "medvidi": {
+    "id": "medvidi",
+    "name": "Medvidi",
+    "domain": "medvidi.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/138b8a39e80bfcc0557fc15b25c71b5cf6e56d3009a20f5d7e6ddcfea3eb99fe.jpg",
+    "funding_total": "$$2.8M Seed",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 195,
+    "company_summary": "Accessible, stigma-free online mental health platform with personalized support."
+  },
+  "bizzycar": {
+    "id": "bizzycar",
+    "name": "BizzyCar",
+    "domain": "bizzycar.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/a4f9e16c3f47f405b36ffc2c69cad9e77a664143c3f17000090e41431fcb45eb.jpg",
+    "funding_total": "$$35M Series B",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Dealer Tire",
+      "FM Capital"
+    ],
+    "company_size": 102,
+    "company_summary": "AI recall management platform automating dealer scheduling and mobile service workflows."
+  },
+  "defenseunicorns": {
+    "id": "defenseunicorns",
+    "name": "Defense Unicorns",
+    "domain": "defenseunicorns.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/1a670df8de8e33f25270d7d3eabaaa4e13e202725b3cd58ed9ba139a93fd7cbe.jpg",
+    "funding_total": "$$171.5M Series B",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Bain Capital Tech Opportunities",
+      "Sapphire Ventures",
+      "Ansa Capital",
+      "Valor Equity Partners",
+      "Uncorrelated Ventures",
+      "AVP",
+      "David Petraeus"
+    ],
+    "company_size": 269,
+    "company_summary": "We help mission-focused heroes solve the world\u00e2\u0080\u0099s biggest software challenges."
+  },
+  "cint": {
+    "id": "cint",
+    "name": "Cint",
+    "domain": "cint.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/cb965bc28b84ecdbbdc712c93355b14fd861c9246245467d76e96ca9b934437e.jpg",
+    "funding_total": "$$64.6M total funding; acquired by Cint for $580M",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "North Bridge Venture Partners & Growth Equity",
+      "Sopris Capital Associates"
+    ],
+    "company_size": 69,
+    "company_summary": "Programmatic access to first-party survey data via global marketplace."
+  },
+  "reachfinancial": {
+    "id": "reachfinancial",
+    "name": "Reach Financial",
+    "domain": "reachfinancial.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/9cccdea3c25378cb147f17deea1d2b68788970f3534c260b9835010461e72676.jpg",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 147,
+    "company_summary": "Debt management fintech offering loans and tools to control finances."
+  },
+  "broadsigncareers": {
+    "id": "broadsigncareers",
+    "name": "Broadsign Careers",
+    "domain": "broadsigncareers.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/cfe92dfb62172a96e886d33c69a5b1367bc36542848a3d33825008138c43c43c.jpg",
+    "funding_total": "Private Equity round led by Crestline",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Crestline"
+    ],
+    "company_size": 400,
+    "company_summary": "Digital out-of-home platform enabling creative, connected audience engagement globally."
+  },
+  "aren": {
+    "id": "aren",
+    "name": "Aren",
+    "domain": "aren.com",
+    "logo_url": "https://bookface-images.s3.amazonaws.com/small_logos/364d4894b0a1316d1031d75709cb12f94ced7b77.png",
+    "funding_total": "$$4.37M Seed",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": null,
+    "company_summary": "AI company building software for nursing workflows"
+  },
+  "fxcintelligence": {
+    "id": "fxcintelligence",
+    "name": "FXC Intelligence",
+    "domain": "fxcintelligence.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/76f1b8ca40244ef9a0615b744aa70ebf1996d3b72676d8feee06217d16c273e5.jpg",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 89,
+    "company_summary": "Financial data company enabling innovation in global payments; hiring now."
+  },
+  "sbt": {
+    "id": "sbt",
+    "name": "SBT",
+    "domain": "sbt.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/53f5fd326e64f0b8e29bcaee305093a7f8b8387c4f838adb8bc12141c8ac6645.jpg",
+    "funding_total": "$$145M",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 200,
+    "company_summary": "Regulated-industry compliance platform converting consumer intent into completed payments."
+  },
+  "sezzle": {
+    "id": "sezzle",
+    "name": "Sezzle",
+    "domain": "sezzle.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/28bd4847a20c53c3fab3d8e99f45781ecf41adf28ca59e7d3b8ab2ffe7cdf70b.jpg",
+    "funding_total": "$$851.6M",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Bastion Management",
+      "Discover"
+    ],
+    "company_size": 464,
+    "company_summary": "Fintech empowering consumers with POS financing and digital payments."
+  },
+  "facilitiesmanagementexpress": {
+    "id": "facilitiesmanagementexpress",
+    "name": "Facilities Management Express",
+    "domain": "facilitiesmanagementexpress.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/62e8e4249d1d9705dea72977c85848057cd52fbab8633d570c025b8f862a2d72.jpg",
+    "funding_total": "$$3M Private Equity",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Luminate Capital Partners",
+      "Five Elms Capital"
+    ],
+    "company_size": 234,
+    "company_summary": "FMX: unified facilities management for campuses, governments, and municipalities."
+  },
+  "knak": {
+    "id": "knak",
+    "name": "Knak",
+    "domain": "knak.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/ebca83e992bad92779f985095bef93798a1dfb5ef44afb6c14b9d58ae212beb5.jpg",
+    "funding_total": "$$25M Series A",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Insight Partners"
+    ],
+    "company_size": 158,
+    "company_summary": "No-code email and landing page builder for enterprise marketing teams."
+  },
+  "myome": {
+    "id": "myome",
+    "name": "MyOme",
+    "domain": "myome.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/c1e5dd9ddb945dd8bcf2ef985b454002157e15a9ff157d0dbe20380823d92db6.jpg",
+    "funding_total": "$$23M Series B",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Healthcare Venture Partners",
+      "Illumina"
+    ],
+    "company_size": 101,
+    "company_summary": "Whole genome sequencing and bioinformatics for personalized actionable clinical reports."
+  },
+  "bitwarden": {
+    "id": "bitwarden",
+    "name": "Bitwarden",
+    "domain": "bitwarden.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/66bfc2e7bcde24e92d7f1e4b44b6f75a9f58d6f1189665050b74f181ac953940.jpg",
+    "funding_total": "$$100M Series B",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "PSG"
+    ],
+    "company_size": 291,
+    "company_summary": "Bitwarden provides trusted security solutions to securely manage sensitive data."
+  },
+  "eqvilent": {
+    "id": "eqvilent",
+    "name": "Eqvilent",
+    "domain": "eqvilent.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/71272037a8126cfb532d1e4966a5d92adaef358b07b1408c7544f562bf531d49.jpg",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 25,
+    "company_summary": "Global quantitative trading firm delivering liquidity via deep learning, FPGA."
+  },
+  "casparhealth": {
+    "id": "casparhealth",
+    "name": "Caspar Health",
+    "domain": "casparhealth.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/aceaf48e0648d158d85577a9ffa11aeeb74b0cff7a55927fa4a8497882dc5fd5.jpg",
+    "funding_total": "$$19.9M Series B",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Ananda Impact Ventures",
+      "Think.Health",
+      "Atlantic",
+      "Planet Positive LP",
+      "Frog Capital",
+      "Microsoft Accelerator Berlin",
+      "Helmut Nanz"
+    ],
+    "company_size": 155,
+    "company_summary": "Digital therapy plus personal care for effective, lasting rehabilitation outcomes."
+  },
+  "welcomepickups": {
+    "id": "welcomepickups",
+    "name": "Welcome Pickups",
+    "domain": "welcomepickups.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/417740479e5573a237abcf8681ec0bb6e1daddcbe63d808c420f2e817c12bd2e.jpg",
+    "funding_total": "$$12.4M over multiple rounds",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "VentureFriends"
+    ],
+    "company_size": 191,
+    "company_summary": "Personalized, wholesome travel with friendly transfers, essentials, tickets, local experiences."
+  },
+  "zattoo": {
+    "id": "zattoo",
+    "name": "Zattoo",
+    "domain": "zattoo.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/5b06d89951a07b0ebb662d3f5b3c3c9cdb711f0f227cc811cb39b4353f43c6a6.jpg",
+    "funding_total": "$$1M Seed Round",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Tamedia Ltd."
+    ],
+    "company_size": 245,
+    "company_summary": "European TV streaming provider offering DTC and B2B TV services."
+  },
+  "n.rich": {
+    "id": "n.rich",
+    "name": "N.Rich",
+    "domain": "n.rich.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/34355e0d42224bc20c0e36c0f368c89988e58811c225d3d5f88fc966b80e336e.jpg",
+    "funding_total": "$$4.8M Series A",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 130,
+    "company_summary": "ABM action platform for enterprise growth, recognized by Gartner."
+  },
+  "genea": {
+    "id": "genea",
+    "name": "Genea",
+    "domain": "genea.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/b4287ac489aca321cfdb1f5758ea846259aa659aafc67eb6bd6554c217a0c4a8.jpg",
+    "funding_total": "$$7.6M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 217,
+    "company_summary": "Genea delivers innovative proptech, secure software, and exemplary service."
+  },
+  "telnyx": {
+    "id": "telnyx",
+    "name": "Telnyx",
+    "domain": "telnyx.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/292e5b575450bff9ab35b02655db961d3c5a50468301c0b948304f9fb24b2957.jpg",
+    "funding_total": "$$2.125M seed",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Techstars",
+      "Alan Matthew",
+      "Point B Capital",
+      "Lakewest Venture Partners",
+      "Corazon Capital",
+      "Pritzker Group Venture Capital",
+      "Chicago Ventures"
+    ],
+    "company_size": 416,
+    "company_summary": "Voice AI, Voice APIs, and eSIMs powered by Telnyx. One platform. Full control. No compromises."
+  },
+  "kiavi": {
+    "id": "kiavi",
+    "name": "Kiavi",
+    "domain": "kiavi.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/5fb51b1393eb24d17176eface57ec46548bde7ff156a92317ed55aed6ff5af4a.jpg",
+    "funding_total": "$$1.85B+ total funding",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 467,
+    "company_summary": "Kiavi: data-driven private lender funding residential investors\u00e2\u0080\u0099 scaling."
+  },
+  "guidewiresoftware": {
+    "id": "guidewiresoftware",
+    "name": "Guidewire Software",
+    "domain": "guidewiresoftware.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/0a28b0d8eff997a126dfa5bf08b24a5b73d211f7bf7afc67975e41d0f1594240.jpg",
+    "funding_total": "$$624.75M",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 115,
+    "company_summary": "ISCS joined Guidewire Software; follow Guidewire for details."
+  },
+  "northabllc": {
+    "id": "northabllc",
+    "name": "NorthAB LLC",
+    "domain": "northabllc.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/fcfad3d62bd0642a6541bb2c90bf83701836b3c60d6b6e7205881ffcd8d84f66.jpg",
+    "funding_total": "$$10M annual revenue",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 46,
+    "company_summary": "Secure, integrated payment processing with merchant accounts and gateways."
+  },
+  "canals": {
+    "id": "canals",
+    "name": "Canals",
+    "domain": "canals.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/29f65ce425c351919801b6a55f23bd89dc6ff7de188bb700876c392eec88af44.jpg",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 148,
+    "company_summary": "AI-powered automation for sales, purchasing, and accounts payable in distribution."
+  },
+  "fabstation": {
+    "id": "fabstation",
+    "name": "FabStation",
+    "domain": "fabstation.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/a445a33f3ba2e94c68add201ec04b8675858473f4cb43209b1dc8c78d09698e5.jpg",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 37,
+    "company_summary": "AR for Industry 4.0, placing 3D assets in fabrication shops."
+  },
+  "simspacecorporation": {
+    "id": "simspacecorporation",
+    "name": "SimSpace Corporation",
+    "domain": "simspacecorporation.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/5a0b7b2c08d35d8c6cfaf433afef04e986a2acf3abc77b89f202ed6b41858a8f.jpg",
+    "funding_total": "$$84M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 206,
+    "company_summary": "SimSpace: AI proving grounds for realistic, hybrid human-AI training."
+  },
+  "foley": {
+    "id": "foley",
+    "name": "Foley",
+    "domain": "foley.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/06e5bb54c46ccd9ae42d2e9546e8d821df44ae6835da6d19c10327ff35c9e280.jpg",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 332,
+    "company_summary": "Automated transportation risk, compliance, and screening for safer fleets."
+  },
+  "futurefitai": {
+    "id": "futurefitai",
+    "name": "FutureFit AI",
+    "domain": "futurefitai.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/6e16753c7399ecb35e56ebf5dd8988cf4b2aabdbc3342febbc45be48eb26c36e.jpg",
+    "funding_total": "$$5.4M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Acumen",
+      "JP Morgan Chase",
+      "Achieve Partners"
+    ],
+    "company_size": 38,
+    "company_summary": "AI-powered career navigation, reskilling, and job placement for workers."
+  },
+  "groundnews": {
+    "id": "groundnews",
+    "name": "Ground News",
+    "domain": "groundnews.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/9e543751697d54d7aeb17d90309401dbfdb665745170232446310b805e35ccab.jpg",
+    "funding_total": "$$150K Angel, Pre Seed, Seed, Series A",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 77,
+    "company_summary": "Platforms that reveal media bias to enable informed, civil dialogue."
+  },
+  "frontify": {
+    "id": "frontify",
+    "name": "Frontify",
+    "domain": "frontify.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/c9e20243dd40be6e1de0d6e5444c36b52a6a6865a6be140e3dfe263a316189ea.jpg",
+    "funding_total": "$$80.6M Series C",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 366,
+    "company_summary": "Cloud brand platform uniting DAM, guidelines, and templates collaboratively."
+  },
+  "rubylabs": {
+    "id": "rubylabs",
+    "name": "Ruby Labs",
+    "domain": "rubylabs.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/8ccc7945052074799fe4703df2547894e0653717d07f13f8f7c00e5e3f18e573.jpg",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 253,
+    "company_summary": "London-based tech company creating innovative health, education, entertainment consumer products."
+  },
+  "stratusgrid": {
+    "id": "stratusgrid",
+    "name": "StratusGrid",
+    "domain": "stratusgrid.com",
+    "logo_url": "https://app.ashbyhq.com/api/images/org-theme-logo/7784df2d-78c9-46e9-88e0-d3d534762753/7645089e-ccee-4bed-b0a9-8ce8b434d96e/2f1f04f2-32e0-4eef-8248-52b04743db27.png",
+    "funding_total": "$$3M Seed",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Dogwood Ventures",
+      "Market Square Ventures"
+    ],
+    "company_size": 30,
+    "company_summary": "Multi-agent cloud infrastructure solution optimizing cost, security, and speed."
+  },
+  "livekit": {
+    "id": "livekit",
+    "name": "LiveKit",
+    "domain": "livekit.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/376273acaaba5bdd82d1c55d1e040d8b80fcb169940a7bdffacd9883243e1ccc.jpg",
+    "funding_total": "$$181M total funding, including $100M Series C",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Index Ventures",
+      "Altimeter",
+      "Redpoint",
+      "Salesforce Ventures"
+    ],
+    "company_size": 196,
+    "company_summary": "Open source frameworks and cloud platform for voice, video, AI."
+  },
+  "zeelyinc.": {
+    "id": "zeelyinc.",
+    "name": "Zeely Inc.",
+    "domain": "zeelyinc..com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/703025420721853aa933e25a748ac80cacc41f04f319713f8884e90c4aa33355.jpg",
+    "funding_total": "$$2.343M Seed",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Google for Startups",
+      "Network.VC",
+      "Vesna Capital",
+      "Angel One"
+    ],
+    "company_size": 155,
+    "company_summary": "AI marketing platform helping SMEs create and promote high-performing content."
+  },
+  "boostersteam\u00e2\u009b\u00b9\u00f0\u009f\u008f\u00bc": {
+    "id": "boostersteam\u00e2\u009b\u00b9\u00f0\u009f\u008f\u00bc",
+    "name": "Boosters Team \u00e2\u009b\u00b9\u00f0\u009f\u008f\u00bc",
+    "domain": "boostersteam\u00e2\u009b\u00b9\u00f0\u009f\u008f\u00bc.com",
+    "logo_url": "https://app.ashbyhq.com/api/images/org-theme-logo/ae674219-3691-4053-bcff-239963151c65/38299158-7d12-4afe-8b98-d5f5ccc472db/9ea62f5e-6d6d-4daa-98e1-4b393936f3c0.png",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 79,
+    "company_summary": "Global tech company building AI-powered apps for learning and wellbeing."
+  },
+  "pinecone": {
+    "id": "pinecone",
+    "name": "Pinecone",
+    "domain": "pinecone.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/13071d678835d3759add9734174ff240f59559075f5edd13a12989010b9068c3.jpg",
+    "funding_total": "$$138M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Andreessen Horowitz",
+      "ICONIQ",
+      "Menlo Ventures",
+      "Wing Venture Capital"
+    ],
+    "company_size": 138,
+    "company_summary": "Leading vector database enabling scalable, accurate, high-performing AI applications."
+  },
+  "mimica": {
+    "id": "mimica",
+    "name": "Mimica",
+    "domain": "mimica.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/f5a59238d9981b707f40a999918e983c32813ca5e1c2df78fafb4b8d4c39a596.jpg",
+    "funding_total": "$$26.2M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Entrepreneurs First",
+      "Paladin Capital Group",
+      "Episode 1"
+    ],
+    "company_size": 310,
+    "company_summary": "AI powered process mining and automation blueprint for enterprise efficiency."
+  },
+  "teleport": {
+    "id": "teleport",
+    "name": "Teleport",
+    "domain": "teleport.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/66abc985aab8a44c5a5b94dc1995aa44d815dae33f949520036e8b17b0e501ee.jpg",
+    "funding_total": "$$11M Angel Round",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 329,
+    "company_summary": "Faster engineering. Resilient infrastructure."
+  },
+  "nordsecurity": {
+    "id": "nordsecurity",
+    "name": "Nord Security",
+    "domain": "nordsecurity.com",
+    "logo_url": "https://app.ashbyhq.com/api/images/org-theme-logo/7b5619e7-2b3d-400c-837e-237f51164776/174a6581-17da-4aee-af6c-578a2a28da11/0db1966a-aba4-44f9-bee1-ccdfa245628e.png",
+    "funding_total": "$$209.0M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Warburg Pincus",
+      "Novator"
+    ],
+    "company_size": 1,
+    "company_summary": "Nord Security Partner page: cybersecurity suite and insights for growth."
+  },
+  "gamechanger": {
+    "id": "gamechanger",
+    "name": "GameChanger",
+    "domain": "gamechanger.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/703e2a6d3fb17b5c90e6d559862cb43f70ea0d8c63902853d595ef018963be91.jpg",
+    "funding_total": "$$10.6M total funding (Seed/Series A/Series B)",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Trilogy Equity Partners"
+    ],
+    "company_size": 398,
+    "company_summary": "Tech company delivering live action and stats for youth sports."
+  },
+  "deepset": {
+    "id": "deepset",
+    "name": "deepset",
+    "domain": "deepset.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/e29946bd2268f550f227eb066015e89e14d0142468d1411b04dee9fb19a1533a.jpg",
+    "funding_total": "$$45.2M Series B",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Mustafa Suleyman",
+      "Jeremy Yap",
+      "Tiny Supercomputer Investment Company",
+      "Charlie Songhurst",
+      "Emil Eifrem",
+      "Rand Hindi",
+      "Harpoon",
+      "Lunar Ventures"
+    ],
+    "company_size": 84,
+    "company_summary": "deepset builds open-source Haystack and enterprise RAG/agent governance platforms."
+  },
+  "terawattinfrastructure": {
+    "id": "terawattinfrastructure",
+    "name": "Terawatt Infrastructure",
+    "domain": "terawattinfrastructure.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/ef77a0b9faa4d56884c43dab356d26275c8e8a1be749a421e9096d5b718244db.jpg",
+    "funding_total": "$$1B Series A",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Vision Ridge Capital Partners"
+    ],
+    "company_size": 117,
+    "company_summary": "Turnkey fleet EV charging infrastructure provider and operator."
+  },
+  "supermove": {
+    "id": "supermove",
+    "name": "Supermove",
+    "domain": "supermove.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/ea7942b464b44a40362f24dc39c40e978af11f600e5cdadf095b3e83c50946fb.jpg",
+    "funding_total": "$$18.4M Series B",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 44,
+    "company_summary": "Automate moving operations to book more jobs, earn more, reduce errors."
+  },
+  "clerk": {
+    "id": "clerk",
+    "name": "Clerk",
+    "domain": "clerk.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/e60909df8a90c1dd872daf27af24b4fbb03aa4e60ab63f0eba1176fe2df9f54d.jpg",
+    "funding_total": "$$84.5M Series B",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "CRV"
+    ],
+    "company_size": 208,
+    "company_summary": "Embeddable UIs, APIs, dashboards for user authentication and management."
+  },
+  "scribd,inc.": {
+    "id": "scribd,inc.",
+    "name": "Scribd, Inc.",
+    "domain": "scribd,inc..com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/2acef8a413e5e576e641278878f997bacc85fa3b4224030975fb42b1ae7c1245.jpg",
+    "funding_total": "$$106.75M",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Khosla Ventures",
+      "Redpoint",
+      "Charles River Ventures"
+    ],
+    "company_size": 451,
+    "company_summary": "Advancing human understanding through Scribd, Slideshare, Everand, and Fable."
+  },
+  "earthoptics": {
+    "id": "earthoptics",
+    "name": "EarthOptics",
+    "domain": "earthoptics.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/d4abea823f409d4145d60d6c6187fe50983de1aaea043b8d1ae2fba812ae768d.jpg",
+    "funding_total": "$$117M venture funding",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 107,
+    "company_summary": "Soil Cloud platform uses sensors and carbon analytics for sustainable farming."
+  },
+  "backerkit": {
+    "id": "backerkit",
+    "name": "BackerKit",
+    "domain": "backerkit.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/e761bb93192c1a2cd19b6474e34c6e8ddd3268db102c698d2f844f2475354c02.jpg",
+    "funding_total": "$$3.0M equity crowdfunding + pre-seed",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 48,
+    "company_summary": "All-in-one crowdfunding platform helping creators manage campaigns and grow fans."
+  },
+  "commons": {
+    "id": "commons",
+    "name": "Commons",
+    "domain": "commons.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/6075e2ed7287934c789d57b7601911ce7b0ffbbfcc556524bf5dd060b6b5ca4d.jpg",
+    "funding_total": "$$11.8M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 37,
+    "company_summary": "Sustainable spending made easy\u00e2\u0080\u0094buy less, buy better, take climate action."
+  },
+  "planetscale": {
+    "id": "planetscale",
+    "name": "PlanetScale",
+    "domain": "planetscale.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/87e3b313df58bd8af8ecc4114c8831bbeaa15fb25045c33b5d4abebc92e3c3de.jpg",
+    "funding_total": "$$105M Series C",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Andreessen Horowitz",
+      "SignalFire",
+      "Insight Partners",
+      "Kleiner Perkins",
+      "Shishir Mehrotra",
+      "Steve Chen",
+      "Tom Preston-Werner",
+      "Jeremy Stoppelman",
+      "Sam Lambert",
+      "Ellen Salisbury"
+    ],
+    "company_size": 105,
+    "company_summary": "MySQL-compatible, horizontally scalable database with online schema changes."
+  },
+  "automox": {
+    "id": "automox",
+    "name": "Automox",
+    "domain": "automox.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/a3a0c3221261105369fcf35074b1bbaf5d28e09a7e24cc5bd2fab9d8de189b46.jpg",
+    "funding_total": "$$152.6M Series C",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "TechOperators Venture Capital",
+      "Koch Disruptive Technologies",
+      "Insight Partners",
+      "Blackstone"
+    ],
+    "company_size": 210,
+    "company_summary": "Policy-driven IT automation platform reducing risk and saving time."
+  },
+  "lirio": {
+    "id": "lirio",
+    "name": "Lirio",
+    "domain": "lirio.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/456e57a1aa2344cfead42156201d5acd5138c2de09b97a1a3d09c9daf1ceaccc.jpg",
+    "funding_total": "$$97.1M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 111,
+    "company_summary": "AI behavioral intelligence platform improving health outcomes via precision nudging."
+  },
+  "syndio": {
+    "id": "syndio",
+    "name": "Syndio",
+    "domain": "syndio.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/e6353e7c0e641472311a6fb6082e6482ce49adcc3340e2c0db26f1efc9be67aa.jpg",
+    "funding_total": "$$133.4M Series C",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Emerson Collective",
+      "Bessemer Venture Partners"
+    ],
+    "company_size": 175,
+    "company_summary": "AI-driven decision intelligence for pay, guiding global compensation."
+  },
+  "trolley": {
+    "id": "trolley",
+    "name": "Trolley",
+    "domain": "trolley.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/2669b81d437f2690e54a1adac3fa27edf7b7e7a9f6135b85e667ee4939f7040a.jpg",
+    "funding_total": "$$32.4M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Wavecrest Growth Partners",
+      "Pace Capital",
+      "GreenSky Ventures"
+    ],
+    "company_size": 106,
+    "company_summary": "Embeddable global payout infrastructure ensuring compliant, scalable payouts and tax."
+  },
+  "trustengine": {
+    "id": "trustengine",
+    "name": "TrustEngine",
+    "domain": "trustengine.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/b867a990bd7417d621e515d7a0729778b9bcb34f539920e01f18b6bb3978937a.jpg",
+    "funding_total": "$$5M",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "LLR Partners",
+      "Espresso Capital"
+    ],
+    "company_size": 56,
+    "company_summary": "Incubator building AI mortgage advice platform MortgageCoach for better lending trust."
+  },
+  "eltropyinc.": {
+    "id": "eltropyinc.",
+    "name": "Eltropy Inc.",
+    "domain": "eltropyinc..com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/21f195c7ed94d131323b06c2548cdf0841c98b4a459054f16655b02965e12747.jpg",
+    "funding_total": "$$41.5M Total Funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "K1 Investment Management"
+    ],
+    "company_size": 308,
+    "company_summary": "AI-powered omni-channel platform helping credit unions grow and engage members."
+  },
+  "granum": {
+    "id": "granum",
+    "name": "Granum",
+    "domain": "granum.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/230f735e9273c72b8093dca9410e727b000f7b09b3d05b4c55d6a48cdfe449a0.jpg",
+    "funding_total": "$$82.6M",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "FTV Capital",
+      "Five Elms Capital",
+      "David Cummings"
+    ],
+    "company_size": 284,
+    "company_summary": "Unified software for North American landscaping; hands-on support and growth."
+  },
+  "onfleet": {
+    "id": "onfleet",
+    "name": "Onfleet",
+    "domain": "onfleet.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/1878b68f936e0d5152c64cc87b1de784497ea0297fe1f992218f5d2a3b5dc5f1.jpg",
+    "funding_total": "$$41.9M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Kayne Anderson Growth Capital",
+      "Kennet Partners",
+      "StartX (Stanford-StartX Fund)"
+    ],
+    "company_size": 91,
+    "company_summary": "Onfleet powers global businesses\u00e2\u0080\u0099 efficient, delightful deliveries with tracking software."
+  },
+  "drivewealth": {
+    "id": "drivewealth",
+    "name": "DriveWealth",
+    "domain": "drivewealth.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/8ab594678b9e2e374d31c6b7de26fd2c45e37202a2cbf881e58bc0df90c529b5.jpg",
+    "funding_total": "$$550.8M Series D",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Mouro Capital",
+      "Fidelity International Strategic Ventures",
+      "Quiet Capital",
+      "Raptor Group",
+      "Citi Ventures",
+      "Flight Deck Capital",
+      "SenaHill Partners",
+      "FTX"
+    ],
+    "company_size": 381,
+    "company_summary": "Global B2B fintech brokerage platform powering partners\u00e2\u0080\u0099 investing via APIs."
+  },
+  "oneclickcode": {
+    "id": "oneclickcode",
+    "name": "OneClick Code",
+    "domain": "oneclickcode.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/786c196170287a7541e2d28569a891ab26966f7e19daeb5326a84fc27da1fc44.jpg",
+    "funding_total": "$$11.5M",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 37,
+    "company_summary": "Automates verified roofing code estimates by address for faster claims."
+  },
+  "tailorcare": {
+    "id": "tailorcare",
+    "name": "TailorCare",
+    "domain": "tailorcare.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/aa5db0627070f564f4d4c8904d9feb18740d555785afcea12c976ba3e900143c.jpg",
+    "funding_total": null,
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 212,
+    "company_summary": "TailorCare provides risk-based, data-driven care navigation for musculoskeletal conditions."
+  },
+  "coconutsoftware": {
+    "id": "coconutsoftware",
+    "name": "Coconut Software",
+    "domain": "coconutsoftware.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/da1797e7c0270139beb85b321c9fa080be58422d14a547b0cab6e040ff273581.jpg",
+    "funding_total": "$$37.3M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [],
+    "company_size": 180,
+    "company_summary": "AI Branch Performance Platform optimizing staffing, scheduling, and customer experiences."
+  },
+  "orderyoyo": {
+    "id": "orderyoyo",
+    "name": "OrderYOYO",
+    "domain": "orderyoyo.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/d1245f58d3b14e932f8bc88975ad58f6a0f84dc4cf6c5e22c7da593032fefb03.jpg",
+    "funding_total": "$$15,775,702",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "PSV"
+    ],
+    "company_size": 224,
+    "company_summary": "Empowering local takeaway restaurants with branded ordering apps and marketing."
+  },
+  "runware": {
+    "id": "runware",
+    "name": "Runware",
+    "domain": "runware.com",
+    "logo_url": "https://crustdata-media.s3.us-east-2.amazonaws.com/company/bc7664ce0cecbdd75679ba4e28427ed9dbfa2654f754765ac912cf8676f66818.jpg",
+    "funding_total": "$$79M total funding",
+    "funding_stage": "Venture",
+    "key_investors": [
+      "Insight Partners",
+      "a16z",
+      "Dawn Capital",
+      "Speedinvest",
+      "Comcast Ventures"
+    ],
+    "company_size": 72,
+    "company_summary": "Run any AI model with Runware, at the lowest cost. Pay less, build more."
+  },
+  "openai": {
+    "id": "openai",
+    "name": "OpenAI",
+    "domain": "openai.com",
+    "logo_url": "https://www.google.com/s2/favicons?domain=openai.com&sz=128",
+    "funding_total": "$17.9B",
+    "funding_stage": "Growth",
+    "key_investors": [
+      "Microsoft",
+      "Thrive Capital",
+      "Khosla Ventures"
+    ],
+    "company_size": 1800,
+    "company_summary": "AI research and deployment company behind ChatGPT."
+  },
+  "anthropic": {
+    "id": "anthropic",
+    "name": "Anthropic",
+    "domain": "anthropic.com",
+    "logo_url": "https://www.google.com/s2/favicons?domain=anthropic.com&sz=128",
+    "funding_total": "$9.7B",
+    "funding_stage": "Series D",
+    "key_investors": [
+      "Amazon",
+      "Google",
+      "Spark Capital"
+    ],
+    "company_size": 600,
+    "company_summary": "AI safety and research company developing Claude."
+  },
+  "cursor": {
+    "id": "cursor",
+    "name": "Cursor (Anysphere)",
+    "domain": "cursor.com",
+    "logo_url": "https://www.google.com/s2/favicons?domain=cursor.com&sz=128",
+    "funding_total": "$60M Series A",
+    "funding_stage": "Series A",
+    "key_investors": [
+      "Andreessen Horowitz",
+      "OpenAI Startup Fund"
+    ],
+    "company_size": 35,
+    "company_summary": "The AI-powered code editor built for engineers."
+  },
+  "supabase": {
+    "id": "supabase",
+    "name": "Supabase",
+    "domain": "supabase.com",
+    "logo_url": "https://www.google.com/s2/favicons?domain=supabase.com&sz=128",
+    "funding_total": "$116M Series B",
+    "funding_stage": "Series B",
+    "key_investors": [
+      "Y Combinator",
+      "Coatue",
+      "Felicis"
+    ],
+    "company_size": 120,
+    "company_summary": "The open source Firebase alternative."
+  },
+  "vercel": {
+    "id": "vercel",
+    "name": "Vercel",
+    "domain": "vercel.com",
+    "logo_url": "https://www.google.com/s2/favicons?domain=vercel.com&sz=128",
+    "funding_total": "$563M Series E",
+    "funding_stage": "Series E",
+    "key_investors": [
+      "Accel",
+      "CRV",
+      "GV",
+      "Bedrock"
+    ],
+    "company_size": 650,
+    "company_summary": "Frontend cloud platform powering Next.js."
+  }
+}

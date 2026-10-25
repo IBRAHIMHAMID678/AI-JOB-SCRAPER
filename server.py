@@ -1,3 +1,4 @@
+import config  # Configures environment and isolates temp/cache strictly to D: drive
 import os
 import json
 import hashlib
@@ -5,8 +6,8 @@ import asyncio
 import threading
 import concurrent.futures
 import pandas as pd
-from fastapi import FastAPI, BackgroundTasks, HTTPException
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi import FastAPI, BackgroundTasks, HTTPException, Query
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
@@ -29,8 +30,13 @@ from database import (
     update_job_status,
     get_applied_jobs_from_db,
     get_active_jobs_from_db,
+    get_fresh_24h_jobs_from_db,
     delete_all_jobs_from_db
 )
+from matcha_ats_harvester import MatchaATSHarvester
+from matcha_freshness import verify_24h_freshness
+from company_enricher import CompanyEnricher
+from matcha_structurer import structure_job_object
 from log_manager import log_queue, job_queue, pending_job_queue, log
 from application_engine import JobApplicationEngine, ApplicationConfig
 from email_service import EmailService
@@ -62,7 +68,7 @@ class VerifyJobRequest(BaseModel):
     estimated_pay: str
     location: str
 
-def run_pipeline():
+def run_pipeline(selected_sources: list = None):
     global is_running, global_evaluated_jobs, global_pending_jobs, global_source_stats
     is_running = True
     global_evaluated_jobs = []
@@ -75,6 +81,7 @@ def run_pipeline():
     
     # Define tasks for concurrent scraping execution
     scraper_tasks = [
+        ("Matcha Direct ATS (Greenhouse/Ashby/Lever/Rippling)", lambda: MatchaATSHarvester().harvest_all(max_hours=24.0, only_fresh=True)),
         ("JobSpy (LinkedIn/Indeed/Glassdoor/ZipRecruiter)", get_jobspy_jobs),
         ("Himalayas API", get_himalayas_jobs),
         ("Remotive API", get_remotive_jobs),
@@ -86,6 +93,17 @@ def run_pipeline():
         ("Jobicy API", fetch_jobicy_jobs),
         ("Working Nomads API", fetch_workingnomads_jobs)
     ]
+    
+    if selected_sources:
+        selected_set = {str(s).lower().strip() for s in selected_sources if s}
+        filtered_tasks = []
+        for name, func in scraper_tasks:
+            name_lower = name.lower()
+            if any(s in name_lower or name_lower in s for s in selected_set):
+                filtered_tasks.append((name, func))
+        if filtered_tasks:
+            scraper_tasks = filtered_tasks
+            log(f"[SYSTEM] Running {len(scraper_tasks)} selected scraper lane(s): {', '.join([t[0] for t in scraper_tasks])}")
     
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
         future_map = {executor.submit(func): name for name, func in scraper_tasks}
@@ -188,13 +206,116 @@ def serve_index():
     with open(index_file, "r", encoding="utf-8") as f:
         return HTMLResponse(content=f.read())
 
+class StartPipelineRequest(BaseModel):
+    sources: list[str] | None = None
+
+@app.get("/api/sources")
+def get_sources_endpoint():
+    return {
+        "sources": [
+            {
+                "id": "jobspy",
+                "name": "JobSpy (LinkedIn & Indeed)",
+                "category": "Deep Crawl",
+                "speed": "Standard",
+                "badge": "💼",
+                "desc": "Live postings from LinkedIn, Indeed, Glassdoor & ZipRecruiter"
+            },
+            {
+                "id": "himalayas",
+                "name": "Himalayas.app",
+                "category": "API",
+                "speed": "Ultra-Fast",
+                "badge": "🏔️",
+                "desc": "Curated remote engineering & AI developer positions"
+            },
+            {
+                "id": "remotive",
+                "name": "Remotive API",
+                "category": "API",
+                "speed": "Ultra-Fast",
+                "badge": "🌍",
+                "desc": "Verified global software, backend & machine learning roles"
+            },
+            {
+                "id": "remoteok",
+                "name": "Remote OK",
+                "category": "API",
+                "speed": "Ultra-Fast",
+                "badge": "⚡",
+                "desc": "Direct public endpoint for worldwide remote tech talent"
+            },
+            {
+                "id": "jobicy",
+                "name": "Jobicy Remote",
+                "category": "API",
+                "speed": "Ultra-Fast",
+                "badge": "🎯",
+                "desc": "Worldwide remote engineering with USD compensation tracking"
+            },
+            {
+                "id": "workingnomads",
+                "name": "Working Nomads",
+                "category": "API",
+                "speed": "Fast",
+                "badge": "💻",
+                "desc": "Curated 100% remote software developer opportunities"
+            },
+            {
+                "id": "weworkremotely",
+                "name": "WeWorkRemotely",
+                "category": "RSS",
+                "speed": "Fast",
+                "badge": "📡",
+                "desc": "Premier remote work community job board feeds"
+            },
+            {
+                "id": "nodesk_python",
+                "name": "Python.org & NoDesk",
+                "category": "RSS",
+                "speed": "Fast",
+                "badge": "🐍",
+                "desc": "Official Python Foundation listings & NoDesk developer channels"
+            },
+            {
+                "id": "themuse",
+                "name": "The Muse",
+                "category": "API",
+                "speed": "Fast",
+                "badge": "🏛️",
+                "desc": "Transparent verified corporate & startup listings"
+            },
+            {
+                "id": "arbeitnow",
+                "name": "Arbeitnow",
+                "category": "API",
+                "speed": "Fast",
+                "badge": "🚀",
+                "desc": "Visa-friendly and EU/Worldwide remote tech opportunities"
+            }
+        ]
+    }
+
+@app.get("/api/status")
+def get_status_endpoint():
+    total_raw = sum(global_source_stats.values()) if global_source_stats else 0
+    return {
+        "is_running": is_running,
+        "scraped_count": total_raw,
+        "matched_count": len(global_evaluated_jobs),
+        "pending_count": len(global_pending_jobs),
+        "mongo_connected": is_mongo_connected,
+        "sources": global_source_stats
+    }
+
 @app.post("/api/start")
-def start_scraping(background_tasks: BackgroundTasks):
+def start_scraping(background_tasks: BackgroundTasks, req: StartPipelineRequest = None):
     global is_running
     if is_running:
         return {"status": "Already running"}
-    background_tasks.add_task(run_pipeline)
-    return {"status": "Started"}
+    selected = req.sources if req and req.sources else None
+    background_tasks.add_task(run_pipeline, selected)
+    return {"status": "Started", "selected_sources": selected}
 
 @app.get("/api/stream")
 async def sse_stream():
@@ -238,6 +359,76 @@ def get_db_jobs():
         return {"mongo_connected": False, "jobs": active_jobs}
     saved_jobs = get_active_jobs_from_db()
     return {"mongo_connected": True, "jobs": saved_jobs}
+
+@app.get("/api/jobs/fresh")
+def get_fresh_jobs_endpoint(hours: float = 24.0):
+    """
+    Returns strictly fresh jobs verified within the given window (default: 24h).
+    """
+    fresh = get_fresh_24h_jobs_from_db(max_hours=hours)
+    return {"status": "success", "window_hours": hours, "count": len(fresh), "jobs": fresh}
+
+@app.get("/api/jobs/search")
+def search_jobs_endpoint(
+    q: str = Query(None),
+    role_type: str = Query(None),
+    location_scope: str = Query(None),
+    min_salary: int = Query(None),
+    investor: str = Query(None),
+    only_fresh: bool = Query(True)
+):
+    """
+    Multi-faceted Matcha search supporting keyword, role type, salary, investor, and 24h freshness.
+    """
+    jobs = get_fresh_24h_jobs_from_db() if only_fresh else get_active_jobs_from_db()
+    filtered = []
+    
+    for j in jobs:
+        if q:
+            q_low = q.lower()
+            text_match = (
+                q_low in str(j.get("title", "")).lower() or
+                q_low in str(j.get("company", "")).lower() or
+                q_low in str(j.get("job_summary", "")).lower() or
+                q_low in str(j.get("description", "")).lower()
+            )
+            if not text_match:
+                continue
+
+        if role_type and role_type != "all":
+            jtype = str(j.get("job_type", "")).lower()
+            if role_type.lower() not in jtype:
+                continue
+
+        if location_scope and location_scope != "all":
+            loc_scope = location_scope.lower()
+            regions = [str(r).lower() for r in (j.get("remote_regions") or [])]
+            if not any(loc_scope in r for r in regions) and loc_scope not in str(j.get("location", "")).lower():
+                continue
+
+        if min_salary:
+            s_min = j.get("salary_min")
+            if s_min and s_min < min_salary:
+                continue
+
+        if investor and investor != "all":
+            inv_str = str(j.get("key_investors") or "").lower()
+            if investor.lower() not in inv_str:
+                continue
+
+        filtered.append(j)
+
+    return {"status": "success", "count": len(filtered), "jobs": filtered}
+
+@app.get("/job/apply-redirect")
+def apply_redirect_endpoint(url: str):
+    """
+    Instant 307 redirect to direct company career page.
+    """
+    if not url:
+        raise HTTPException(status_code=400, detail="Missing target URL")
+    return RedirectResponse(url=url, status_code=307)
+
 
 @app.get("/api/jobs/applied")
 def get_applied_jobs():

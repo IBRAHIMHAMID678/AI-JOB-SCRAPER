@@ -1,9 +1,35 @@
 # config.py
 
 import os
+import sys
+import tempfile
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Explicitly isolate all caches, temp files, and browser data to D: drive (.cache)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CACHE_DIR = os.path.join(BASE_DIR, ".cache")
+TEMP_DIR = os.path.join(CACHE_DIR, "temp")
+os.makedirs(TEMP_DIR, exist_ok=True)
+
+# OS Temp redirection (stops C:\Users\...\AppData\Local\Temp writes)
+os.environ["TEMP"] = TEMP_DIR
+os.environ["TMP"] = TEMP_DIR
+os.environ["TMPDIR"] = TEMP_DIR
+tempfile.tempdir = TEMP_DIR
+
+# Playwright & Browser cache redirection
+os.environ["PLAYWRIGHT_BROWSERS_PATH"] = os.path.join(CACHE_DIR, "ms-playwright")
+
+# AI / ML library cache redirection away from C: drive
+os.environ["XDG_CACHE_HOME"] = CACHE_DIR
+os.environ["HF_HOME"] = os.path.join(CACHE_DIR, "huggingface")
+os.environ["TORCH_HOME"] = os.path.join(CACHE_DIR, "torch")
+
+# Prevent writing .pyc files to disk
+os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
+sys.dont_write_bytecode = True
 
 # API Keys (loaded from environment — see .env.example; never commit real values)
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
@@ -13,6 +39,10 @@ OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 # Item 15: junk terms "Remote Developer UK" / "Software Engineer Remote" removed;
 # missing terms added.
 SEARCH_TERMS = [
+    "Junior AI Engineer",
+    "Junior Python Developer",
+    "Junior Backend Developer",
+    "Junior Full Stack Developer",
     "AI Engineer",
     "LLM Engineer",
     "RAG Engineer",
@@ -28,13 +58,14 @@ SEARCH_TERMS = [
     "Python Backend Developer",
 ]
 RESULTS_PER_TERM = 15
+HOURS_OLD = 24  # Freshness: jobs posted within the last 24 hours
 
 # AI Evaluation Settings
 OPENROUTER_MODEL = "google/gemini-2.5-flash"
 RATE_LIMIT_DELAY = 1
 
 # Disk Cache Settings
-EVAL_CACHE_FILE = "eval_cache.json"
+EVAL_CACHE_FILE = os.path.join(CACHE_DIR, "eval_cache.json")
 
 # Target Profile Details
 CANDIDATE_PROFILE = """

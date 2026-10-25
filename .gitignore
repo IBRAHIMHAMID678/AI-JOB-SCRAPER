@@ -82,5 +82,8 @@ scratch_*.py
 uploads/
 *.backup
 jobpilot.db.backup
-
-
+.cache/
+.freebuff/
+eval_cache.json
+sweeps/
+matcha_chunks/

@@ -163,14 +163,14 @@ def fetch_remotive() -> list[dict]:
 
 
 def fetch_hn_hiring() -> list[dict]:
-    """HN 'Who is hiring' — current month's thread, via Algolia search."""
-    # Find the latest "Who is hiring" thread
+    """HN 'Who is hiring' — latest current thread via Algolia search_by_date."""
     search = json.loads(_get(
-        "https://hn.algolia.com/api/v1/search?query=who%20is%20hiring&tags=story"
+        "https://hn.algolia.com/api/v1/search_by_date?query=who%20is%20hiring&tags=story&hitsPerPage=10"
     ))
     thread_id = None
     for hit in search.get("hits", []):
-        if "who is hiring" in (hit.get("title") or "").lower():
+        t_title = (hit.get("title") or "").lower()
+        if "who is hiring" in t_title and "who wants to be hired" not in t_title:
             thread_id = hit["objectID"]
             break
     if not thread_id:

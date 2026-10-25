@@ -11,6 +11,11 @@ def get_themuse_jobs():
     
     all_jobs = []
     
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Accept": "application/json"
+    }
+    
     # We will fetch the first 2 pages to get a good batch of active jobs
     for page in range(2):
         log(f"  -> Fetching The Muse API page {page}...")
@@ -22,7 +27,7 @@ def get_themuse_jobs():
         }
         
         try:
-            response = requests.get(base_url, params=params, timeout=12)
+            response = requests.get(base_url, params=params, headers=headers, timeout=12)
             if response.status_code == 200:
                 data = response.json()
                 results = data.get("results", [])
