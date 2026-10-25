@@ -37,6 +37,12 @@ class TestMatchaStructurer(unittest.TestCase):
         self.assertEqual(regions, ["US"])
         self.assertIn("United States", summary)
 
+        # US cities & state codes without explicit 'USA'
+        regions, summary = extract_remote_regions("Irvine, CA", "ML engineer position")
+        self.assertEqual(regions, ["US"])
+        regions, summary = extract_remote_regions("Reston, VA", "Software developer role")
+        self.assertEqual(regions, ["US"])
+
         # Worldwide
         regions, summary = extract_remote_regions("Remote", "We are a fully distributed team hiring anywhere in the world.")
         self.assertEqual(regions, ["Worldwide"])

@@ -93,9 +93,9 @@ def extract_remote_regions(location_str: str, desc_str: str) -> Tuple[List[str],
         r'(us|usa|united states)\s*[\(\-\,\:\/]\s*remote',
         r'\b(us|usa)\s+remote\b',
         r'\bremote\s+(us|usa)\b',
-        r'\b(san\s+francisco|california|new\s+york|seattle|austin|chicago|los\s+angeles|boston|denver|atlanta|miami)\b',
-        r'\b(ca|ny|tx|wa|il|ma|co|fl|va|ga|nc|pa|oh)\s*[,;]\s*(united states|usa|us)\b',
-        r'[,;]\s*(california|new york|texas|washington)\b',
+        r'\b(san\s+francisco|san\s+diego|san\s+jose|los\s+angeles|seattle|austin|chicago|boston|new\s+york|nyc|denver|atlanta|miami|houston|dallas|reston|mclean|irvine|arlington|palo\s+alto|mountain\s+view|sunnyvale|redwood\s+city|cambridge|philadelphia|phoenix|portland|salt\s+lake\s+city)\b',
+        r'[,;]\s*(al|ak|az|ar|ca|co|ct|de|fl|ga|hi|id|il|in|ia|ks|ky|la|me|md|ma|mi|mn|ms|mo|mt|ne|nv|nh|nj|nm|ny|nc|nd|oh|ok|or|pa|ri|sc|sd|tn|tx|ut|vt|va|wa|wv|wi|wy)\b',
+        r'[,;]\s*(california|new\s+york|texas|washington|virginia|massachusetts|illinois|colorado|florida|georgia|north\s+carolina|pennsylvania|ohio|arizona|oregon|maryland)\b',
         r'\bunited states\s*-\s*\w+\b'
     ]
     us_desc_patterns = [
