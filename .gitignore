@@ -60,8 +60,13 @@ Thumbs.db
 htmlcov/
 test_*.db*
 
-# Screenshots / Local media
+# Screenshots / Local media & video render artifacts
 *.png
+*.mp4
+*.mov
+*.avi
+*.wav
+fresh_verified_*.json
 screenshots/
 jobpilot/screenshots/
 

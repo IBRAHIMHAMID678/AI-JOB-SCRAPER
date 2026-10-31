@@ -22,6 +22,7 @@ import concurrent.futures
 from datetime import datetime, timezone, timedelta
 import urllib.request
 import urllib.error
+import unicodedata
 
 # Ensure root directory is in sys.path
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -130,7 +131,8 @@ def classify_location(location: str, description: str) -> tuple[str, bool]:
     Returns (category, is_eligible)
     Categories: 'Twin Cities Local', 'Pakistan Remote', 'Worldwide Remote', 'Ineligible'
     """
-    loc_clean = (location or "Remote").lower()
+    raw_loc = location or "Remote"
+    loc_clean = unicodedata.normalize("NFKD", str(raw_loc)).encode("ascii", "ignore").decode("utf-8").lower()
     desc_clean = (description or "").lower()
     full_text = f"{loc_clean} {desc_clean}"
 

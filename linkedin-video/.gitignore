@@ -1,0 +1,4 @@
+node_modules/
+.remotion/
+preview_*.jpg
+out/
