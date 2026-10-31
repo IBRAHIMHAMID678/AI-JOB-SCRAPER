@@ -25,7 +25,7 @@ class TestDatabaseParity(unittest.TestCase):
         for col in required:
             self.assertIn(col, cols, f"Missing column {col} in matched_jobs")
 
-    def test_save_and_retrieve_matcha_job(self):
+    def test_save_and_retrieve_job(self):
         sample_job = {
             "url": "https://test.example.com/careers/test-engineer-101",
             "title": "Senior AI Systems Architect",

@@ -33,10 +33,10 @@ from database import (
     get_fresh_24h_jobs_from_db,
     delete_all_jobs_from_db
 )
-from matcha_ats_harvester import MatchaATSHarvester
-from matcha_freshness import verify_24h_freshness
+from ats_harvester import ATSHarvester
+from freshness_engine import verify_24h_freshness
 from company_enricher import CompanyEnricher
-from matcha_structurer import structure_job_object
+from job_structurer import structure_job_object
 from log_manager import log_queue, job_queue, pending_job_queue, log
 from application_engine import JobApplicationEngine, ApplicationConfig
 from email_service import EmailService
@@ -81,7 +81,7 @@ def run_pipeline(selected_sources: list = None):
     
     # Define tasks for concurrent scraping execution
     scraper_tasks = [
-        ("Matcha Direct ATS (Greenhouse/Ashby/Lever/Rippling)", lambda: MatchaATSHarvester().harvest_all(max_hours=24.0, only_fresh=True)),
+        ("Direct ATS Harvester (Greenhouse/Ashby/Lever/Rippling)", lambda: ATSHarvester().harvest_all(max_hours=24.0, only_fresh=True)),
         ("JobSpy (LinkedIn/Indeed/Glassdoor/ZipRecruiter)", get_jobspy_jobs),
         ("Himalayas API", get_himalayas_jobs),
         ("Remotive API", get_remotive_jobs),
@@ -378,7 +378,7 @@ def search_jobs_endpoint(
     only_fresh: bool = Query(True)
 ):
     """
-    Multi-faceted Matcha search supporting keyword, role type, salary, investor, and 24h freshness.
+    Multi-faceted verified search supporting keyword, role type, salary, investor, and 24h freshness.
     """
     jobs = get_fresh_24h_jobs_from_db() if only_fresh else get_active_jobs_from_db()
     filtered = []

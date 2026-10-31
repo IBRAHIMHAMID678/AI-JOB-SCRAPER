@@ -1,5 +1,5 @@
 """
-Matcha-Grade Structured Extraction Pipeline.
+Production-Grade Job Metadata Extraction Pipeline.
 Extracts normalized salary min/max/currency, remote regions, job category taxonomy,
 and crisp 2-sentence actionable job summaries.
 """
@@ -213,7 +213,7 @@ def generate_crisp_summary(title: str, company: str, description: str) -> str:
 
 def structure_job_object(job: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Enriches and normalizes the job object with Matcha structured fields.
+    Enriches and normalizes the job object with standardized structured fields.
     """
     title = job.get("title", "")
     desc = job.get("description", "")

@@ -7,9 +7,9 @@ if BASE_DIR not in sys.path:
 
 import unittest
 from datetime import datetime, timezone, timedelta
-from matcha_freshness import parse_iso_or_epoch, verify_24h_freshness, contains_dead_job_markers
+from freshness_engine import parse_iso_or_epoch, verify_24h_freshness, contains_dead_job_markers
 
-class TestMatchaFreshness(unittest.TestCase):
+class TestFreshnessEngine(unittest.TestCase):
     def setUp(self):
         self.ref_now = datetime(2026, 10, 24, 15, 0, 0, tzinfo=timezone.utc)
 

@@ -5,7 +5,7 @@
    ========================================================================== */
 
 :root {
-    /* Color Foundation - Linear & Matcha Elite Obsidian Theme */
+    /* Color Foundation - Linear Elite Obsidian Theme */
     --bg-base: #09090b;
     --bg-card: rgba(18, 18, 22, 0.82);
     --bg-card-hover: rgba(24, 24, 30, 0.92);
@@ -25,10 +25,10 @@
     --text-muted: #71717a;
     --text-dim: #52525b;
 
-    /* Refined Matcha & Botanical Accents (Zero Generic Blue) */
-    --neon-cyan: #10b981;             /* Mapped to Matcha Emerald */
-    --neon-blue: #059669;             /* Mapped to Deep Matcha Leaf */
-    --neon-indigo: #16a34a;           /* Mapped to Vibrant Matcha Green */
+    /* Refined Botanical & Emerald Accents (Zero Generic Blue) */
+    --neon-cyan: #10b981;             /* Mapped to Emerald */
+    --neon-blue: #059669;             /* Mapped to Deep Forest Emerald */
+    --neon-indigo: #16a34a;           /* Mapped to Vibrant Emerald Green */
     --neon-emerald: #10b981;
     --neon-emerald-glow: rgba(16, 185, 129, 0.22);
     --neon-amber: #f59e0b;
@@ -344,7 +344,7 @@ body {
     gap: 1rem;
 }
 
-/* Primary Launch Button - Matcha Emerald */
+/* Primary Launch Button - Emerald */
 .btn-launch-primary {
     position: relative;
     display: inline-flex;
@@ -1938,7 +1938,7 @@ body {
 }
 
 /* ==========================================================================
-   Matcha Parity Visual Styles: Logos, Funding Badges, Investor Chips & Summaries
+   Enriched Visual Styles: Logos, Funding Badges, Investor Chips & Summaries
    ========================================================================== */
 .company-cell-flex {
     display: flex;
