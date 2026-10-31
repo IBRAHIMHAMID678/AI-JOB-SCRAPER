@@ -232,7 +232,7 @@ if __name__ == "__main__":
     
     # Initialize orchestrator
     async def test_orchestrator():
-        orchestrator = JobApplicationOrchestrator(config, "Ibrahim_Hamid_Resume.pdf")
+        orchestrator = JobApplicationOrchestrator(config, "resume.pdf")
         await orchestrator.initialize()
         
         # Simulate scraper results
