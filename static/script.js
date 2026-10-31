@@ -516,7 +516,7 @@ Target Experience: 0 - 2 years (Entry / Junior / Associate)`;
                 regionBadgeHtml = `<span class="region-badge-worldwide">🌍 Worldwide Remote</span>`;
             }
 
-            // Matcha Metadata
+            // Enriched Job Metadata
             const logoDomain = (job.company || 'tech').toLowerCase().replace(/[^a-z0-9]/g, '');
             const logoUrl = job.logo_url || `https://www.google.com/s2/favicons?domain=${logoDomain}.com&sz=64`;
             const isDirectCareer = job.direct_career_url && (job.direct_career_url.includes('?gh_jid') || job.direct_career_url !== job.url);

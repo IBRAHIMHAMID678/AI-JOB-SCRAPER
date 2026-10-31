@@ -1,5 +1,5 @@
 """
-Matcha-Grade 24-Hour Freshness Engine & Junk Job Eliminator.
+Production-Grade 24-Hour Freshness Engine & Dead Posting Eliminator.
 Guarantees zero stale jobs, zero fake repost dates, and deterministic UTC window validation.
 """
 from __future__ import annotations

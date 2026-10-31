@@ -1,5 +1,5 @@
 """
-Matcha-Grade High-Concurrency ATS Harvester.
+High-Concurrency 1st-Party ATS Harvester.
 Directly ingests 1st-party ATS public APIs (Greenhouse, Ashby, Lever, Rippling, Workable),
 resolves canonical company domain URLs, and enforces strict 24-hour freshness gating.
 """
@@ -15,7 +15,7 @@ from typing import Dict, List, Any, Optional
 from datetime import datetime, timezone
 
 import httpx
-from matcha_freshness import verify_24h_freshness, contains_dead_job_markers
+from freshness_engine import verify_24h_freshness, contains_dead_job_markers
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 REGISTRY_PATH = os.path.join(BASE_DIR, "company_registry.json")
@@ -29,7 +29,7 @@ def load_company_registry() -> Dict[str, List[str]]:
             pass
     return {"greenhouse": [], "ashby": [], "lever": [], "rippling": [], "workable": [], "smartrecruiters": []}
 
-class MatchaATSHarvester:
+class ATSHarvester:
     def __init__(self, max_concurrent: int = 15, timeout: float = 12.0):
         self.max_concurrent = max_concurrent
         self.timeout = timeout
@@ -318,8 +318,8 @@ class MatchaATSHarvester:
             return asyncio.run(self.harvest_all_async(max_hours=max_hours, only_fresh=only_fresh))
 
 if __name__ == "__main__":
-    print("Testing Matcha ATS Harvester...")
-    harvester = MatchaATSHarvester()
+    print("Testing ATS Harvester...")
+    harvester = ATSHarvester()
     t0 = time.time()
     jobs = harvester.harvest_all(max_hours=48.0, only_fresh=True)
     t1 = time.time()
@@ -327,3 +327,6 @@ if __name__ == "__main__":
     for j in jobs[:5]:
         print(f"[{j['company']}] {j['title']} ({j['hours_old']:.1f}h ago)")
         print(f"   URL: {j['direct_career_url']}")
+
+# Backward compatibility alias
+MatchaATSHarvester = ATSHarvester

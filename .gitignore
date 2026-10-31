@@ -94,4 +94,4 @@ jobpilot.db.backup
 .freebuff/
 eval_cache.json
 sweeps/
-matcha_chunks/
+stream_chunks/

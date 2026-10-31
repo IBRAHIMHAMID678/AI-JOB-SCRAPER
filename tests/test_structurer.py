@@ -6,9 +6,9 @@ if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
 import unittest
-from matcha_structurer import extract_salary_range, extract_remote_regions, classify_taxonomy, generate_crisp_summary, structure_job_object
+from job_structurer import extract_salary_range, extract_remote_regions, classify_taxonomy, generate_crisp_summary, structure_job_object
 
-class TestMatchaStructurer(unittest.TestCase):
+class TestJobStructurer(unittest.TestCase):
     def test_salary_extraction_formats(self):
         # Full format
         s_min, s_max, curr = extract_salary_range("Software Engineer ($120,000 - $180,000)")

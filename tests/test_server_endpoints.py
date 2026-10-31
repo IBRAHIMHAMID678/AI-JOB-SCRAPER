@@ -13,7 +13,7 @@ class TestServerEndpoints(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.client = TestClient(app)
-        # Seed a fresh Matcha job
+        # Seed a fresh job
         cls.test_job = {
             "url": "https://test.together.ai/careers/fde-202",
             "title": "Forward Deployed LLM Engineer",

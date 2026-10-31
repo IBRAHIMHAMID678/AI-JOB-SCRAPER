@@ -15,10 +15,10 @@ sys.path.insert(0, BASE_DIR)
 sys.path.insert(0, os.path.join(BASE_DIR, "auto-scraper"))
 
 import sources
-from matcha_ats_harvester import MatchaATSHarvester
-from matcha_freshness import verify_24h_freshness, contains_dead_job_markers
+from ats_harvester import ATSHarvester
+from freshness_engine import verify_24h_freshness, contains_dead_job_markers
 from company_enricher import CompanyEnricher
-from matcha_structurer import structure_job_object
+from job_structurer import structure_job_object
 from database import save_job_to_db
 
 # 1. Build Exclusion Sets from DB and PDF
@@ -222,15 +222,15 @@ def main():
     print("Starting Fresh Job Discovery & Verification Sweep")
     print("=" * 60)
 
-    # 1. Query Sources (Matcha Direct ATS 1st-party + Existing Target Sources)
+    # 1. Query Sources (Direct ATS 1st-party + Existing Target Sources)
     print("Harvesting real-time 1st-party ATS jobs (Greenhouse, Ashby, Lever, Rippling, Workable)...")
-    ats_harvester = MatchaATSHarvester()
+    ats_harvester = ATSHarvester()
     enricher = CompanyEnricher()
     
     raw_candidates = []
     try:
         ats_jobs = ats_harvester.harvest_all(max_hours=24.0, only_fresh=True)
-        print(f"  [Matcha ATS Harvester] Collected {len(ats_jobs)} live fresh ATS jobs!")
+        print(f"  [Direct ATS Harvester] Collected {len(ats_jobs)} live fresh ATS jobs!")
         for aj in ats_jobs:
             raw_candidates.append({
                 "title": aj.get("title", "").strip(),
@@ -247,7 +247,7 @@ def main():
                 "is_24h_fresh": True
             })
     except Exception as e:
-        print(f"  [Matcha ATS Harvester] Warning: {e}")
+        print(f"  [Direct ATS Harvester] Warning: {e}")
 
     target_sources = [
         "apnijobs", "talenthubsol", "indeed_pk",
@@ -335,7 +335,7 @@ def main():
 
         job["category"] = category
 
-        # Matcha Enrichment & Structuring
+        # Structured Metadata Enrichment & Structuring
         job = enricher.enrich_job(job)
         job = structure_job_object(job)
 

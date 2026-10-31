@@ -38,7 +38,7 @@ def init_sqlite():
         """)
         conn.commit()
 
-        # Non-destructive migrations: Add Matcha parity columns if missing
+        # Non-destructive migrations: Add structured metadata columns if missing
         c.execute("PRAGMA table_info(matched_jobs)")
         existing_cols = {col[1] for col in c.fetchall()}
         

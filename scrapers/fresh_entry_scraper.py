@@ -217,10 +217,10 @@ class FreshEntryJobFinder:
     def harvest(self) -> Dict[str, List[Dict[str, Any]]]:
         candidates: List[Dict[str, Any]] = []
 
-        # 1. LandOffer API
+        # 1. Cloud Stream Harvester
         try:
-            from scrapers.landoffer_scraper import LandOfferScraper
-            scraper = LandOfferScraper()
+            from scrapers.cloud_agent_scraper import CloudAgentScraper
+            scraper = CloudAgentScraper()
             lo_jobs = scraper.fetch_jobs(
                 keywords=[
                     "ai engineer", "machine learning", "prompt engineer",
@@ -236,10 +236,10 @@ class FreshEntryJobFinder:
                     "url": j.get("application_url") or j.get("url", ""),
                     "description": j.get("description", ""),
                     "remote_regions": j.get("remote_regions", []),
-                    "source": "LandOffer"
+                    "source": "Cloud Stream"
                 })
         except Exception as e:
-            logger.warning(f"LandOffer scrape error: {e}")
+            logger.warning(f"Cloud stream scrape error: {e}")
 
         # 2. Himalayas (Worldwide)
         try:

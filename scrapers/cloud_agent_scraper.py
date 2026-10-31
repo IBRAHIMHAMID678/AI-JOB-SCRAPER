@@ -1,6 +1,6 @@
 """
-LandOffer API Scraper & Filter Adapter.
-Queries the reverse-engineered LandOffer Railway API (https://job-agent-production-9446.up.railway.app/api/jobs)
+Cloud Job Stream Harvester & Filter Adapter.
+High-throughput stream scraper for live software and AI engineering roles
 with strict 24h freshness, role specialization, senior exclusions, and hardened location classification.
 """
 from __future__ import annotations
@@ -20,10 +20,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
-from matcha_freshness import verify_24h_freshness, contains_dead_job_markers
-from matcha_structurer import structure_job_object, extract_remote_regions, extract_salary_range
+from freshness_engine import verify_24h_freshness, contains_dead_job_markers
+from job_structurer import structure_job_object, extract_remote_regions, extract_salary_range
 
-logger = logging.getLogger("landoffer_scraper")
+logger = logging.getLogger("cloud_agent_scraper")
 
 # Strict Role Target Regex (Junior/Mid AI, Full-Stack, Python, Backend)
 TARGET_ROLE_PATTERNS = [
@@ -68,7 +68,7 @@ def is_hardened_target_role(title: str) -> bool:
             return False
     return any(re.search(pat, t) for pat in TARGET_ROLE_PATTERNS)
 
-class LandOfferScraper:
+class CloudAgentScraper:
     BASE_URL = "https://job-agent-production-9446.up.railway.app/api/jobs"
 
     def __init__(self, timeout: float = 12.0):
@@ -85,7 +85,7 @@ class LandOfferScraper:
         limit_per_query: int = 50
     ) -> List[Dict[str, Any]]:
         """
-        Synchronously fetches and filters fresh jobs from LandOffer API.
+        Synchronously fetches and filters fresh jobs from Cloud Stream API.
         """
         if keywords is None:
             keywords = [
@@ -122,7 +122,7 @@ class LandOfferScraper:
                                 seen_fingerprints.add(job["fingerprint"])
                                 collected_jobs.append(job)
                 except Exception as e:
-                    logger.debug(f"Error querying LandOffer for kw '{kw}': {e}")
+                    logger.debug(f"Error querying Cloud Stream for kw '{kw}': {e}")
 
             # 2. Fetch specific local Pakistan jobs
             try:
@@ -141,7 +141,7 @@ class LandOfferScraper:
                             seen_fingerprints.add(job["fingerprint"])
                             collected_jobs.append(job)
             except Exception as e:
-                logger.debug(f"Error querying LandOffer for location 'pakistan': {e}")
+                logger.debug(f"Error querying Cloud Stream for location 'pakistan': {e}")
 
         return collected_jobs
 
@@ -225,7 +225,7 @@ class LandOfferScraper:
             "salary_min": sal_min,
             "salary_max": sal_max,
             "salary_currency": sal_curr or "USD",
-            "source": "landoffer",
+            "source": "cloud_agent",
             "date_posted": dt.isoformat() if dt else str(ts or ""),
             "hours_old": hrs_old,
             "is_24h_fresh": is_fresh,
@@ -234,19 +234,23 @@ class LandOfferScraper:
             "fingerprint": fp
         }
 
-def get_landoffer_jobs() -> List[Dict[str, Any]]:
+def get_cloud_agent_jobs() -> List[Dict[str, Any]]:
     """Legacy interface compatible with other scrapers."""
-    scraper = LandOfferScraper()
+    scraper = CloudAgentScraper()
     return scraper.fetch_jobs(max_hours=24.0)
 
 if __name__ == "__main__":
-    print("Testing LandOffer Scraper & Hardened Filter Adapter...")
-    scraper = LandOfferScraper()
+    print("Testing Cloud Stream Scraper & Hardened Filter Adapter...")
+    scraper = CloudAgentScraper()
     jobs = scraper.fetch_jobs(max_hours=24.0, limit_per_query=20)
-    print(f"\nSuccessfully harvested {len(jobs)} hardened, verified fresh jobs from LandOffer:")
+    print(f"\nSuccessfully harvested {len(jobs)} hardened, verified fresh jobs from Cloud Stream:")
     for j in jobs[:8]:
         print(f"\n[{j['company']}] {j['title']}")
         print(f"  URL:       {j['direct_career_url']}")
         print(f"  Location:  {j['location']}")
         print(f"  Regions:   {j['remote_regions']} ({j['remote_summary']})")
         print(f"  Freshness: {j['hours_old']:.1f}h ago | {j['date_posted']}")
+
+# Backward compatibility aliases
+LandOfferScraper = CloudAgentScraper
+get_landoffer_jobs = get_cloud_agent_jobs

@@ -1,5 +1,5 @@
 """
-Matcha-Grade Company Intelligence & Metadata Enrichment Engine.
+Production-Grade Company Intelligence & Metadata Enrichment Engine.
 Attaches venture funding, key investors, company size, and logos to jobs.
 """
 from __future__ import annotations
