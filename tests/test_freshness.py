@@ -1,3 +1,10 @@
+import os
+import sys
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
 import unittest
 from datetime import datetime, timezone, timedelta
 from matcha_freshness import parse_iso_or_epoch, verify_24h_freshness, contains_dead_job_markers

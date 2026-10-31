@@ -372,3 +372,4 @@ class FreshEntryJobFinder:
             "twin_cities": verified_twin_cities,
             "worldwide_remote": verified_worldwide
         }
+
