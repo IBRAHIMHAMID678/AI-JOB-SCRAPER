@@ -204,7 +204,7 @@ if __name__ == "__main__":
     engine = JobApplicationEngine(config)
     
     # Initialize with resume (would be actual path in production)
-    engine.initialize("Ibrahim_Hamid_Resume.pdf")
+    engine.initialize("resume.pdf")
     
     print(f"Application Engine initialized: {engine.get_application_stats()}")
     

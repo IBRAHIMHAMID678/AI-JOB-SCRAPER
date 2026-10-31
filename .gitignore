@@ -7,6 +7,9 @@ ENV/
 env.bak/
 venv.bak/
 
+# Personal documents & resumes
+*.pdf
+
 # API keys and secrets
 *.pem
 *.key
