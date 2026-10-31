@@ -1,3 +1,10 @@
+import os
+import sys
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
 import unittest
 from matcha_structurer import extract_salary_range, extract_remote_regions, classify_taxonomy, generate_crisp_summary, structure_job_object
 
