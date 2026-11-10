@@ -15,6 +15,16 @@ router = APIRouter(tags=["auth"])
 
 # ── Schemas ────────────────────────────────────────────────────────────────────
 
+class VerifyOtpBody(BaseModel):
+    email: str
+    otp: str
+
+
+class ResendOtpBody(BaseModel):
+    email: str
+    purpose: str = "registration"  # registration | password_reset
+
+
 class RegisterBody(BaseModel):
     username: str
     email: str
@@ -82,8 +92,61 @@ def get_current_user_optional(request: Request):
 
 # ── Endpoints ──────────────────────────────────────────────────────────────────
 
+@router.post("/api/auth/register-request")
+def register_request(body: RegisterBody):
+    """Step 1 of Registration: Validates details and sends 6-digit OTP to Gmail."""
+    try:
+        res = auth_service.start_registration(body.username, body.email, body.password)
+        return res
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    except Exception as e:
+        raise HTTPException(500, f"Could not dispatch verification code: {e}")
+
+
+@router.post("/api/auth/register-verify")
+def register_verify(body: VerifyOtpBody):
+    """Step 2 of Registration: Verifies OTP, activates account, and returns session token."""
+    try:
+        res = auth_service.verify_registration(body.email, body.otp)
+        return res
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    except Exception as e:
+        raise HTTPException(500, f"Verification failed: {e}")
+
+
+@router.post("/api/auth/resend-otp")
+def resend_otp(body: ResendOtpBody):
+    """Resends verification code subject to 60s cooldown and hourly limits."""
+    from ...services.otp_service import _get_smtp_credentials
+    try:
+        if body.purpose == "password_reset":
+            res = auth_service.request_password_reset_otp(body.email)
+        else:
+            # Look up existing pending registration
+            from ...core.database import db_session
+            from ...core.models import OTPVerification
+            with db_session() as db:
+                rec = db.query(OTPVerification).filter_by(
+                    email=body.email.strip().lower(), purpose="registration", verified_at=None
+                ).order_by(OTPVerification.created_at.desc()).first()
+                if not rec or not rec.metadata_json:
+                    raise ValueError("No pending registration found for this email. Please register again.")
+                username = rec.metadata_json.get("username", "")
+                pwd_hash = rec.metadata_json.get("password_hash", "")
+            from ...services.otp_service import send_registration_otp
+            res = send_registration_otp(body.email, username, pwd_hash)
+        return res
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
 @router.post("/api/auth/register")
 def register(body: RegisterBody):
+    """Direct registration fallback for programmatic integration."""
     if len(body.username) < 3:
         raise HTTPException(400, "Username must be at least 3 characters")
     if len(body.password) < 6:
@@ -116,7 +179,7 @@ def logout(request: Request):
 @router.post("/api/auth/forgot-password")
 def forgot_password(body: ForgotPasswordBody):
     try:
-        result = auth_service.request_password_reset(body.email)
+        result = auth_service.request_password_reset_otp(body.email)
     except ValueError as e:
         raise HTTPException(400, str(e))
     return result
@@ -125,7 +188,7 @@ def forgot_password(body: ForgotPasswordBody):
 @router.post("/api/auth/reset-password")
 def reset_password(body: ResetPasswordBody):
     try:
-        auth_service.reset_password(body.email, body.otp, body.new_password)
+        auth_service.complete_password_reset(body.email, body.otp, body.new_password)
     except ValueError as e:
         raise HTTPException(400, str(e))
     return {"ok": True}

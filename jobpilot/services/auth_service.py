@@ -103,7 +103,44 @@ def decrypt(value: str) -> str:
         return ""
 
 
-# ── User CRUD ──────────────────────────────────────────────────────────────────
+from . import otp_service
+
+
+# ── Registration & OTP Verification ──────────────────────────────────────────
+
+def start_registration(username: str, email: str, password: str) -> dict:
+    """Initiates registration by dispatching a 6-digit OTP to the user's Gmail/email."""
+    clean_email = email.strip().lower()
+    clean_username = username.strip().lower()
+
+    if not _valid_email(clean_email):
+        raise ValueError("Please enter a valid email address.")
+    if len(clean_username) < 3:
+        raise ValueError("Username must be at least 3 characters.")
+    if len(password) < 6:
+        raise ValueError("Password must be at least 6 characters.")
+
+    pwd_hash = _hash_password(password)
+    return otp_service.send_registration_otp(clean_email, clean_username, pwd_hash)
+
+
+def verify_registration(email: str, otp: str) -> dict:
+    """Verifies the OTP code and creates/activates the user account."""
+    return otp_service.verify_registration_otp(email, otp)
+
+
+def request_password_reset_otp(email: str) -> dict:
+    """Dispatches a password reset OTP to user's email via Gmail SMTP."""
+    return otp_service.send_password_reset_otp(email)
+
+
+def complete_password_reset(email: str, otp: str, new_password: str) -> bool:
+    """Verifies OTP and resets user password."""
+    if len(new_password) < 6:
+        raise ValueError("Password must be at least 6 characters.")
+    pwd_hash = _hash_password(new_password)
+    return otp_service.verify_password_reset_otp(email, otp, pwd_hash)
+
 
 def register(username: str, email: str, password: str) -> User:
     email = email.strip().lower()

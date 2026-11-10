@@ -124,27 +124,31 @@ class Settings(BaseSettings):
     NOTIFY_INTERVIEW: bool = True
     NOTIFY_DAILY_SUMMARY: bool = True
 
-    # ── SMTP (email applications & notifications) ─────────────────────────────
-    SMTP_HOST: Optional[str] = None
+    # ── SMTP (email applications, OTP & notifications) ───────────────────────
+    SMTP_HOST: str = "smtp.gmail.com"
     SMTP_PORT: int = 587
     SMTP_USER: Optional[str] = None
     SMTP_PASS: Optional[str] = None
+    SMTP_PASSWORD: Optional[str] = None
+    SMTP_FROM_EMAIL: Optional[str] = None
+    SMTP_FROM_NAME: str = "JobPortal"
+    SMTP_USE_TLS: bool = True
 
     # ── Follow-up ─────────────────────────────────────────────────────────────
     FOLLOWUP_DELAY_DAYS: int = 7
     FOLLOWUP_MAX_PER_APPLICATION: int = 2
 
-    # ── Candidate Profile ─────────────────────────────────────────────────────
-    CANDIDATE_NAME: str = "Ibrahim Hamid"
-    CANDIDATE_EMAIL: str = "ibrahimhamid.2600@gmail.com"
-    CANDIDATE_PHONE: str = "+92 318 0584128"
-    CANDIDATE_LOCATION: str = "Islamabad, Pakistan"
-    CANDIDATE_TIMEZONE: str = "Asia/Karachi"
-    CANDIDATE_WORK_AUTHORIZATION: str = "Pakistan"
+    # ── Candidate Profile (Generic Configurable Defaults) ─────────────────────
+    CANDIDATE_NAME: str = "Job Seeker"
+    CANDIDATE_EMAIL: str = "user@example.com"
+    CANDIDATE_PHONE: str = ""
+    CANDIDATE_LOCATION: str = "Worldwide Remote"
+    CANDIDATE_TIMEZONE: str = "UTC"
+    CANDIDATE_WORK_AUTHORIZATION: str = "Worldwide"
     CANDIDATE_REMOTE_PREFERENCE: str = "worldwide_remote"
-    CANDIDATE_LINKEDIN: str = "https://linkedin.com/in/ibrahim-hamid678"
-    CANDIDATE_GITHUB: str = "https://github.com/IBRAHIMHAMID678"
-    CANDIDATE_PORTFOLIO: str = "https://github.com/IBRAHIMHAMID678"
+    CANDIDATE_LINKEDIN: str = ""
+    CANDIDATE_GITHUB: str = ""
+    CANDIDATE_PORTFOLIO: str = ""
 
     # ── Telegram ──────────────────────────────────────────────────────────────
     TELEGRAM_BOT_TOKEN: Optional[str] = None

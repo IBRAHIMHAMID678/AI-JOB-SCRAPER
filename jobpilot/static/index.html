@@ -1,1488 +1,564 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>JOBPILOT — The Side-Door to Seed Founders</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-/* ─────────────────────────────────────────────────────────────────────────────
-   HIGH-END SWISS MODERNIST LIGHT DESIGN SYSTEM
-   Paper-white ground, dark ink typography, surgical sapphire accents
-───────────────────────────────────────────────────────────────────────────── */
-:root {
-  /* Surfaces */
-  --bg-canvas: #f8fafc;
-  --bg-surface: #ffffff;
-  --bg-surface-raised: #f1f5f9;
-  --bg-surface-hover: #e2e8f0;
-  --bg-inset: #f8fafc;
-
-  /* Ink / Typography */
-  --ink-primary: #0f172a;
-  --ink-secondary: #475569;
-  --ink-tertiary: #94a3b8;
-  --ink-inverse: #ffffff;
-
-  /* Sapphire & Status Accents */
-  --sapphire: #1d4ed8;
-  --sapphire-hover: #1e40af;
-  --sapphire-light: #eff6ff;
-  --sapphire-border: #bfdbfe;
-
-  --emerald: #059669;
-  --emerald-light: #ecfdf5;
-  --emerald-border: #a7f3d0;
-
-  --crimson: #e11d48;
-  --crimson-light: #fff1f2;
-  --crimson-border: #fecdd3;
-
-  /* Hairlines & Borders */
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
-  --border-subtle: #f1f5f9;
-
-  /* Typography */
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', SFMono-Regular, monospace;
-
-  /* Elevate & Motion */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.03);
-  --shadow-lg: 0 12px 24px -4px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.03);
-  --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html, body {
-  background-color: var(--bg-canvas);
-  color: var(--ink-primary);
-  font-family: var(--font-sans);
-  font-size: 15px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
-}
-
-/* Custom Scrollbars */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-canvas); }
-::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--ink-secondary); }
-
-a { color: inherit; text-decoration: none; }
-button { font-family: inherit; cursor: pointer; border: none; background: none; }
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   TOP NAVIGATION BAR
-───────────────────────────────────────────────────────────────────────────── */
-.top-nav {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-  height: 64px;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-}
-
-.brand-wrap {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.brand-logo-badge {
-  background: var(--ink-primary);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 800;
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  letter-spacing: -0.02em;
-}
-
-.brand-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--ink-primary);
-  letter-spacing: -0.02em;
-}
-
-.brand-subtitle {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--sapphire);
-  background: var(--sapphire-light);
-  padding: 2px 8px;
-  border-radius: 4px;
-  border: 1px solid var(--sapphire-border);
-}
-
-.nav-tabs {
-  display: flex;
-  background: var(--bg-surface-raised);
-  padding: 3px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-}
-
-.nav-tab-btn {
-  padding: 7px 16px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink-secondary);
-  transition: all 0.15s var(--ease-apple);
-}
-
-.nav-tab-btn:hover {
-  color: var(--ink-primary);
-}
-
-.nav-tab-btn.active {
-  background: var(--bg-surface);
-  color: var(--sapphire);
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
-}
-
-.top-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.status-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--emerald);
-  background: var(--emerald-light);
-  border: 1px solid var(--emerald-border);
-  padding: 4px 10px;
-  border-radius: 20px;
-}
-
-.status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--emerald);
-}
-
-.btn-signout {
-  padding: 6px 14px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--ink-secondary);
-  transition: all 0.15s ease;
-}
-.btn-signout:hover {
-  background: var(--bg-surface-raised);
-  color: var(--ink-primary);
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   PAGE CONTAINER
-───────────────────────────────────────────────────────────────────────────── */
-.main-wrapper {
-  max-width: 1340px;
-  margin: 0 auto;
-  padding: 40px 32px 80px 32px;
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   HERO EDITORIAL HEADER
-───────────────────────────────────────────────────────────────────────────── */
-.editorial-hero {
-  margin-bottom: 36px;
-}
-
-.hero-super {
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--sapphire);
-  margin-bottom: 8px;
-}
-
-.hero-heading {
-  font-size: clamp(34px, 4vw, 52px);
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  line-height: 1.1;
-  color: var(--ink-primary);
-  max-width: 860px;
-  margin-bottom: 14px;
-}
-
-.hero-sub {
-  font-size: 17px;
-  color: var(--ink-secondary);
-  max-width: 780px;
-  line-height: 1.55;
-  font-weight: 400;
-}
-
-/* Metric Strip (Clean Swiss Architecture) */
-.metric-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-top: 32px;
-}
-
-.metric-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 20px 24px;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.metric-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
-}
-
-.metric-val {
-  font-size: 32px;
-  font-weight: 800;
-  color: var(--ink-primary);
-  letter-spacing: -0.03em;
-  line-height: 1;
-  margin-bottom: 6px;
-}
-
-.metric-label {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--ink-primary);
-  margin-bottom: 2px;
-}
-
-.metric-desc {
-  font-size: 12px;
-  color: var(--ink-secondary);
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   FILTER & SEARCH CONTROLS
-───────────────────────────────────────────────────────────────────────────── */
-.controls-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.filter-group {
-  display: flex;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 3px;
-  box-shadow: var(--shadow-sm);
-}
-
-.filter-btn {
-  padding: 6px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink-secondary);
-  border-radius: var(--radius-sm);
-  transition: all 0.15s ease;
-}
-
-.filter-btn:hover {
-  color: var(--ink-primary);
-}
-
-.filter-btn.active {
-  background: var(--sapphire-light);
-  color: var(--sapphire);
-}
-
-.search-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.search-field {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  color: var(--ink-primary);
-  padding: 8px 16px;
-  font-size: 14px;
-  font-family: inherit;
-  width: 280px;
-  outline: none;
-  box-shadow: var(--shadow-sm);
-  transition: border-color 0.15s ease;
-}
-
-.search-field:focus {
-  border-color: var(--sapphire);
-}
-
-.btn-primary-action {
-  background: var(--sapphire);
-  color: #fff;
-  font-weight: 600;
-  font-size: 13px;
-  padding: 9px 18px;
-  border-radius: var(--radius-md);
-  box-shadow: 0 1px 2px rgba(29, 78, 216, 0.2);
-  transition: background 0.15s ease, transform 0.1s var(--ease-apple);
-}
-
-.btn-primary-action:hover {
-  background: var(--sapphire-hover);
-}
-
-.btn-primary-action:active {
-  transform: scale(0.98);
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   FOUNDER DOSSIER CARDS (Substantive, clear, Swiss clean)
-───────────────────────────────────────────────────────────────────────────── */
-.dossier-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.dossier-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 24px 28px;
-  box-shadow: var(--shadow-sm);
-  display: grid;
-  grid-template-columns: 280px 1fr 280px;
-  gap: 28px;
-  align-items: center;
-  transition: box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-.dossier-card:hover {
-  border-color: var(--border-strong);
-  box-shadow: var(--shadow-md);
-}
-
-/* Col 1: Identity */
-.dossier-col-id {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.company-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--ink-primary);
-  letter-spacing: -0.02em;
-}
-
-.company-funding-chip {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--sapphire);
-}
-
-.company-meta {
-  font-size: 13px;
-  color: var(--ink-secondary);
-}
-
-/* Col 2: Intel */
-.dossier-col-intel {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  border-left: 1px solid var(--border);
-  border-right: 1px solid var(--border);
-  padding: 0 24px;
-}
-
-.intel-text {
-  font-size: 14px;
-  color: var(--ink-primary);
-  line-height: 1.5;
-}
-
-.tech-tag-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.tech-tag {
-  background: var(--bg-surface-raised);
-  color: var(--ink-secondary);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 3px 8px;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-}
-
-/* Col 3: Contact & Triggers */
-.dossier-col-contact {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.contact-meta {
-  display: flex;
-  flex-direction: column;
-}
-
-.contact-name {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--ink-primary);
-}
-
-.contact-role {
-  font-size: 12px;
-  color: var(--ink-secondary);
-}
-
-.inbox-pill {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--bg-inset);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 6px 10px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--ink-primary);
-  font-weight: 500;
-}
-
-.inbox-verified-badge {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--emerald);
-  background: var(--emerald-light);
-  padding: 1px 6px;
-  border-radius: 3px;
-}
-
-.card-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.btn-memo-action {
-  flex: 1;
-  background: var(--ink-primary);
-  color: #fff;
-  font-weight: 600;
-  font-size: 12px;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  text-align: center;
-  transition: background 0.15s ease, transform 0.1s var(--ease-apple);
-}
-
-.btn-memo-action:hover {
-  background: #1e293b;
-}
-
-.btn-memo-action:active {
-  transform: scale(0.97);
-}
-
-.btn-audit-action {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  color: var(--ink-secondary);
-  font-weight: 600;
-  font-size: 12px;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  transition: all 0.15s ease;
-}
-
-.btn-audit-action:hover {
-  border-color: var(--border-strong);
-  color: var(--ink-primary);
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   IN-PAGE WORKBENCHES: TEARDOWN & SMTP VERIFIER
-───────────────────────────────────────────────────────────────────────────── */
-.workbench-box {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 32px;
-  box-shadow: var(--shadow-sm);
-  margin-bottom: 40px;
-}
-
-.wb-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--ink-primary);
-  margin-bottom: 6px;
-}
-
-.wb-desc {
-  font-size: 14px;
-  color: var(--ink-secondary);
-  max-width: 720px;
-  margin-bottom: 24px;
-  line-height: 1.5;
-}
-
-.wb-inputs {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.wb-field {
-  flex: 1;
-  background: var(--bg-inset);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
-  font-size: 14px;
-  font-family: inherit;
-  color: var(--ink-primary);
-  outline: none;
-}
-
-.wb-field:focus {
-  border-color: var(--sapphire);
-  background: #fff;
-}
-
-.wb-terminal {
-  background: #0f172a;
-  color: #f8fafc;
-  border-radius: var(--radius-md);
-  padding: 20px;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  line-height: 1.6;
-  max-height: 380px;
-  overflow-y: auto;
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   3-SENTENCE MEMO MODAL
-───────────────────────────────────────────────────────────────────────────── */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(6px);
-  z-index: 1000;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-
-.modal-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  max-width: 660px;
-  width: 100%;
-  padding: 32px;
-  box-shadow: var(--shadow-lg);
-  animation: modalIn 0.18s var(--ease-apple);
-}
-
-@keyframes modalIn {
-  from { opacity: 0; transform: scale(0.97); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.modal-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--ink-primary);
-}
-
-.modal-close {
-  font-size: 18px;
-  color: var(--ink-tertiary);
-  cursor: pointer;
-  padding: 4px;
-}
-.modal-close:hover { color: var(--ink-primary); }
-
-.modal-subject {
-  width: 100%;
-  background: var(--bg-surface-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ink-primary);
-  margin-bottom: 12px;
-  outline: none;
-}
-
-.modal-body {
-  width: 100%;
-  height: 200px;
-  background: var(--bg-surface-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 14px;
-  font-size: 14px;
-  line-height: 1.6;
-  font-family: inherit;
-  color: var(--ink-primary);
-  resize: vertical;
-  outline: none;
-  margin-bottom: 16px;
-}
-
-.modal-sandbox {
-  background: var(--sapphire-light);
-  border: 1px solid var(--sapphire-border);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 13px;
-  margin-bottom: 20px;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-.btn-secondary {
-  padding: 9px 16px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink-secondary);
-  transition: all 0.15s ease;
-}
-
-.btn-secondary:hover {
-  background: var(--bg-surface-raised);
-  color: var(--ink-primary);
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   AUTH OVERLAY
-───────────────────────────────────────────────────────────────────────────── */
-#auth-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--bg-canvas);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-
-.auth-panel {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  max-width: 400px;
-  width: 100%;
-  padding: 36px;
-  box-shadow: var(--shadow-lg);
-}
-
-.auth-heading {
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  color: var(--ink-primary);
-  margin-bottom: 6px;
-}
-
-.auth-desc {
-  font-size: 14px;
-  color: var(--ink-secondary);
-  margin-bottom: 24px;
-}
-
-.auth-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--ink-primary);
-  margin-bottom: 6px;
-}
-
-.auth-input {
-  width: 100%;
-  background: var(--bg-inset);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  font-size: 14px;
-  color: var(--ink-primary);
-  margin-bottom: 16px;
-  outline: none;
-}
-
-.auth-input:focus {
-  border-color: var(--sapphire);
-  background: #fff;
-}
-
-.auth-submit {
-  width: 100%;
-  background: var(--sapphire);
-  color: #fff;
-  font-weight: 600;
-  font-size: 14px;
-  padding: 12px;
-  border-radius: var(--radius-sm);
-  transition: background 0.15s ease, transform 0.1s var(--ease-apple);
-}
-
-.auth-submit:hover { background: var(--sapphire-hover); }
-.auth-submit:active { transform: scale(0.98); }
-
-@media (max-width: 1024px) {
-  .dossier-card { grid-template-columns: 1fr; gap: 16px; }
-  .dossier-col-intel { border-left: none; border-right: none; padding: 0; }
-  .metric-grid { grid-template-columns: repeat(2, 1fr); }
-}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobPortal — Autonomous Tech Job Harvester & Precision Match Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-<!-- ── AUTH OVERLAY ─────────────────────────────────────────────────────────── -->
-<div id="auth-overlay" style="display:none">
-  <div class="auth-panel">
-    <div style="font-size:12px;font-weight:700;color:var(--sapphire);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px">JOBPILOT EXEC</div>
-    <h2 class="auth-heading">Sign In to Radar</h2>
-    <p class="auth-desc">Access direct seed founder pipeline, unindexed opportunities, and $0 SMTP verification.</p>
-
-    <label class="auth-label">Username</label>
-    <input type="text" class="auth-input" id="login-user" value="admin" placeholder="admin">
-
-    <label class="auth-label">Password</label>
-    <input type="password" class="auth-input" id="login-pass" value="admin123" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-
-    <button class="auth-submit" id="login-btn" onclick="doLogin()">Enter Terminal</button>
-    <div id="login-err" style="color:var(--crimson);font-size:12px;margin-top:12px;text-align:center"></div>
-    <div style="font-size:12px;color:var(--ink-tertiary);margin-top:16px;text-align:center">
-      Standard access: <code>admin</code> / <code>admin123</code>
-    </div>
-  </div>
-</div>
-
-<!-- ── TOP NAVIGATION BAR ───────────────────────────────────────────────────── -->
-<header class="top-nav">
-  <div class="brand-wrap">
-    <span class="brand-logo-badge">JP</span>
-    <span class="brand-title">JOBPILOT</span>
-    <span class="brand-subtitle">Side-Door Radar</span>
+  <!-- ── Ambient Floating Mesh Background ────────────────────────────────────── -->
+  <div class="ambient-mesh">
+    <div class="mesh-orb mesh-orb-1"></div>
+    <div class="mesh-orb mesh-orb-2"></div>
   </div>
 
-  <nav class="nav-tabs">
-    <button class="nav-tab-btn active" onclick="switchView('radar')" id="tab-radar">Direct Founders</button>
-    <button class="nav-tab-btn" onclick="switchView('teardown')" id="tab-teardown">Teardown Studio</button>
-    <button class="nav-tab-btn" onclick="switchView('verifier')" id="tab-verifier">Socket MX Verifier</button>
-    <button class="nav-tab-btn" onclick="switchView('cvs')" id="tab-cvs">CV Vault</button>
-    <button class="nav-tab-btn" onclick="switchView('settings')" id="tab-settings">Preferences</button>
-  </nav>
-
-  <div class="top-right">
-    <div class="status-chip">
-      <span class="status-dot"></span>
-      <span>Port 25 Probe Ready</span>
-    </div>
-    <button class="btn-signout" onclick="doLogout()">Sign Out</button>
-  </div>
-</header>
-
-<!-- ── MAIN CONTENT WRAPPER ─────────────────────────────────────────────────── -->
-<main class="main-wrapper">
-
-  <!-- ── VIEW 1: FOUNDER RADAR ────────────────────────────────────────────── -->
-  <section id="view-radar">
-    <div class="editorial-hero">
-      <div class="hero-super">Intelligence Wire</div>
-      <h1 class="hero-heading">Direct line to seed-stage founders. Zero recruiters. Zero job board noise.</h1>
-      <p class="hero-sub">
-        Unindexed seed startups (&lt;15 team), verified direct-to-CTO mailboxes, and automated architectural teardowns. Bypassing saturated applicant portals to land high-leverage remote engineering roles.
-      </p>
-
-      <div class="metric-grid">
-        <div class="metric-card">
-          <div class="metric-val" id="m-startups">21</div>
-          <div class="metric-label">Seed Startups (&lt;15)</div>
-          <div class="metric-desc">Apollo stealth & pre-seed round wires</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-val" id="m-emails">13</div>
-          <div class="metric-label">Verified Work Inboxes</div>
-          <div class="metric-desc">$0 Socket MX direct port 25 probe</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-val" id="m-hn">8</div>
-          <div class="metric-label">HN Direct Founders</div>
-          <div class="metric-desc">Unindexed Who is Hiring extraction</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-val" id="m-agencies">3</div>
-          <div class="metric-label">Boutique AI Agencies</div>
-          <div class="metric-desc">High-margin client execution partners</div>
-        </div>
+  <!-- ── Navigation Header ────────────────────────────────────────────────────── -->
+  <header class="nav-header">
+    <div class="brand-wrap" onclick="switchView('landing')">
+      <div class="brand-badge">
+        <span class="pulse-dot"></span>
+        <span>JP</span>
       </div>
-    </div>
-
-    <!-- Controls -->
-    <div class="controls-bar">
-      <div class="filter-group">
-        <button class="filter-btn active" onclick="filterRadar('all', this)">All Signals</button>
-        <button class="filter-btn" onclick="filterRadar('apollo_seed', this)">Apollo Seed</button>
-        <button class="filter-btn" onclick="filterRadar('hn_who_is_hiring', this)">HN Direct</button>
-        <button class="filter-btn" onclick="filterRadar('sec_edgar_form_d', this)">SEC Form D</button>
-        <button class="filter-btn" onclick="filterRadar('agency_partner_network', this)">Boutique Agencies</button>
-      </div>
-
-      <div class="search-actions">
-        <input type="text" class="search-field" id="radar-search" placeholder="Search company, tech, founder..." oninput="searchRadar(this.value)">
-        <button class="btn-primary-action" onclick="loadRadarFeed()">↻ Refresh Signals</button>
-      </div>
-    </div>
-
-    <!-- Dossier Stream -->
-    <div class="dossier-list" id="radar-list">
-      <!-- Live Rendered Cards -->
-    </div>
-  </section>
-
-  <!-- ── VIEW 2: APP TEARDOWN STUDIO ──────────────────────────────────────── -->
-  <section id="view-teardown" style="display:none">
-    <div class="workbench-box">
-      <h2 class="wb-title">Startup App Teardown Studio</h2>
-      <p class="wb-desc">
-        Decompiles client-side bundles, extracts exposed API routes, audits missing security headers, and generates a concrete 3-bullet CTO engineering memo with a copy-paste FastAPI backend fix.
-      </p>
-
-      <div class="wb-inputs">
-        <input type="text" class="wb-field" id="td-target-url" placeholder="https://app.targetstartup.ai or domain">
-        <button class="btn-primary-action" id="td-run-btn" onclick="executeStudioTeardown()">Decompile &amp; Audit App</button>
-      </div>
-
-      <div id="td-terminal" class="wb-terminal">
-        // Ready. Enter a target startup web app or landing page domain above.
-      </div>
-    </div>
-  </section>
-
-  <!-- ── VIEW 3: SOCKET MX VERIFIER ───────────────────────────────────────── -->
-  <section id="view-verifier" style="display:none">
-    <div class="workbench-box">
-      <h2 class="wb-title">Zero-Cost Socket SMTP MX Handshake Verifier</h2>
-      <p class="wb-desc">
-        Direct socket RFC 5321 probe on port 25. Handshakes directly with Google Workspace, Microsoft 365, or ProtonMail MX servers to verify deliverability in 300ms without sending an email or consuming paid credits.
-      </p>
-
-      <div class="wb-inputs">
-        <input type="text" class="wb-field" id="mx-first" placeholder="First Name (e.g. Alex)">
-        <input type="text" class="wb-field" id="mx-last" placeholder="Last Name (e.g. Vance)">
-        <input type="text" class="wb-field" id="mx-domain" placeholder="Domain (e.g. neuralflow.ai)">
-        <button class="btn-primary-action" id="mx-test-btn" onclick="executeStudioVerifier()">Test Handshake</button>
-      </div>
-
-      <div id="mx-terminal" class="wb-terminal">
-        // Ready. Enter founder contact name and company domain to probe primary MX host.
-      </div>
-    </div>
-  </section>
-
-  <!-- ── VIEW 4: CV VAULT ─────────────────────────────────────────────────── -->
-  <section id="view-cvs" style="display:none">
-    <div class="workbench-box">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
-        <div>
-          <h2 class="wb-title">Curated CV &amp; Capability Vault</h2>
-          <p class="wb-desc" style="margin-bottom:0">Upload tailored PDF resumes and technical case studies used for dynamic AI pitch matching.</p>
-        </div>
-        <label class="btn-primary-action" style="cursor:pointer">
-          Upload PDF CV
-          <input type="file" id="cv-upload-input" accept=".pdf,.docx" style="display:none" onchange="uploadCvFile(this)">
-        </label>
-      </div>
-      <div id="cv-vault-list" class="dossier-list">
-        <!-- Rendered CVs -->
-      </div>
-    </div>
-  </section>
-
-  <!-- ── VIEW 5: PREFERENCES ──────────────────────────────────────────────── -->
-  <section id="view-settings" style="display:none">
-    <div class="workbench-box" style="max-width:680px">
-      <h2 class="wb-title">Outreach &amp; Radar Preferences</h2>
-      <p class="wb-desc">Configure LLM intelligence keys and target remote hire criteria.</p>
-
-      <div style="display:flex;flex-direction:column;gap:18px">
-        <div>
-          <label class="auth-label">Apollo Session Account</label>
-          <input type="text" class="wb-field" value="ibrahim66hamid@gmail.com (Session Verified)" disabled style="width:100%">
-        </div>
-        <div>
-          <label class="auth-label">Groq API Key (Fast LLaMA 3.3 Inference)</label>
-          <input type="password" class="wb-field" id="set-groq" placeholder="gsk_..." style="width:100%">
-        </div>
-        <div>
-          <label class="auth-label">Target Role Terms</label>
-          <input type="text" class="wb-field" id="set-terms" value="AI Engineer, Full Stack Developer, Python, FastAPI" style="width:100%">
-        </div>
-        <div>
-          <button class="btn-primary-action" onclick="savePreferences()">Save Configuration</button>
-          <span id="set-status" style="margin-left:12px;font-size:13px;color:var(--emerald);font-weight:600"></span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<!-- ── 3-SENTENCE MEMO MODAL ────────────────────────────────────────────────── -->
-<div class="modal-overlay" id="memo-modal">
-  <div class="modal-card">
-    <div class="modal-header">
-      <h3 class="modal-title" id="mm-company">Outreach Technical Memo</h3>
-      <div class="modal-close" onclick="closeMemoModal()">✕</div>
-    </div>
-
-    <input type="text" class="modal-subject" id="mm-subject" readonly>
-    <textarea class="modal-body" id="mm-body"></textarea>
-
-    <div class="modal-sandbox">
       <div>
-        <strong style="color:var(--sapphire)">Dynamic Live Sandbox:</strong>
-        <span id="mm-sandbox-link" style="font-family:var(--font-mono);margin-left:6px;font-size:12px">https://...</span>
+        <span class="brand-title">JobPortal</span>
+        <span class="brand-sub">Autonomous</span>
       </div>
-      <span style="color:var(--emerald);font-size:11px;font-weight:700">1-Week Risk-Free Offer Included</span>
     </div>
 
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeMemoModal()">Dismiss</button>
-      <button class="btn-secondary" onclick="openMailClient()">Open in Mail Client</button>
-      <button class="btn-primary-action" id="mm-copy-btn" onclick="copyMemoToClipboard()">Copy to Clipboard</button>
+    <nav class="nav-links">
+      <button class="nav-btn active" id="nav-btn-landing" onclick="switchView('landing')">Home</button>
+      <button class="nav-btn" id="nav-btn-explorer" onclick="switchView('explorer')">Explore Catalog</button>
+      <button class="nav-btn" id="nav-btn-matches" onclick="switchView('matches')" style="display:none;">Personalized Matches</button>
+      <button class="nav-btn" id="nav-btn-saved" onclick="switchView('saved')" style="display:none;">Saved Jobs</button>
+      <button class="nav-btn" id="nav-btn-profile" onclick="switchView('profile')" style="display:none;">My Profile & CV</button>
+    </nav>
+
+    <div class="nav-right" id="nav-user-actions">
+      <!-- Populated dynamically by checkAuthState() -->
+      <button class="btn-outline" onclick="openAuthModal('login')">Sign In</button>
+      <button class="btn-primary" onclick="openAuthModal('register')">Create Account</button>
+    </div>
+  </header>
+
+  <!-- ───────────────────────────────────────────────────────────────────────────
+       VIEW 1: LANDING PAGE
+       ─────────────────────────────────────────────────────────────────────────── -->
+  <main class="app-view landing-view" id="view-landing">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-pill">
+        <span>⚡ CONTINUOUS MULTI-SOURCE HARVESTING</span>
+      </div>
+      <h1 class="hero-headline">
+        Autonomous Job Discovery & <span>Precision Matching</span> for Engineers
+      </h1>
+      <p class="hero-desc">
+        Continuously collects and deduplicates verified engineering roles every 1–2 hours.
+        Strict zero-noise filtering, automated CV parsing, and 1-click direct applications.
+      </p>
+
+      <!-- Prominent Search Bar -->
+      <div class="hero-search-wrap">
+        <span style="font-size:18px; margin-left:10px;">🔍</span>
+        <input type="text" class="hero-search-input" id="hero-search-input" placeholder="Search by job title, skill, tech stack, or company..." onkeydown="if(event.key==='Enter')handleHeroSearch()">
+        <button class="hero-search-btn" onclick="handleHeroSearch()">Find Jobs</button>
+      </div>
+
+      <!-- Quick Category Pills -->
+      <div class="quick-pills">
+        <span style="font-size:12px; font-weight:700; color:var(--ink-tertiary); margin-right:4px;">Popular:</span>
+        <div class="quick-pill" onclick="selectQuickPill('industry', 'ai_ml')">Artificial Intelligence</div>
+        <div class="quick-pill" onclick="selectQuickPill('industry', 'full_stack')">Full-Stack</div>
+        <div class="quick-pill" onclick="selectQuickPill('industry', 'python')">Python Developer</div>
+        <div class="quick-pill" onclick="selectQuickPill('work_arrangement', 'remote')">Remote Worldwide</div>
+        <div class="quick-pill" onclick="selectQuickPill('location', 'islamabad')">Islamabad & Rawalpindi</div>
+        <div class="quick-pill" onclick="selectQuickPill('job_type', 'internship')">Internships</div>
+      </div>
+
+      <!-- Telemetry Counters -->
+      <div class="telemetry-grid">
+        <div class="telemetry-card">
+          <div class="telemetry-val" id="telemetry-total-jobs">680+</div>
+          <div class="telemetry-label">Verified Listings</div>
+          <div class="telemetry-desc">Preserved historical catalog</div>
+        </div>
+        <div class="telemetry-card">
+          <div class="telemetry-val" id="telemetry-total-sources">14</div>
+          <div class="telemetry-label">Ingestion Feeds</div>
+          <div class="telemetry-desc">RemoteOK, Himalayas, Remotive, etc.</div>
+        </div>
+        <div class="telemetry-card">
+          <div class="telemetry-val" id="telemetry-fresh-24h">24+</div>
+          <div class="telemetry-label">Fresh Past 24h</div>
+          <div class="telemetry-desc">Continuous scheduled cycle</div>
+        </div>
+        <div class="telemetry-card">
+          <div class="telemetry-val" style="color:var(--emerald);">100%</div>
+          <div class="telemetry-label">Strict Filtering</div>
+          <div class="telemetry-desc">Zero noise, exact match constraints</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="section-wrap">
+      <div class="section-head">
+        <h2>How JobPortal Works</h2>
+        <p>A complete engineering workflow that replaces manual job-board hunting.</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">STEP 01</div>
+          <h3>Upload Your CV</h3>
+          <p>Drop your PDF resume. Our parser automatically extracts skills, experience years, education, and target roles with deterministic error-handling.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">STEP 02</div>
+          <h3>Continuous Autonomous Scraper</h3>
+          <p>Our background engine continuously scrapes 14+ platforms every 1–2 hours, deduplicating listings by URL & content hash and storing historical records.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">STEP 03</div>
+          <h3>Precision Explainable Match</h3>
+          <p>Review personalized job matches with clear breakdown tags. Filter strictly by level, location, or industry, and apply directly to employers.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Verified Jobs Section -->
+    <section class="section-wrap">
+      <div class="section-head" style="display:flex; justify-content:space-between; align-items:flex-end; text-align:left; margin-bottom:28px;">
+        <div>
+          <h2>Recent Verified Opportunities</h2>
+          <p>Fresh opportunities collected and verified across multiple sources.</p>
+        </div>
+        <button class="btn-primary" onclick="switchView('explorer')">View Full Catalog →</button>
+      </div>
+      <div class="job-cards-list" id="featured-jobs-grid">
+        <!-- Rendered dynamically by loadFeaturedJobs() -->
+      </div>
+    </section>
+
+    <!-- Platform Footer -->
+    <footer style="border-top:1px solid var(--border); padding:40px 24px; text-align:center; color:var(--ink-secondary); font-size:13px; background:var(--bg-surface);">
+      <div style="font-weight:700; color:var(--ink-primary); margin-bottom:8px;">JobPortal Autonomous Career Ingestion Platform</div>
+      <p style="max-width:540px; margin:0 auto 16px auto; font-size:12px; color:var(--ink-tertiary);">
+        Built with FastAPI, SQLAlchemy, Groq/OpenRouter Fallback Engine, and Strict Classification Heuristics. Isolated user data and zero-credential leaks.
+      </p>
+      <div>&copy; 2026 JobPortal. Production Ready.</div>
+    </footer>
+  </main>
+
+  <!-- ───────────────────────────────────────────────────────────────────────────
+       VIEW 2: JOB EXPLORER (GENERAL CATALOG & STRICT MULTI-FILTER)
+       ─────────────────────────────────────────────────────────────────────────── -->
+  <main class="app-view app-container" id="view-explorer" style="display:none;">
+    <div class="portal-layout">
+      
+      <!-- Left Filter Drawer / Sidebar -->
+      <aside class="filter-panel">
+        <div class="filter-header">
+          <span class="filter-title">Advanced Filters</span>
+          <button class="btn-reset-filters" onclick="resetAllFilters()">Reset All</button>
+        </div>
+
+        <!-- Date Range Filter (Default 24h as requested) -->
+        <div class="filter-group">
+          <label class="filter-label">Date Discovered / Posted</label>
+          <select class="filter-select" id="filter-date-range" onchange="applyFilterChange('date_range', this.value)">
+            <option value="24h" selected>Last 24 Hours (Default)</option>
+            <option value="7d">Last 7 Days</option>
+            <option value="30d">Last 30 Days</option>
+            <option value="all">All Historical Listings</option>
+          </select>
+        </div>
+
+        <!-- Job Type Filter -->
+        <div class="filter-group">
+          <label class="filter-label">Job Type</label>
+          <select class="filter-select" id="filter-job-type" onchange="applyFilterChange('job_type', this.value)">
+            <option value="all">All Job Types</option>
+            <option value="internship">Internship / Trainee (Strict)</option>
+            <option value="full_time">Full-time</option>
+            <option value="part_time">Part-time</option>
+            <option value="contract">Contract / Freelance</option>
+          </select>
+        </div>
+
+        <!-- Work Arrangement Filter -->
+        <div class="filter-group">
+          <label class="filter-label">Work Arrangement</label>
+          <select class="filter-select" id="filter-work-arrangement" onchange="applyFilterChange('work_arrangement', this.value)">
+            <option value="all">All Arrangements</option>
+            <option value="remote">Remote Worldwide</option>
+            <option value="hybrid">Hybrid</option>
+            <option value="onsite">On-site</option>
+          </select>
+        </div>
+
+        <!-- Location Filter -->
+        <div class="filter-group">
+          <label class="filter-label">Geographic Location</label>
+          <select class="filter-select" id="filter-location" onchange="applyFilterChange('location', this.value)">
+            <option value="all">All Locations</option>
+            <option value="islamabad">Islamabad</option>
+            <option value="rawalpindi">Rawalpindi</option>
+            <option value="pakistan">Pakistan (Nationwide)</option>
+            <option value="worldwide">Worldwide / International</option>
+          </select>
+        </div>
+
+        <!-- Experience Level Filter -->
+        <div class="filter-group">
+          <label class="filter-label">Experience Level</label>
+          <select class="filter-select" id="filter-experience-level" onchange="applyFilterChange('experience_level', this.value)">
+            <option value="all">All Experience Levels</option>
+            <option value="internship">Internship / Student</option>
+            <option value="entry_level">Entry-Level / Junior (0–2 yrs)</option>
+            <option value="mid_level">Mid-Level (2–5 yrs)</option>
+            <option value="senior">Senior / Lead (5+ yrs)</option>
+          </select>
+        </div>
+
+        <!-- Industry & Field Filter -->
+        <div class="filter-group">
+          <label class="filter-label">Industry & Technical Field</label>
+          <select class="filter-select" id="filter-industry" onchange="applyFilterChange('industry', this.value)">
+            <option value="all">All Industries & Fields</option>
+            <option value="ai_ml">Artificial Intelligence & ML</option>
+            <option value="backend">Backend Development</option>
+            <option value="frontend">Frontend Development</option>
+            <option value="full_stack">Full-Stack Development</option>
+            <option value="python">Python Engineering</option>
+            <option value="data_science">Data Science & Engineering</option>
+            <option value="devops_cloud">DevOps & Cloud</option>
+            <option value="cybersecurity">Cybersecurity</option>
+            <option value="qa_testing">QA & Testing</option>
+          </select>
+        </div>
+
+        <!-- Sort By -->
+        <div class="filter-group">
+          <label class="filter-label">Sort Order</label>
+          <select class="filter-select" id="filter-sort-by" onchange="applyFilterChange('sort_by', this.value)">
+            <option value="newest">Newest First</option>
+            <option value="salary_high">Highest Salary</option>
+          </select>
+        </div>
+      </aside>
+
+      <!-- Right Main Content Area -->
+      <section>
+        <!-- Search bar & Controls Header -->
+        <div class="hero-search-wrap" style="max-width:100%; margin-bottom:18px;">
+          <span style="font-size:18px; margin-left:10px;">🔍</span>
+          <input type="text" class="hero-search-input" id="explorer-search-input" placeholder="Search by title, company, skill, or keyword..." onkeydown="handleSearchKeydown(event)">
+          <button class="hero-search-btn" onclick="applyFilterChange('search', document.getElementById('explorer-search-input').value.trim())">Search</button>
+        </div>
+
+        <div class="results-header">
+          <div class="results-count" id="total-jobs-count">
+            <span>Loading...</span> Listings Found
+          </div>
+          <div class="results-controls">
+            <button class="btn-outline" onclick="loadJobs()">↻ Refresh</button>
+          </div>
+        </div>
+
+        <!-- Active Filter Chips Bar -->
+        <div class="applied-tags-bar" id="applied-filters-bar"></div>
+
+        <!-- Job Cards List -->
+        <div class="job-cards-list" id="job-cards-container">
+          <!-- Rendered by loadJobs() -->
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-wrap" id="pagination-container"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ───────────────────────────────────────────────────────────────────────────
+       VIEW 3: PERSONALIZED JOB MATCHES
+       ─────────────────────────────────────────────────────────────────────────── -->
+  <main class="app-view app-container" id="view-matches" style="display:none;">
+    <div style="margin-bottom:28px;">
+      <h1 style="font-size:28px; font-weight:800; color:var(--ink-primary); letter-spacing:-0.025em; margin-bottom:8px;">
+        Your Personalized Job Matches
+      </h1>
+      <p style="color:var(--ink-secondary); font-size:15px;">
+        Ranked and scored against your active CV skills, work experience, preferred roles, and remote preferences.
+      </p>
+    </div>
+
+    <div class="job-cards-list" id="matches-cards-container">
+      <!-- Populated by loadMatches() -->
+    </div>
+  </main>
+
+  <!-- ───────────────────────────────────────────────────────────────────────────
+       VIEW 4: SAVED JOBS (BOOKMARKS)
+       ─────────────────────────────────────────────────────────────────────────── -->
+  <main class="app-view app-container" id="view-saved" style="display:none;">
+    <div style="margin-bottom:28px;">
+      <h1 style="font-size:28px; font-weight:800; color:var(--ink-primary); letter-spacing:-0.025em; margin-bottom:8px;">
+        Saved Bookmarks
+      </h1>
+      <p style="color:var(--ink-secondary); font-size:15px;">
+        Opportunities you have bookmarked for review and direct application.
+      </p>
+    </div>
+
+    <div class="job-cards-list" id="saved-cards-container">
+      <!-- Populated by loadSavedJobs() -->
+    </div>
+  </main>
+
+  <!-- ───────────────────────────────────────────────────────────────────────────
+       VIEW 5: USER PROFILE & CV VAULT
+       ─────────────────────────────────────────────────────────────────────────── -->
+  <main class="app-view app-container" id="view-profile" style="display:none;">
+    <div style="max-width:820px; margin:0 auto;">
+      <div style="margin-bottom:32px;">
+        <h1 style="font-size:28px; font-weight:800; color:var(--ink-primary); letter-spacing:-0.025em; margin-bottom:8px;">
+          Candidate Profile & CV Vault
+        </h1>
+        <p style="color:var(--ink-secondary); font-size:15px;">
+          Manage your extracted profile data, skills, and target job preferences. Your data is strictly isolated.
+        </p>
+      </div>
+
+      <!-- CV Upload Zone -->
+      <div style="background:var(--bg-surface); border:2px dashed var(--border-strong); border-radius:var(--radius-lg); padding:36px; text-align:center; margin-bottom:32px;">
+        <div style="font-size:40px; margin-bottom:12px;">📄</div>
+        <h3 style="font-size:18px; font-weight:700; color:var(--ink-primary); margin-bottom:6px;">Upload Your CV / Resume</h3>
+        <p style="font-size:13px; color:var(--ink-secondary); margin-bottom:20px;">
+          Supported formats: PDF (up to 10MB). Automatically extracts skills, experience, and roles.
+        </p>
+        <input type="file" id="cv-file-input" accept=".pdf,.docx,.txt" style="display:none;" onchange="handleCvUpload(this.files[0])">
+        <button class="btn-primary" onclick="document.getElementById('cv-file-input').click()">
+          Select File to Upload
+        </button>
+        <div id="cv-upload-status" style="margin-top:14px; font-size:13px;"></div>
+      </div>
+
+      <div id="cv-status-indicator" style="margin-bottom:24px;"></div>
+
+      <!-- Profile Form -->
+      <form onsubmit="handleProfileUpdate(event)" style="background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:32px; box-shadow:var(--shadow-sm);">
+        <h3 style="font-size:18px; font-weight:700; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+          Candidate Details & Preferences
+        </h3>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+          <div>
+            <label class="auth-label">Full Name</label>
+            <input type="text" class="auth-input" id="prof-name" required>
+          </div>
+          <div>
+            <label class="auth-label">Email (Read Only)</label>
+            <input type="email" class="auth-input" id="prof-email" readonly style="opacity:0.75; cursor:not-allowed;">
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+          <div>
+            <label class="auth-label">Phone Number</label>
+            <input type="text" class="auth-input" id="prof-phone">
+          </div>
+          <div>
+            <label class="auth-label">Current Location</label>
+            <input type="text" class="auth-input" id="prof-location" placeholder="e.g. Islamabad, Pakistan or Remote">
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+          <div>
+            <label class="auth-label">Remote Preference</label>
+            <select class="filter-select" id="prof-remote-pref">
+              <option value="worldwide_remote">Worldwide Remote</option>
+              <option value="hybrid">Hybrid</option>
+              <option value="onsite">On-Site</option>
+            </select>
+          </div>
+          <div>
+            <label class="auth-label">Years of Professional Experience</label>
+            <input type="number" step="0.5" class="auth-input" id="prof-exp-years">
+          </div>
+        </div>
+
+        <div class="auth-input-group">
+          <label class="auth-label">Technical Skills (Comma separated)</label>
+          <input type="text" class="auth-input" id="prof-skills" placeholder="Python, FastAPI, React, PostgreSQL, Docker, LangChain">
+        </div>
+
+        <div class="auth-input-group">
+          <label class="auth-label">Preferred Target Job Titles (Comma separated)</label>
+          <input type="text" class="auth-input" id="prof-roles" placeholder="AI Engineer, Full Stack Developer, Python Developer">
+        </div>
+
+        <div class="auth-input-group">
+          <label class="auth-label">Professional Summary</label>
+          <textarea class="auth-input" id="prof-summary" rows="4" placeholder="Brief summary of your technical background and achievements..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" id="btn-save-profile" style="width:100%; justify-content:center; padding:12px;">
+          Save Profile Changes
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <!-- ───────────────────────────────────────────────────────────────────────────
+       AUTH MODAL (LOGIN & GMAIL OTP REGISTRATION)
+       ─────────────────────────────────────────────────────────────────────────── -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <div style="font-size:11px; font-weight:800; color:var(--primary); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">
+            Secure Authentication
+          </div>
+          <div class="modal-title">JobPortal Access</div>
+        </div>
+        <button class="modal-close-btn" onclick="closeAuthModal()">✕</button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab-btn active" id="tab-btn-login" onclick="switchAuthTab('login')">Sign In</button>
+        <button class="auth-tab-btn" id="tab-btn-register" onclick="switchAuthTab('register')">Create Account</button>
+      </div>
+
+      <div id="auth-error-msg" style="color:var(--crimson); font-size:13px; font-weight:600; margin-bottom:14px; text-align:center;"></div>
+
+      <!-- Tab Pane 1: Sign In -->
+      <div class="auth-tab-pane" id="auth-pane-login">
+        <form onsubmit="handleLoginSubmit(event)">
+          <div class="auth-input-group">
+            <label class="auth-label">Username or Email</label>
+            <input type="text" class="auth-input" id="login-email" placeholder="you@domain.com or username" required>
+          </div>
+          <div class="auth-input-group">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <label class="auth-label" style="margin-bottom:0;">Password</label>
+              <a href="javascript:void(0)" onclick="switchAuthTab('forgot')" style="font-size:12px; color:var(--primary); font-weight:600;">Forgot?</a>
+            </div>
+            <input type="password" class="auth-input" id="login-password" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn-primary" id="btn-login-submit" style="width:100%; justify-content:center; padding:12px; margin-top:8px;">
+            Sign In
+          </button>
+        </form>
+      </div>
+
+      <!-- Tab Pane 2: Step 1 Registration (Requests OTP) -->
+      <div class="auth-tab-pane" id="auth-pane-register" style="display:none;">
+        <p style="font-size:13px; color:var(--ink-secondary); margin-bottom:18px;">
+          Create your personal account. We will send a secure 6-digit OTP code to your Gmail address to verify ownership.
+        </p>
+        <form onsubmit="handleRegisterRequest(event)">
+          <div class="auth-input-group">
+            <label class="auth-label">Desired Username</label>
+            <input type="text" class="auth-input" id="reg-username" placeholder="e.g. devhunter" required>
+          </div>
+          <div class="auth-input-group">
+            <label class="auth-label">Your Email (Gmail or Work Email)</label>
+            <input type="email" class="auth-input" id="reg-email" placeholder="you@gmail.com" required>
+          </div>
+          <div class="auth-input-group">
+            <label class="auth-label">Create Password (min 6 characters)</label>
+            <input type="password" class="auth-input" id="reg-password" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn-primary" id="btn-reg-request" style="width:100%; justify-content:center; padding:12px; margin-top:8px;">
+            Continue to Verification
+          </button>
+        </form>
+      </div>
+
+      <!-- Tab Pane 3: Step 2 OTP Verification -->
+      <div class="auth-tab-pane" id="auth-pane-otp" style="display:none;">
+        <div style="text-align:center; margin-bottom:18px;">
+          <div style="font-size:32px; margin-bottom:8px;">✉️</div>
+          <h3 style="font-size:18px; font-weight:800; color:var(--ink-primary); margin-bottom:4px;">Enter Verification Code</h3>
+          <p style="font-size:13px; color:var(--ink-secondary);">
+            A 6-digit code has been dispatched to <strong id="otp-target-email">your email</strong>.
+          </p>
+          <div id="otp-dev-hint" style="margin-top:8px; font-size:12px;"></div>
+        </div>
+
+        <form onsubmit="handleOtpSubmit(event)">
+          <div style="display:flex; justify-content:center; margin-bottom:16px;">
+            <input type="text" class="auth-input" id="otp-code-input" maxlength="6" placeholder="123456" style="width:200px; text-align:center; font-size:24px; font-weight:800; letter-spacing:6px; font-family:var(--font-mono);" required>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--ink-secondary); margin-bottom:20px;">
+            <span>Code expires in: <strong id="otp-countdown" style="color:var(--primary);">10:00</strong></span>
+            <button type="button" class="btn-outline" id="btn-resend-otp" onclick="handleResendOtp()" style="padding:4px 10px; font-size:12px;">Resend Code</button>
+          </div>
+
+          <button type="submit" class="btn-primary" id="btn-verify-otp" style="width:100%; justify-content:center; padding:12px;">
+            Verify & Activate Account
+          </button>
+        </form>
+      </div>
+
+      <!-- Tab Pane 4: Forgot Password Request -->
+      <div class="auth-tab-pane" id="auth-pane-forgot" style="display:none;">
+        <p style="font-size:13px; color:var(--ink-secondary); margin-bottom:18px;">
+          Enter your registered email address. We will dispatch a 6-digit reset code to verify your identity.
+        </p>
+        <form onsubmit="handleForgotSubmit(event)">
+          <div class="auth-input-group">
+            <label class="auth-label">Account Email</label>
+            <input type="email" class="auth-input" id="forgot-email" placeholder="you@domain.com" required>
+          </div>
+          <button type="submit" class="btn-primary" id="btn-forgot-submit" style="width:100%; justify-content:center; padding:12px;">
+            Send Reset Code
+          </button>
+        </form>
+      </div>
+
+      <!-- Tab Pane 5: Reset Password Complete -->
+      <div class="auth-tab-pane" id="auth-pane-reset" style="display:none;">
+        <div id="reset-dev-hint" style="margin-bottom:12px; text-align:center;"></div>
+        <form onsubmit="handleResetSubmit(event)">
+          <div class="auth-input-group">
+            <label class="auth-label">6-Digit Reset Code</label>
+            <input type="text" class="auth-input" id="reset-otp" maxlength="6" placeholder="123456" style="text-align:center; font-size:20px; font-weight:800; letter-spacing:4px;" required>
+          </div>
+          <div class="auth-input-group">
+            <label class="auth-label">New Password (min 6 characters)</label>
+            <input type="password" class="auth-input" id="reset-new-password" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn-primary" id="btn-reset-submit" style="width:100%; justify-content:center; padding:12px;">
+            Update Password
+          </button>
+        </form>
+      </div>
+
     </div>
   </div>
-</div>
 
-<!-- ── SCRIPTS & LOGIC ──────────────────────────────────────────────────────── -->
-<script>
-let _token = localStorage.getItem('jp_token') || 'valid';
-let _currentLeads = [];
-let _activePitch = null;
+  <!-- ───────────────────────────────────────────────────────────────────────────
+       JOB DETAILS SLIDE-OVER DRAWER
+       ─────────────────────────────────────────────────────────────────────────── -->
+  <div class="drawer-overlay" id="job-detail-drawer" onclick="if(event.target===this)closeJobDrawer()">
+    <div class="drawer-panel" id="drawer-job-content">
+      <!-- Populated by openJobDetail() -->
+    </div>
+  </div>
 
-// Initial Fallback Signals (instant zero-delay rendering)
-const DEFAULT_SIGNALS = [
-  {
-    company: "NeuralFlow AI",
-    domain: "neuralflowai.ai",
-    source: "apollo_seed",
-    funding_stage: "Seed Round ($1.4M)",
-    headcount: "1–10 Engineers",
-    location: "San Francisco / Remote",
-    contact_name: "Alex Vance",
-    contact_title: "Co-Founder & CTO",
-    verified_email: "alex.vance@neuralflowai.ai",
-    description: "Building streaming RAG architectures and low-latency LLM microservices for enterprise legal teams. Seeking Python & FastAPI engineers.",
-    technologies: ["Python", "FastAPI", "React", "Docker", "RAG"]
-  },
-  {
-    company: "AetherPulse Systems",
-    domain: "aetherpulse.io",
-    source: "apollo_seed",
-    funding_stage: "Seed ($2.1M)",
-    headcount: "1–8 Engineers",
-    location: "Austin, TX / Remote Worldwide",
-    contact_name: "Sarah Chen",
-    contact_title: "Head of Engineering",
-    verified_email: "sarah@aetherpulse.io",
-    description: "Autonomous voice dispatch pipelines for industrial logistics. High concurrency async Python backend.",
-    technologies: ["Python", "FastAPI", "WebSockets", "Redis"]
-  },
-  {
-    company: "CortexGrid",
-    domain: "cortexgrid.tech",
-    source: "apollo_seed",
-    funding_stage: "Pre-Seed ($850k)",
-    headcount: "1–5 Engineers",
-    location: "Remote Worldwide",
-    contact_name: "Marcus Kane",
-    contact_title: "Founder & CEO",
-    verified_email: "marcus@cortexgrid.tech",
-    description: "Edge model orchestration and inference optimization. Need strong distributed backend engineers.",
-    technologies: ["Python", "FastAPI", "TypeScript", "Next.js"]
-  },
-  {
-    company: "Ambra Health (Telehealth)",
-    domain: "ambrahealth.com",
-    source: "hn_who_is_hiring",
-    funding_stage: "Series A ($12M)",
-    headcount: "15–40 Engineers",
-    location: "Remote (Worldwide)",
-    contact_name: "Pete (Eng Lead)",
-    contact_title: "Hiring Manager",
-    verified_email: "pete+jobs@ambrahealth.com",
-    description: "Cloud medical imaging and HL7 routing pipeline. Hiring remote backend developers with zero ATS barrier.",
-    technologies: ["Python", "FastAPI", "Linux", "PostgreSQL"]
-  },
-  {
-    company: "VocalFlow Automation",
-    domain: "vocalflow.agency",
-    source: "agency_partner_network",
-    funding_stage: "Boutique Dev Agency",
-    headcount: "12 Specialists",
-    location: "Austin, TX (Remote Partners)",
-    contact_name: "Marcus Vance",
-    contact_title: "Agency Principal & Founder",
-    verified_email: "marcus@vocalflow.agency",
-    description: "Custom enterprise voice AI agents, n8n orchestrations, and high-margin client backend contracts.",
-    technologies: ["Python", "FastAPI", "Vapi", "LangChain"]
-  },
-  {
-    company: "DiaMonTech AG",
-    domain: "diamontech.de",
-    source: "hn_who_is_hiring",
-    funding_stage: "HN Direct",
-    headcount: "10–25 Engineers",
-    location: "Berlin / Remote",
-    contact_name: "Bartosz Plotka",
-    contact_title: "Lead Backend Engineer",
-    verified_email: "bartosz.plotka@diamontech.de",
-    description: "Non-invasive blood glucose monitoring algorithms and real-time medical data ingestion pipelines.",
-    technologies: ["Python", "FastAPI", "Go", "Docker"]
-  }
-];
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
 
-async function checkAuth(){
-  const token = localStorage.getItem('jp_token');
-  if (token) {
-    _token = token;
-    document.getElementById('auth-overlay').style.display = 'none';
-    loadRadarFeed();
-    return;
-  }
-  // Try seamless auto-login with default admin credentials
-  try {
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username_or_email: 'admin', password: 'admin123' })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      _token = data.token;
-      localStorage.setItem('jp_token', _token);
-      document.getElementById('auth-overlay').style.display = 'none';
-      loadRadarFeed();
-      return;
-    }
-  } catch(e) {}
-  document.getElementById('auth-overlay').style.display = 'flex';
-}
-
-async function doLogin(){
-  const user = document.getElementById('login-user').value.trim() || 'admin';
-  const pass = document.getElementById('login-pass').value.trim() || 'admin123';
-  const btn = document.getElementById('login-btn');
-  const err = document.getElementById('login-err');
-  err.textContent = '';
-  btn.disabled = true; btn.textContent = 'Authenticating...';
-
-  try {
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username_or_email: user, password: pass })
-    });
-    if (!res.ok) {
-      const errText = await res.text();
-      throw new Error('Invalid credentials. Use admin / admin123');
-    }
-    const data = await res.json();
-    _token = data.token;
-    localStorage.setItem('jp_token', _token);
-    document.getElementById('auth-overlay').style.display = 'none';
-    loadRadarFeed();
-  } catch(e) {
-    err.textContent = e.message;
-  } finally {
-    btn.disabled = false; btn.textContent = 'Enter Terminal';
-  }
-}
-
-function doLogout(){
-  localStorage.removeItem('jp_token');
-  _token = '';
-  location.reload();
-}
-
-function switchView(viewName){
-  ['radar', 'teardown', 'verifier', 'cvs', 'settings'].forEach(v => {
-    const el = document.getElementById('view-' + v);
-    const tab = document.getElementById('tab-' + v);
-    if (el) el.style.display = (v === viewName) ? '' : 'none';
-    if (tab) tab.classList.toggle('active', v === viewName);
-  });
-  if (viewName === 'cvs') loadCvVault();
-}
-
-async function loadRadarFeed(){
-  // Immediate render from defaults so there is zero blank state
-  if (!_currentLeads.length) {
-    _currentLeads = DEFAULT_SIGNALS;
-    renderCards(_currentLeads);
-    updateMetrics(_currentLeads);
-  }
-
-  try {
-    const res = await fetch('/api/radar/feed?limit=40', {
-      headers: { 'Authorization': 'Bearer ' + _token }
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.status === 'success' && data.feed && data.feed.length){
-        _currentLeads = data.feed;
-        renderCards(_currentLeads);
-        updateMetrics(data.feed);
-      }
-    }
-  } catch(e) {
-    console.warn('Live radar feed background update:', e);
-  }
-}
-
-function updateMetrics(items){
-  const startups = items.filter(i => i.source === 'apollo_seed' || i.source === 'sec_edgar_form_d').length || 21;
-  const verified = items.filter(i => i.verified_email || i.decision_maker_email).length || 13;
-  const hn = items.filter(i => i.source === 'hn_who_is_hiring').length || 8;
-  const agencies = items.filter(i => i.source === 'agency_partner_network').length || 3;
-
-  document.getElementById('m-startups').textContent = startups;
-  document.getElementById('m-emails').textContent = verified;
-  document.getElementById('m-hn').textContent = hn;
-  document.getElementById('m-agencies').textContent = agencies;
-}
-
-function filterRadar(stream, btn){
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-
-  if (stream === 'all'){
-    renderCards(_currentLeads);
-  } else {
-    const filtered = _currentLeads.filter(i => i.source === stream);
-    renderCards(filtered);
-  }
-}
-
-function searchRadar(query){
-  const q = (query || '').toLowerCase().trim();
-  if (!q) { renderCards(_currentLeads); return; }
-  const matches = _currentLeads.filter(i => {
-    return (i.company || '').toLowerCase().includes(q) ||
-           (i.description || '').toLowerCase().includes(q) ||
-           (i.contact_name || '').toLowerCase().includes(q) ||
-           (i.technologies || []).some(t => t.toLowerCase().includes(q));
-  });
-  renderCards(matches);
-}
-
-function renderCards(items){
-  const el = document.getElementById('radar-list');
-  if (!items || !items.length){
-    el.innerHTML = '<div style="padding:48px;text-align:center;color:var(--ink-secondary)">No signals matching the selected criteria.</div>';
-    return;
-  }
-
-  el.innerHTML = items.map((item, idx) => {
-    const email = item.verified_email || item.decision_maker_email || item.email || (item.author ? `${item.author}@users.noreply.github.com` : 'direct.founder@domain');
-    const contact = item.contact_name || (item.author ? `HN @${item.author}` : 'Founder / CTO');
-    const role = item.contact_title || item.role || 'Co-Founder & CTO';
-    const stack = (item.technologies || item.matched_skills || ['Python', 'FastAPI', 'React']).slice(0, 4);
-
-    return `
-    <div class="dossier-card">
-      <div class="dossier-col-id">
-        <div class="company-title">${esc(item.company)}</div>
-        <div class="company-funding-chip">${item.funding_stage || 'Seed Stage'} · ${item.headcount || '1–15 Team'}</div>
-        <div class="company-meta">${esc(item.location || 'Remote Worldwide')}</div>
-      </div>
-
-      <div class="dossier-col-intel">
-        <div class="intel-text">${esc(item.description || 'Building high-throughput scalable services. Expanding core product architecture.')}</div>
-        <div class="tech-tag-row">
-          ${stack.map(s => `<span class="tech-tag">${esc(s)}</span>`).join('')}
-        </div>
-      </div>
-
-      <div class="dossier-col-contact">
-        <div class="contact-meta">
-          <div class="contact-name">${esc(contact)}</div>
-          <div class="contact-role">${esc(role)}</div>
-        </div>
-        <div class="inbox-pill">
-          <span>${esc(email)}</span>
-          <span class="inbox-verified-badge">250 OK</span>
-        </div>
-        <div class="card-actions">
-          <button class="btn-memo-action" onclick="generateLeadPitch(${idx})">3-Sentence Memo</button>
-          <button class="btn-audit-action" onclick="quickTeardown('${esc(item.company)}', '${esc(item.domain || '')}')">Audit</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// 3-Sentence Memo Generator
-async function generateLeadPitch(idx){
-  const item = _currentLeads[idx];
-  if (!item) return;
-
-  const modal = document.getElementById('memo-modal');
-  modal.style.display = 'flex';
-  document.getElementById('mm-company').textContent = `Outreach Memo: ${item.company}`;
-  document.getElementById('mm-subject').value = `FastAPI + React execution for ${item.company} (congrats on the round)`;
-  document.getElementById('mm-body').value = `Hi ${item.contact_name || 'Founder'},\n\nCongratulations on ${item.company}'s recent funding round.\n\nI saw you're building with ${item.technologies ? item.technologies.slice(0,3).join(', ') : 'Python, FastAPI, React'}. I'm an AI Full-Stack Developer who specializes in production async backends—recently launched a live forensic LLM guardrail harness and real-time agent demos.\n\nI know shipping your MVP endpoints fast without burning runway is priority #1. I've spun up a dynamic sandbox customized with your logo here:\nhttps://ibrahimhamid.vercel.app/demo?client=${item.company.toLowerCase().replace(/[^a-z0-9]/g, '')}\n\nI'd love to take on your highest-friction backlog ticket for 1 week completely risk-free—if the PR doesn't exceed your standards, you owe me nothing.\n\nBest,\nIbrahim`;
-  document.getElementById('mm-sandbox-link').textContent = `https://ibrahimhamid.vercel.app/demo?client=${item.company.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
-
-  _activePitch = {
-    subject: document.getElementById('mm-subject').value,
-    body: document.getElementById('mm-body').value
-  };
-
-  try {
-    const res = await fetch('/api/radar/generate-pitch', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + _token
-      },
-      body: JSON.stringify({
-        company_name: item.company,
-        contact_name: item.contact_name || item.author || 'Founder',
-        contact_title: item.contact_title || 'CTO',
-        pitch_type: item.source === 'agency_partner_network' ? 'agency_owner' : 'seed_founder',
-        tech_stack: item.technologies || ['Python', 'FastAPI', 'React']
-      })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      _activePitch = data.pitch;
-      document.getElementById('mm-subject').value = _activePitch.subject;
-      document.getElementById('mm-body').value = _activePitch.body;
-      document.getElementById('mm-sandbox-link').textContent = _activePitch.demo_link;
-    }
-  } catch(e) {
-    console.warn('Pitch generation fallback active:', e);
-  }
-}
-
-function closeMemoModal(){
-  document.getElementById('memo-modal').style.display = 'none';
-}
-
-function copyMemoToClipboard(){
-  if (!_activePitch) return;
-  const fullText = `Subject: ${_activePitch.subject}\n\n${_activePitch.body}`;
-  navigator.clipboard.writeText(fullText);
-  const btn = document.getElementById('mm-copy-btn');
-  btn.textContent = 'Copied to Clipboard!';
-  setTimeout(() => { btn.textContent = 'Copy to Clipboard'; }, 2000);
-}
-
-function openMailClient(){
-  if (!_activePitch) return;
-  const s = encodeURIComponent(_activePitch.subject);
-  const b = encodeURIComponent(_activePitch.body);
-  window.open(`mailto:?subject=${s}&body=${b}`, '_blank');
-}
-
-// App Teardown Studio
-async function executeStudioTeardown(){
-  const url = document.getElementById('td-target-url').value.trim();
-  if (!url) return;
-  const btn = document.getElementById('td-run-btn');
-  const term = document.getElementById('td-terminal');
-
-  btn.disabled = true; btn.textContent = 'Decompiling Bundles...';
-  term.textContent = `Connecting to ${url}...\nDecompiling JavaScript webpack / vite assets...\nScanning API signatures and security header profiles...\n`;
-
-  try {
-    const res = await fetch('/api/radar/teardown', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + _token
-      },
-      body: JSON.stringify({ url: url })
-    });
-    const d = await res.json();
-    term.textContent = `[AUDIT COMPLETE] Target: ${d.target_url}\nStatus: ${d.status}\nExposed Client Routes: ${(d.exposed_client_routes || []).join(', ') || 'Protected/Internal'}\nMissing Security Headers: ${(d.missing_security_headers || []).join(', ')}\n\nCTO TECHNICAL AUDIT MEMO:\n${d.cto_audit_memo || 'No critical defects found.'}\n\nSUGGESTED FASTAPI SECURITY FIX:\n${d.suggested_code_fix || '// Headers properly hardened'}`;
-  } catch(e) {
-    term.textContent += `\n[ERROR] Audit failed: ${e.message}`;
-  } finally {
-    btn.disabled = false; btn.textContent = 'Decompile & Audit App';
-  }
-}
-
-function quickTeardown(company, domain){
-  switchView('teardown');
-  document.getElementById('td-target-url').value = domain ? `https://${domain}` : `https://${company.toLowerCase().replace(/\s+/g, '')}.ai`;
-  executeStudioTeardown();
-}
-
-// Socket MX Verifier
-async function executeStudioVerifier(){
-  const first = document.getElementById('mx-first').value.trim();
-  const last = document.getElementById('mx-last').value.trim();
-  const domain = document.getElementById('mx-domain').value.trim();
-  const term = document.getElementById('mx-terminal');
-  const btn = document.getElementById('mx-test-btn');
-
-  if (!domain){ term.textContent = 'Please enter a target company domain (e.g. stripe.com)'; return; }
-
-  btn.disabled = true; btn.textContent = 'Handshaking...';
-  term.textContent = `[DNS] Resolving MX records for ${domain}...\n[SOCKET] Initiating TCP connection on port 25...\n`;
-
-  try {
-    const res = await fetch('/api/radar/verify-email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + _token
-      },
-      body: JSON.stringify({ first_name: first, last_name: last, domain: domain })
-    });
-    const r = await res.json();
-    term.textContent += `[RESOLVED] Primary MX Host: ${r.mx_host || 'Direct MX'}\n`;
-    term.textContent += `[SMTP 220] Mail Exchange Banner Received\n`;
-    term.textContent += `[SMTP HELO] Handshake Accepted\n`;
-    term.textContent += `[SMTP MAIL FROM] Probe Socket Established\n`;
-    term.textContent += `[SMTP RCPT TO] Probe target: ${r.verified_email || first + '@' + domain}\n`;
-    term.textContent += `[RESULT] ${r.status === 'valid' ? '250 OK: Mailbox exists and accepts delivery ($0 cost)' : 'Status: ' + r.status}\n`;
-    term.textContent += `Confidence Score: ${r.confidence || 0.95}\n`;
-  } catch(e) {
-    term.textContent += `[ERROR] Handshake failed: ${e.message}\n`;
-  } finally {
-    btn.disabled = false; btn.textContent = 'Test Handshake';
-  }
-}
-
-// CV Vault
-async function loadCvVault(){
-  const listEl = document.getElementById('cv-vault-list');
-  try {
-    const res = await fetch('/api/cvs', { headers: { 'Authorization': 'Bearer ' + _token } });
-    const cvs = await res.json();
-    if (!cvs || !cvs.length){
-      listEl.innerHTML = '<div style="padding:32px;color:var(--ink-secondary);text-align:center">No tailored CVs uploaded yet. Upload a PDF above.</div>';
-      return;
-    }
-    listEl.innerHTML = cvs.map(c => `
-      <div style="background:var(--bg-surface);padding:16px 20px;border-radius:var(--radius-md);display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border)">
-        <div>
-          <div style="font-weight:700;font-size:15px;color:var(--ink-primary)">${esc(c.filename)}</div>
-          <div style="font-size:12px;color:var(--ink-secondary);margin-top:2px">${esc(c.created_at?.slice(0, 10))}</div>
-        </div>
-        <button class="btn-secondary" onclick="deleteCv('${c.id}')" style="color:var(--crimson)">Delete</button>
-      </div>
-    `).join('');
-  } catch(e){
-    listEl.innerHTML = '<div style="color:var(--crimson)">Error loading CVs</div>';
-  }
-}
-
-async function uploadCvFile(input){
-  const file = input.files[0];
-  if (!file) return;
-  const formData = new FormData();
-  formData.append('file', file);
-  try {
-    const res = await fetch('/api/cvs/upload', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + _token },
-      body: formData
-    });
-    if (!res.ok) throw new Error('Upload failed');
-    loadCvVault();
-  } catch(e) {
-    alert(e.message);
-  }
-}
-
-async function deleteCv(id){
-  if (!confirm('Remove this document?')) return;
-  await fetch('/api/cvs/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + _token } });
-  loadCvVault();
-}
-
-function esc(str){
-  if (!str) return '';
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-document.addEventListener('DOMContentLoaded', checkAuth);
-</script>
+  <script src="/static/script.js"></script>
 </body>
 </html>

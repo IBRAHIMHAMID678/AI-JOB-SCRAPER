@@ -80,9 +80,8 @@ def run_pipeline(trigger: str = "manual", user_id: Optional[str] = None) -> dict
             user_ids = [u[0] for u in users_with_cvs]
 
     if not user_ids:
-        sse_log("[JOBPILOT] No users with CVs found. Upload a CV first.")
-        _is_running = False
-        return summary
+        user_ids = []
+        sse_log("[JOBPILOT] Scraping new jobs for public catalog (no active users with CVs found).")
 
     try:
         # ── Phase 1: Source fetching (parallel, shared for all users) ────────
@@ -142,11 +141,49 @@ def run_pipeline(trigger: str = "manual", user_id: Optional[str] = None) -> dict
             sse_log("[JOBPILOT] No new jobs found. Pipeline complete.")
             return summary
 
-        # ── Phase 4-6: Per-user matching + persist ───────────────────────────
+        # ── Phase 3b: Global Catalog Persistence (Preserves all historical jobs) ──
+        print(f"[JOBPILOT] Phase 3b: Persisting {len(unique)} jobs to database...", flush=True)
+        from ..core.models import Job
+        with db_session() as db:
+            saved_count = 0
+            for uj in unique:
+                if not db.query(Job).filter(Job.url_hash == uj.url_hash).first():
+                    job_orm = Job(
+                        source_name=uj.source_name,
+                        source_job_id=uj.source_job_id,
+                        title=uj.title,
+                        company=uj.company,
+                        location=uj.location or "Worldwide",
+                        remote_type=uj.remote_type or "unknown",
+                        employment_type=uj.employment_type or "full_time",
+                        salary_min=uj.salary_min,
+                        salary_max=uj.salary_max,
+                        currency=uj.currency or "USD",
+                        salary_raw=uj.salary_raw,
+                        description=uj.description,
+                        skills_raw=uj.skills_raw if isinstance(uj.skills_raw, list) else [],
+                        posting_date=uj.posting_date,
+                        discovered_at=datetime.now(timezone.utc),
+                        application_url=uj.application_url,
+                        url_hash=uj.url_hash,
+                        content_hash=uj.content_hash,
+                        canonical_job_id=uj.canonical_job_id,
+                    )
+                    db.add(job_orm)
+                    saved_count += 1
+            db.commit()
+            print(f"[JOBPILOT] Catalog updated: +{saved_count} new historical records", flush=True)
+            sse_log(f"[CATALOG] Persisted {saved_count} new job listings to portal database.")
+
+        # ── Phase 4-6: Per-user personalized matching ─────────────────────────
         for uid in user_ids:
-            print(f"[JOBPILOT] Phase 4-6: Scoring & Auto-Applying across {len(unique)} jobs for user {uid[:8]}...", flush=True)
-            sse_log(f"[JOBPILOT] Phase 4-6: Scoring {len(unique)} jobs for user {uid[:8]}...")
-            _analyze_match_and_persist(unique, summary, uid)
+            print(f"[JOBPILOT] Phase 4-6: Scoring across jobs for user {uid[:8]}...", flush=True)
+            sse_log(f"[JOBPILOT] Phase 4-6: Scoring jobs for user {uid[:8]}...")
+            try:
+                from ..services.matching_service import compute_user_job_matches
+                compute_user_job_matches(uid, limit=300)
+            except Exception as match_err:
+                logger.warning("Personalized matching error for user %s: %s", uid, match_err)
 
     except Exception as exc:
         logger.error("Pipeline error: %s", exc)

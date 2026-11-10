@@ -47,6 +47,10 @@ async def upload_cv(
     if len(content) > MAX_SIZE:
         raise HTTPException(400, "File too large (max 10 MB).")
 
+    # Magic byte validation for PDFs
+    if ext == ".pdf" and not content.startswith(b"%PDF-"):
+        raise HTTPException(400, "Invalid PDF format: file header signature verification failed.")
+
     filename = f"{uuid.uuid4().hex}{ext}"
     file_path = str(_upload_dir() / filename)
     with open(file_path, "wb") as f:
@@ -83,20 +87,38 @@ async def upload_cv(
             parsed_at=datetime.utcnow(),
         )
         db.add(cv)
-        db.flush()
         cv_id = cv.id
 
-    # Auto-trigger pipeline in background so user sees results immediately
-    import threading
-    def _run_pipeline():
-        try:
-            from ...workers.pipeline import run_pipeline, is_pipeline_running
-            if not is_pipeline_running():
-                run_pipeline("cv_upload", user_id=user.id)
-        except Exception as exc:
-            logger.error("Auto-pipeline after CV upload failed: %s", exc)
+        # Automatically synchronize extracted data to user's CandidateProfile
+        from ...core.models import CandidateProfile
+        profile = db.query(CandidateProfile).filter_by(id=user.id).first()
+        if not profile:
+            profile = CandidateProfile(id=user.id, name=user.username.capitalize(), email=user.email)
+            db.add(profile)
+        
+        if parsed.get("skills"):
+            profile.skills = parsed.get("skills")
+        if parsed.get("roles"):
+            profile.preferred_roles = parsed.get("roles")
+        if parsed.get("experience_years") is not None:
+            profile.years_experience = float(parsed.get("experience_years"))
+        if parsed.get("summary"):
+            profile.summary = parsed.get("summary")
+        if parsed.get("education"):
+            profile.education = parsed.get("education")
 
-    threading.Thread(target=_run_pipeline, daemon=True).start()
+        db.commit()
+
+    # Trigger personalized matching for this user
+    import threading
+    def _run_matching():
+        try:
+            from ...services.matching_service import compute_user_job_matches
+            compute_user_job_matches(user.id)
+        except Exception as exc:
+            logger.error("Job matching calculation error: %s", exc)
+
+    threading.Thread(target=_run_matching, daemon=True).start()
 
     return JSONResponse({
         "id": cv_id,

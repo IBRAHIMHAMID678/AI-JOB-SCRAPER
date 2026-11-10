@@ -45,6 +45,7 @@ class User(Base):
     email = Column(String(200), unique=True, nullable=False)
     password_hash = Column(String(200), nullable=False)
     is_active = Column(Boolean, default=True)
+    is_verified = Column(Boolean, default=True)
     created_at = Column(DateTime, default=_now)
     updated_at = Column(DateTime, default=_now, onupdate=_now)
 
@@ -677,4 +678,42 @@ class ApplicationLock(Base):
     worker_id = Column(String(100), nullable=False)
     locked_at = Column(DateTime, default=_now, nullable=False)
     expires_at = Column(DateTime, nullable=False)
+
+
+# ── Saved Jobs (Bookmarking) ──────────────────────────────────────────────────
+
+class SavedJob(Base):
+    __tablename__ = "saved_jobs"
+
+    id = Column(String(36), primary_key=True, default=_uuid)
+    user_id = Column(String(36), ForeignKey("users.id"), nullable=False, index=True)
+    job_id = Column(String(36), ForeignKey("jobs.id"), nullable=False, index=True)
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=_now)
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "job_id", name="uq_saved_jobs_user_job"),
+    )
+
+    user = relationship("User", backref="saved_jobs")
+    job = relationship("Job")
+
+
+# ── OTP Verifications (Gmail Verification & Password Reset) ───────────────────
+
+class OTPVerification(Base):
+    __tablename__ = "otp_verifications"
+
+    id = Column(String(36), primary_key=True, default=_uuid)
+    email = Column(String(200), nullable=False, index=True)
+    otp_hash = Column(String(200), nullable=False)
+    purpose = Column(String(50), nullable=False, default="registration")  # registration | password_reset
+    metadata_json = Column(JSON, default=dict)  # pending username, password_hash
+    attempts = Column(Integer, default=0)
+    resend_count = Column(Integer, default=0)
+    last_sent_at = Column(DateTime, default=_now)
+    expires_at = Column(DateTime, nullable=False)
+    verified_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=_now)
+
 

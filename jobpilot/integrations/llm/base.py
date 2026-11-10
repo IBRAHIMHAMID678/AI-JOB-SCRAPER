@@ -122,8 +122,25 @@ def register_provider(name: str, cls: Type[LLMProvider]) -> None:
 
 def get_provider() -> LLMProvider:
     name = settings.LLM_PROVIDER
+    # If groq or openrouter fails or fallback requested, use fallback
+    if name == "fallback" or "fallback" in _REGISTRY:
+        try:
+            fb = _REGISTRY["fallback"]()
+            if fb.providers:
+                return fb
+        except Exception:
+            pass
+
     cls = _REGISTRY.get(name)
     if cls is None:
+        if "fallback" in _REGISTRY:
+            return _REGISTRY["fallback"]()
         available = list(_REGISTRY.keys())
         raise LLMError(f"LLM provider '{name}' not found. Available: {available}", retryable=False)
-    return cls()
+    try:
+        return cls()
+    except Exception as exc:
+        if "fallback" in _REGISTRY:
+            logger.warning("Primary provider %s init failed (%s). Engaging fallback.", name, exc)
+            return _REGISTRY["fallback"]()
+        raise
